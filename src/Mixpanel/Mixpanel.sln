@@ -3,6 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mixpanel", "Mixpanel\Mixpanel.csproj", "{50E3A1C0-C171-42E5-891F-10DF80E8DAF4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mixpanel.Tests", "Mixpanel.Tests\Mixpanel.Tests.csproj", "{0ACDB4A7-5717-4CA7-BA9D-E168413DC487}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2A680DFF-0ABA-4D28-A811-8A8612EDCE87}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +22,10 @@ Global
 		{50E3A1C0-C171-42E5-891F-10DF80E8DAF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50E3A1C0-C171-42E5-891F-10DF80E8DAF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50E3A1C0-C171-42E5-891F-10DF80E8DAF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ACDB4A7-5717-4CA7-BA9D-E168413DC487}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ACDB4A7-5717-4CA7-BA9D-E168413DC487}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ACDB4A7-5717-4CA7-BA9D-E168413DC487}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ACDB4A7-5717-4CA7-BA9D-E168413DC487}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

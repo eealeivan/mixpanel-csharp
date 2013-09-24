@@ -16,7 +16,7 @@ namespace Mixpanel.Builders
                 {"distinct_id", MixpanelTrackProperty.DistinctId},
                 {"distinctid", MixpanelTrackProperty.DistinctId},
 
-                {"ip", MixpanelTrackProperty.DistinctId},
+                {"ip", MixpanelTrackProperty.IpAddress},
 
                 {"time", MixpanelTrackProperty.Time},
             };
@@ -27,7 +27,7 @@ namespace Mixpanel.Builders
         private readonly IDictionary<string, object> _otherProps =
             new Dictionary<string, object>();
 
-        public void Add(string propertyName, object value, int weight)
+        public void Add(string propertyName, object value, int weight = 1)
         {
             //TODO: Values parsing (mixpanel supported types)
             string bindingProp;
