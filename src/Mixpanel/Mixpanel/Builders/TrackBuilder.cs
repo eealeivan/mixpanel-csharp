@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Mixpanel.PropertyTypes;
 
 namespace Mixpanel.Builders
 {
@@ -9,16 +8,16 @@ namespace Mixpanel.Builders
         private static readonly Dictionary<string, string> BindingProps =
             new Dictionary<string, string>
             {
-                {"event", MixpanelTrackProperty.Event},
+                {"event", MixpanelProperty.Event},
 
-                {"token", MixpanelTrackProperty.Token},
+                {"token", MixpanelProperty.Token},
 
-                {"distinct_id", MixpanelTrackProperty.DistinctId},
-                {"distinctid", MixpanelTrackProperty.DistinctId},
+                {"distinct_id", MixpanelProperty.DistinctId},
+                {"distinctid", MixpanelProperty.DistinctId},
 
-                {"ip", MixpanelTrackProperty.IpAddress},
+                {"ip", MixpanelProperty.Ip},
 
-                {"time", MixpanelTrackProperty.Time},
+                {"time", MixpanelProperty.Time},
             };
 
         private readonly IDictionary<string, Tuple<object, int>> _mixpanelProps =
@@ -58,38 +57,38 @@ namespace Mixpanel.Builders
 
                 // event
                 Tuple<object, int> @event;
-                if (!_mixpanelProps.TryGetValue(MixpanelTrackProperty.Event, out @event))
+                if (!_mixpanelProps.TryGetValue(MixpanelProperty.Event, out @event))
                 {
                     throw new Exception("'Event' property is not set.");
                 }
-                obj[MixpanelTrackProperty.Event] = @event.Item1;
+                obj[MixpanelProperty.Event] = @event.Item1;
 
                 // properties
                 var properties = new Dictionary<string, object>();
                 obj["properties"] = properties;
 
                 Tuple<object, int> token;
-                if (_mixpanelProps.TryGetValue(MixpanelTrackProperty.Token, out token))
+                if (_mixpanelProps.TryGetValue(MixpanelProperty.Token, out token))
                 {
-                    properties[MixpanelTrackProperty.Token] = token.Item1;
+                    properties["token"] = token.Item1;
                 }
 
                 Tuple<object, int> distinctId;
-                if (_mixpanelProps.TryGetValue(MixpanelTrackProperty.DistinctId, out distinctId))
+                if (_mixpanelProps.TryGetValue(MixpanelProperty.DistinctId, out distinctId))
                 {
-                    properties[MixpanelTrackProperty.DistinctId] = distinctId.Item1;
+                    properties["distinct_id"] = distinctId.Item1;
                 }
 
                 Tuple<object, int> ip;
-                if (_mixpanelProps.TryGetValue(MixpanelTrackProperty.IpAddress, out ip))
+                if (_mixpanelProps.TryGetValue(MixpanelProperty.Ip, out ip))
                 {
-                    properties[MixpanelTrackProperty.IpAddress] = ip.Item1;
+                    properties["ip"] = ip.Item1;
                 }
 
                 Tuple<object, int> time;
-                if (_mixpanelProps.TryGetValue(MixpanelTrackProperty.Time, out time))
+                if (_mixpanelProps.TryGetValue(MixpanelProperty.Time, out time))
                 {
-                    properties[MixpanelTrackProperty.Time] = time.Item1;
+                    properties["time"] = time.Item1;
                 }
 
                 //TODO: Names changing according to config

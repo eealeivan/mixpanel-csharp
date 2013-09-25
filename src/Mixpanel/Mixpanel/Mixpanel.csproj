@@ -42,11 +42,12 @@
   <ItemGroup>
     <Compile Include="Builders\BuilderBase.cs" />
     <Compile Include="Builders\TrackBuilder.cs" />
+    <Compile Include="Builders\ValueParser.cs" />
     <Compile Include="DefaultJsonSerializer.cs" />
     <Compile Include="IMixpanelClient.cs" />
     <Compile Include="MixpanelConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyTypes\MixpanelTrackProperty.cs" />
+    <Compile Include="MixpanelProperty.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
