@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mixpanel.Builders;
+using Mixpanel.Exceptions;
 using NUnit.Framework;
 
 namespace Mixpanel.Tests
@@ -65,6 +66,45 @@ namespace Mixpanel.Tests
             // Weights are ignored for custum properties
             Assert.AreEqual("3", properties["TestProp1"]);
             Assert.AreEqual("1", properties["TestProp2"]);
+        }
+
+        [Test]
+        [ExpectedException(typeof(MixpanelObjectFormatException), 
+            ExpectedMessage = "'event'", MatchType = MessageMatch.Contains)]
+        public void TrackBuilder_throws_exception_if_event_is_not_set()
+        {
+            var builder = new TrackBuilder();
+            var obj = builder.Object;
+        }
+        
+        [Test]
+        [ExpectedException(typeof(MixpanelPropertyWrongTypeException), 
+            ExpectedMessage = "'event'", MatchType = MessageMatch.Contains)]
+        public void TrackBuilder_throws_exception_if_event_is_of_wrong_type()
+        {
+            var builder = new TrackBuilder();
+            builder.Add(MixpanelProperty.Event, DateTime.Now);
+            var obj = builder.Object;
+        }  
+        
+        [Test]
+        [ExpectedException(typeof(MixpanelPropertyNullOrEmptyException), 
+            ExpectedMessage = "'event'", MatchType = MessageMatch.Contains)]
+        public void TrackBuilder_throws_exception_if_event_is_empty()
+        {
+            var builder = new TrackBuilder();
+            builder.Add(MixpanelProperty.Event, "");
+            var obj = builder.Object;
+        }
+        
+        [Test]
+        [ExpectedException(typeof(MixpanelPropertyNullOrEmptyException), 
+            ExpectedMessage = "'event'", MatchType = MessageMatch.Contains)]
+        public void TrackBuilder_throws_exception_if_event_is_null()
+        {
+            var builder = new TrackBuilder();
+            builder.Add(MixpanelProperty.Event, null);
+            var obj = builder.Object;
         }
     }
 }

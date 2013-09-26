@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Mixpanel.Exceptions;
+using Mixpanel.Misc;
 
 namespace Mixpanel.Builders
 {
@@ -58,33 +60,51 @@ namespace Mixpanel.Builders
                 // event
                 Tuple<object, int> @event;
                 if (!_mixpanelProps.TryGetValue(MixpanelProperty.Event, out @event))
-                {
-                    throw new Exception("'Event' property is not set.");
-                }
-                obj[MixpanelProperty.Event] = @event.Item1;
+                    throw new MixpanelObjectFormatException("'event' property is not set.");
+             
+                if (@event.Item1 == null)
+                    throw new MixpanelPropertyNullOrEmptyException("'event' property can't be null.");
 
-                // properties
+                if (!(@event.Item1 is string))
+                    throw new MixpanelPropertyWrongTypeException("'event' property should be of type string.");
+             
+                var eventS = @event.Item1 as string;
+                if (string.IsNullOrWhiteSpace(eventS))
+                    throw new MixpanelPropertyNullOrEmptyException("'event' property can't be empty.");
+                obj["event"] = eventS;
+                
                 var properties = new Dictionary<string, object>();
                 obj["properties"] = properties;
 
+                // token
                 Tuple<object, int> token;
-                if (_mixpanelProps.TryGetValue(MixpanelProperty.Token, out token))
-                {
-                    properties["token"] = token.Item1;
-                }
+                if (!_mixpanelProps.TryGetValue(MixpanelProperty.Token, out token))
+                    throw new Exception("'token' property is not set.");
+            
+                if (!(token.Item1 is string))
+                    throw new Exception("'token' property should be of type string.");
+                
+                var tokenS = token.Item1 as string;
+                if (string.IsNullOrWhiteSpace(tokenS))
+                    throw new Exception("'token' property can't be empty.");
+                properties["token"] = tokenS;
 
+                // distinct_id
                 Tuple<object, int> distinctId;
-                if (_mixpanelProps.TryGetValue(MixpanelProperty.DistinctId, out distinctId))
+                if (_mixpanelProps.TryGetValue(MixpanelProperty.DistinctId, out distinctId) 
+                    && distinctId.Item1 != null)
                 {
-                    properties["distinct_id"] = distinctId.Item1;
+                    properties["distinct_id"] = distinctId.Item1.ToString();
                 }
 
+                // ip
                 Tuple<object, int> ip;
-                if (_mixpanelProps.TryGetValue(MixpanelProperty.Ip, out ip))
+                if (_mixpanelProps.TryGetValue(MixpanelProperty.Ip, out ip) && ip.Item1 != null)
                 {
-                    properties["ip"] = ip.Item1;
+                    properties["ip"] = ip.Item1.ToString();
                 }
 
+                // time
                 Tuple<object, int> time;
                 if (_mixpanelProps.TryGetValue(MixpanelProperty.Time, out time) && time.Item1 != null)
                 {
@@ -94,6 +114,7 @@ namespace Mixpanel.Builders
                     }
                 }
 
+                // Other properties
                 //TODO: Names changing according to config
                 foreach (var otherProp in _otherProps)
                 {
