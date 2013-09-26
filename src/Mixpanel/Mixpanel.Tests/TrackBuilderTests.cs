@@ -11,7 +11,7 @@ namespace Mixpanel.Tests
         [Test]
         public void TrackBuilder_builds_simple_object()
         {
-            var now = DateTime.Now;
+            var now = new DateTime(2013, 9, 26, 22, 33, 44, DateTimeKind.Utc);
             var builder = new TrackBuilder();
 
             builder.Add(MixpanelProperty.Event, "test_event");
@@ -32,7 +32,8 @@ namespace Mixpanel.Tests
             Assert.AreEqual("aa11qq", properties["token"]);
             Assert.AreEqual("123", properties["distinct_id"]);
             Assert.AreEqual("111.111.111.111", properties["ip"]);
-            Assert.AreEqual(now, properties["time"]);
+            Assert.IsInstanceOf<long>(properties["time"]);
+            Assert.AreEqual(1380234824L, properties["time"]);
             Assert.AreEqual("test value 1", properties["TestProp1"]);
             Assert.AreEqual(5, properties["TestProp2"]);
         }

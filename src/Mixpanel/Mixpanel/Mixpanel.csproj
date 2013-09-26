@@ -45,6 +45,7 @@
     <Compile Include="Builders\ValueParser.cs" />
     <Compile Include="DefaultJsonSerializer.cs" />
     <Compile Include="IMixpanelClient.cs" />
+    <Compile Include="Misc\DateTimeExtensions.cs" />
     <Compile Include="MixpanelConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MixpanelProperty.cs" />

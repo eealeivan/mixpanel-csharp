@@ -86,9 +86,12 @@ namespace Mixpanel.Builders
                 }
 
                 Tuple<object, int> time;
-                if (_mixpanelProps.TryGetValue(MixpanelProperty.Time, out time))
+                if (_mixpanelProps.TryGetValue(MixpanelProperty.Time, out time) && time.Item1 != null)
                 {
-                    properties["time"] = time.Item1;
+                    if (time.Item1 is DateTime)
+                    {
+                        properties["time"] = ((DateTime)time.Item1).ToUnixTime();
+                    }
                 }
 
                 //TODO: Names changing according to config
