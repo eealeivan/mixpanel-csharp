@@ -4,8 +4,8 @@ using System.Runtime.Serialization;
 namespace Mixpanel.Exceptions
 {
     /// <summary>
-    /// Exception indicates that some property is of wrong type.
-    /// For example <see cref="MixpanelProperty.Token"/> is of type <see cref="DateTime"/>.
+    /// Exception indicates that some Mixpanel property has wrong type.
+    /// For example <see cref="MixpanelProperty.Token"/> is of type <see cref="int"/>.
     /// </summary>
     public class MixpanelPropertyWrongTypeException : Exception
     {

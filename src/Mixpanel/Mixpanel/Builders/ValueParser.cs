@@ -1,9 +1,12 @@
 ﻿using System;
+using Mixpanel.Misc;
 
 namespace Mixpanel.Builders
 {
     internal class ValueParser
     {
+        public const string MixpanelDateFormat = "yyyy-MM-ddTHH:mm:ss";
+
         public Tuple<object, bool> Parse(object value)
         {
             if (value is string || value is int || value is long ||
@@ -15,7 +18,8 @@ namespace Mixpanel.Builders
             if (value is DateTime)
             {
                 var valueDt = (DateTime)value;
-                return new Tuple<object, bool>(valueDt.ToString("yyyy-MM-ddTHH:mm:ss"), true);
+                return new Tuple<object, bool>(
+                    valueDt.ToStableUniversalTime().ToString(MixpanelDateFormat), true);
             }
 
             if (value is float || value is short || value is ushort || value is uint || 

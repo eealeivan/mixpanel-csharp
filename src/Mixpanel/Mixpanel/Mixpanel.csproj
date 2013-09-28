@@ -44,7 +44,7 @@
     <Compile Include="Builders\TrackBuilder.cs" />
     <Compile Include="Builders\ValueParser.cs" />
     <Compile Include="DefaultJsonSerializer.cs" />
-    <Compile Include="Exceptions\MixpanelObjectFormatException.cs" />
+    <Compile Include="Exceptions\MixpanelObjectStructureException.cs" />
     <Compile Include="Exceptions\MixpanelPropertyNullOrEmptyException.cs" />
     <Compile Include="Exceptions\MixpanelPropertyWrongTypeException.cs" />
     <Compile Include="IMixpanelClient.cs" />

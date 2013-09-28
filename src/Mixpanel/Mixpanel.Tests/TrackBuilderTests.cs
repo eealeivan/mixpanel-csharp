@@ -69,7 +69,7 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(MixpanelObjectFormatException), 
+        [ExpectedException(typeof(MixpanelObjectStructureException), 
             ExpectedMessage = "'event'", MatchType = MessageMatch.Contains)]
         public void TrackBuilder_throws_exception_if_event_is_not_set()
         {
@@ -83,7 +83,7 @@ namespace Mixpanel.Tests
         public void TrackBuilder_throws_exception_if_event_is_of_wrong_type()
         {
             var builder = new TrackBuilder();
-            builder.Add(MixpanelProperty.Event, DateTime.Now);
+            builder.Add(MixpanelProperty.Event, 1);
             var obj = builder.Object;
         }  
         
@@ -104,6 +104,49 @@ namespace Mixpanel.Tests
         {
             var builder = new TrackBuilder();
             builder.Add(MixpanelProperty.Event, null);
+            var obj = builder.Object;
+        }
+
+        [Test]
+        [ExpectedException(typeof(MixpanelObjectStructureException),
+            ExpectedMessage = "'token'", MatchType = MessageMatch.Contains)]
+        public void TrackBuilder_throws_exception_if_token_is_not_set()
+        {
+            var builder = new TrackBuilder();
+            builder.Add(MixpanelProperty.Event, "event");
+            var obj = builder.Object;
+        }
+
+        [Test]
+        [ExpectedException(typeof(MixpanelPropertyWrongTypeException),
+            ExpectedMessage = "'token'", MatchType = MessageMatch.Contains)]
+        public void TrackBuilder_throws_exception_if_token_is_of_wrong_type()
+        {
+            var builder = new TrackBuilder();
+            builder.Add(MixpanelProperty.Event, "event");
+            builder.Add(MixpanelProperty.Token, 1);
+            var obj = builder.Object;
+        }
+
+        [Test]
+        [ExpectedException(typeof(MixpanelPropertyNullOrEmptyException),
+            ExpectedMessage = "'token'", MatchType = MessageMatch.Contains)]
+        public void TrackBuilder_throws_exception_if_token_is_empty()
+        {
+            var builder = new TrackBuilder();
+            builder.Add(MixpanelProperty.Event, "event");
+            builder.Add(MixpanelProperty.Token, "");
+            var obj = builder.Object;
+        }
+
+        [Test]
+        [ExpectedException(typeof(MixpanelPropertyNullOrEmptyException),
+            ExpectedMessage = "'token'", MatchType = MessageMatch.Contains)]
+        public void TrackBuilder_throws_exception_if_token_is_null()
+        {
+            var builder = new TrackBuilder();
+            builder.Add(MixpanelProperty.Event, "event");
+            builder.Add(MixpanelProperty.Token, null);
             var obj = builder.Object;
         }
     }
