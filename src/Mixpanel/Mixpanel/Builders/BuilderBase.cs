@@ -8,6 +8,15 @@ namespace Mixpanel.Builders
     /// </summary>
     internal abstract class BuilderBase
     {
+        protected readonly MixpanelConfig Config;
+        protected readonly ValueParser ValueParser;
+
+        protected BuilderBase(MixpanelConfig config = null)
+        {
+            Config = config;
+            ValueParser = new ValueParser();
+        }
+
         public abstract IDictionary<string, object> Object { get; } 
     }
 }

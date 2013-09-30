@@ -10,7 +10,6 @@ namespace Mixpanel.Builders
     {
         private readonly IDictionary<string, Tuple<object, int>> _mixpanelProps;
         private readonly IDictionary<string, object> _otherProps;
-        private readonly ValueParser _valueParser;
         private static readonly Dictionary<string, string> BindingProps =
             new Dictionary<string, string>
             {
@@ -26,16 +25,16 @@ namespace Mixpanel.Builders
                 {"time", MixpanelProperty.Time},
             };
 
-        public TrackBuilder()
+        public TrackBuilder(MixpanelConfig config = null)
+            : base(config)
         {
             _mixpanelProps = new Dictionary<string, Tuple<object, int>>();
             _otherProps = new Dictionary<string, object>();
-            _valueParser = new ValueParser();
         }
 
         public void Add(string propertyName, object value, int weight = 1)
         {
-            var parsedValue = _valueParser.Parse(value);
+            var parsedValue = ValueParser.Parse(value);
             if (!parsedValue.Item2) return;
 
             string bindingProp;
