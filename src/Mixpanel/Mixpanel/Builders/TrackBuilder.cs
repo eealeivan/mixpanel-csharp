@@ -34,6 +34,9 @@ namespace Mixpanel.Builders
 
         public void Add(string propertyName, object value, int weight = 1)
         {
+            if(string.IsNullOrEmpty(propertyName))
+                throw new ArgumentNullException("propertyName");
+
             var parsedValue = ValueParser.Parse(value);
             if (!parsedValue.Item2) return;
 
@@ -126,10 +129,9 @@ namespace Mixpanel.Builders
                 }
 
                 // Other properties
-                //TODO: Names changing according to config
                 foreach (var otherProp in _otherProps)
                 {
-                    properties[otherProp.Key] = otherProp.Value;
+                    properties[PropertyNameFormatter.Format(otherProp.Key)] = otherProp.Value;
                 }
 
                 return obj;

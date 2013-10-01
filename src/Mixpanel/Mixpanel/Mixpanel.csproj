@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\BuilderBase.cs" />
+    <Compile Include="Builders\PropertyNameFormatter.cs" />
     <Compile Include="Builders\TrackBuilder.cs" />
     <Compile Include="Builders\ValueParser.cs" />
     <Compile Include="DefaultJsonSerializer.cs" />
