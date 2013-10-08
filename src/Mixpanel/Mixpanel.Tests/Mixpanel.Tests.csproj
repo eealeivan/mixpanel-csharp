@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExtensionsTests.cs" />
+    <Compile Include="MixpanelDataTests.cs" />
     <Compile Include="PropertiesDiggerTests.cs" />
     <Compile Include="PropertyNameFormatterTests.cs" />
     <Compile Include="TrackBuilderTests.cs" />

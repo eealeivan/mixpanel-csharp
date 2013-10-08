@@ -42,12 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\BuilderBase.cs" />
+    <Compile Include="Builders\MixpanelData.cs" />
     <Compile Include="Builders\PropertyNameFormatter.cs" />
     <Compile Include="Builders\TrackBuilder.cs" />
     <Compile Include="Builders\ValueParser.cs" />
     <Compile Include="DefaultJsonSerializer.cs" />
     <Compile Include="Exceptions\MixpanelObjectStructureException.cs" />
-    <Compile Include="Exceptions\MixpanelPropertyNullOrEmptyException.cs" />
+    <Compile Include="Exceptions\MixpanelRequiredPropertyNullOrEmptyException.cs" />
     <Compile Include="Exceptions\MixpanelPropertyWrongTypeException.cs" />
     <Compile Include="IMixpanelClient.cs" />
     <Compile Include="Misc\DateTimeExtensions.cs" />

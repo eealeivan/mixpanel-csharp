@@ -18,7 +18,7 @@ namespace Mixpanel.Builders
             ValueParser = new ValueParser();
             PropertyNameFormatter = new PropertyNameFormatter(config);
         }
-
-        public abstract IDictionary<string, object> Object { get; } 
+        
+        public abstract IDictionary<string, object> GetObject(MixpanelData mixpanelData);
     }
 }
