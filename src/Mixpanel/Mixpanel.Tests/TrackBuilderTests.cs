@@ -9,146 +9,139 @@ namespace Mixpanel.Tests
     [TestFixture]
     public class TrackBuilderTests
     {
-        private readonly Dictionary<string, string> _specialPropsBindings =
-           new Dictionary<string, string>
-            {
-                {"event", MixpanelProperty.Event},
+        private TrackBuilder _builder;
+        private MixpanelData _md;
 
-                {"token", MixpanelProperty.Token},
-
-                {"distinct_id", MixpanelProperty.DistinctId},
-                {"distinctid", MixpanelProperty.DistinctId},
-
-                {"ip", MixpanelProperty.Ip},
-
-                {"time", MixpanelProperty.Time},
-            };
+        [SetUp]
+        public void SetUp()
+        {
+            _builder = new TrackBuilder();
+            _md = new MixpanelData(TrackBuilder.SpecialPropsBindings);
+        }
 
         [Test]
-        public void TrackBuilder_builds_simple_object()
+        public void GetObject_BuildSimpleObject_Builed()
         {
             var now = new DateTime(2013, 9, 26, 22, 33, 44, DateTimeKind.Utc);
-            var builder = new TrackBuilder();
-            var md = new MixpanelData(_specialPropsBindings);
+            _md.SetProperty(MixpanelProperty.Event, "test_event");
+            _md.SetProperty(MixpanelProperty.Token, "aa11qq");
+            _md.SetProperty(MixpanelProperty.DistinctId, "123");
+            _md.SetProperty(MixpanelProperty.Ip, "111.111.111.111");
+            _md.SetProperty(MixpanelProperty.Time, now);
+            _md.SetProperty("TestProp1", "test value 1");
+            _md.SetProperty("TestProp2", 5);
 
-            md.SetProperty(MixpanelProperty.Event, "test_event");
-            md.SetProperty(MixpanelProperty.Token, "aa11qq");
-            md.SetProperty(MixpanelProperty.DistinctId, "123");
-            md.SetProperty(MixpanelProperty.Ip, "111.111.111.111");
-            md.SetProperty(MixpanelProperty.Time, now);
-            md.SetProperty("TestProp1", "test value 1");
-            md.SetProperty("TestProp2", 5);
+            var obj = _builder.GetObject(_md);
+            Assert.That(obj.Count, Is.EqualTo(2));
+            Assert.That(obj["event"], Is.EqualTo("test_event"));
 
-            var obj = builder.GetObject(md);
-            Assert.AreEqual(2, obj.Count);
-            Assert.AreEqual("test_event", obj["event"]);
-
-            Assert.IsInstanceOf<IDictionary<string, object>>(obj["properties"]);
+            Assert.That(obj["properties"], Is.InstanceOf<IDictionary<string, object>>());
             var properties = (IDictionary<string, object>)obj["properties"];
 
-            Assert.AreEqual("aa11qq", properties["token"]);
-            Assert.AreEqual("123", properties["distinct_id"]);
-            Assert.AreEqual("111.111.111.111", properties["ip"]);
-            Assert.IsInstanceOf<long>(properties["time"]);
-            Assert.AreEqual(1380234824L, properties["time"]);
-            Assert.AreEqual("test value 1", properties["TestProp1"]);
-            Assert.AreEqual(5, properties["TestProp2"]);
+            Assert.That(properties["token"], Is.EqualTo("aa11qq"));
+            Assert.That(properties["distinct_id"], Is.EqualTo("123"));
+            Assert.That(properties["ip"], Is.EqualTo("111.111.111.111"));
+            Assert.That(properties["ip"], Is.EqualTo("111.111.111.111"));
+            Assert.That(properties["time"], Is.TypeOf<long>());
+            Assert.That(properties["time"], Is.EqualTo(1380234824L));
+            Assert.That(properties["TestProp1"], Is.EqualTo("test value 1"));
+            Assert.That(properties["TestProp2"], Is.EqualTo(5));
         }
 
         [Test]
-        public void TrackBuilder_overrides_properties()
+        public void GetObject_SetOnePropertyManyTimes_Overwritten()
         {
-            var builder = new TrackBuilder();
-            var md = new MixpanelData(_specialPropsBindings);
-            md.SetProperty(MixpanelProperty.Event, "test_event1");
-            md.SetProperty(MixpanelProperty.Event, "test_event2");
+            _md.SetProperty(MixpanelProperty.Event, "test_event1");
+            _md.SetProperty(MixpanelProperty.Event, "test_event2");
 
-            md.SetProperty(MixpanelProperty.Token, "token2");
-            md.SetProperty(MixpanelProperty.Token, "token1");
+            _md.SetProperty(MixpanelProperty.Token, "token2");
+            _md.SetProperty(MixpanelProperty.Token, "token1");
 
-            md.SetProperty("TestProp1", "1");
-            md.SetProperty("TestProp1", "2");
-            md.SetProperty("TestProp1", "3");
+            _md.SetProperty("TestProp1", "1");
+            _md.SetProperty("TestProp1", "2");
+            _md.SetProperty("TestProp1", "3");
 
-            md.SetProperty("TestProp2", "3");
-            md.SetProperty("TestProp2", "2");
-            md.SetProperty("TestProp2", "1");
+            _md.SetProperty("TestProp2", "3");
+            _md.SetProperty("TestProp2", "2");
+            _md.SetProperty("TestProp2", "1");
 
-            var obj = builder.GetObject(md);
+            var obj = _builder.GetObject(_md);
 
-            Assert.AreEqual("test_event2", obj["event"]);
+            Assert.That(obj["event"], Is.EqualTo("test_event2"));
+
             var properties = (IDictionary<string, object>)obj["properties"];
-            Assert.AreEqual("token1", properties["token"]);
-
-            Assert.AreEqual("3", properties["TestProp1"]);
-            Assert.AreEqual("1", properties["TestProp2"]);
+            Assert.That(properties["token"], Is.EqualTo("token1"));
+            Assert.That(properties["TestProp1"], Is.EqualTo("3"));
+            Assert.That(properties["TestProp2"], Is.EqualTo("1"));
         }
 
         [Test]
-        [ExpectedException(typeof(MixpanelObjectStructureException),
-            ExpectedMessage = "'event'", MatchType = MessageMatch.Contains)]
-        public void TrackBuilder_throws_exception_if_event_is_not_set()
+        public void GetObject_EventPropertyNotSet_ThrowsException()
         {
-            var builder = new TrackBuilder();
-            var md = new MixpanelData(_specialPropsBindings);
-            builder.GetObject(md);
+            Assert.That(
+               () => { _builder.GetObject(_md); },
+               Throws
+                   .TypeOf<MixpanelObjectStructureException>()
+                   .And.Message.EqualTo("'event' property is not set."));
         }
 
         [Test]
-        [ExpectedException(typeof(MixpanelRequiredPropertyNullOrEmptyException),
-            ExpectedMessage = "'event'", MatchType = MessageMatch.Contains)]
-        public void TrackBuilder_throws_exception_if_event_is_null()
+        public void GetObject_EventPropertyIsNull_ThrowsException()
         {
-            var builder = new TrackBuilder();
-            var md = new MixpanelData(_specialPropsBindings);
-            md.SetProperty(MixpanelProperty.Event, null);
-            builder.GetObject(md);
+            _md.SetProperty(MixpanelProperty.Event, null);
+            Assert.That(
+               () => { _builder.GetObject(_md); },
+               Throws
+                   .TypeOf<MixpanelRequiredPropertyNullOrEmptyException>()
+                   .And.Message.EqualTo("'event' property can't be null."));
         }
 
         [Test]
-        [ExpectedException(typeof(MixpanelRequiredPropertyNullOrEmptyException),
-            ExpectedMessage = "'event' property can't be empty.")]
-        public void TrackBuilder_throws_exception_if_event_is_empty()
+        public void GetObject_EventPropertyIsEmpty_ThrowsException()
         {
-            var builder = new TrackBuilder();
-            var md = new MixpanelData(_specialPropsBindings);
-            md.SetProperty(MixpanelProperty.Event, "");
-            builder.GetObject(md);
+            _md.SetProperty(MixpanelProperty.Event, "");
+            Assert.That(
+               () => { _builder.GetObject(_md); },
+               Throws
+                   .TypeOf<MixpanelRequiredPropertyNullOrEmptyException>()
+                   .And.Message.EqualTo("'event' property can't be empty."));
         }
 
         [Test]
-        [ExpectedException(typeof(MixpanelObjectStructureException),
-            ExpectedMessage = "'token'", MatchType = MessageMatch.Contains)]
-        public void TrackBuilder_throws_exception_if_token_is_not_set()
+        public void GetObject_TokenPropertyNotSet_ThrowsException()
         {
-            var builder = new TrackBuilder();
-            var md = new MixpanelData(_specialPropsBindings);
-            md.SetProperty(MixpanelProperty.Event, "event");
-            builder.GetObject(md);
+            _md.SetProperty(MixpanelProperty.Event, "event");
+            Assert.That(
+                () => { _builder.GetObject(_md); },
+                Throws
+                    .TypeOf<MixpanelObjectStructureException>()
+                    .And.Message.EqualTo("'token' property is not set."));
         }
 
         [Test]
-        [ExpectedException(typeof(MixpanelRequiredPropertyNullOrEmptyException),
-            ExpectedMessage = "'token'", MatchType = MessageMatch.Contains)]
-        public void TrackBuilder_throws_exception_if_token_is_null()
+        public void GetObject_TokenPropertyIsNull_ThrowsException()
         {
-            var builder = new TrackBuilder();
-            var md = new MixpanelData(_specialPropsBindings);
-            md.SetProperty(MixpanelProperty.Event, "event");
-            md.SetProperty(MixpanelProperty.Token, null);
-            builder.GetObject(md);
+            _md.SetProperty(MixpanelProperty.Event, "event");
+            _md.SetProperty(MixpanelProperty.Token, null);
+
+            Assert.That(
+                () => { _builder.GetObject(_md); },
+                Throws
+                    .TypeOf<MixpanelRequiredPropertyNullOrEmptyException>()
+                    .And.Message.EqualTo("'token' property can't be null."));
         }
 
         [Test]
-        [ExpectedException(typeof(MixpanelRequiredPropertyNullOrEmptyException),
-            ExpectedMessage = "'token' property can't be empty.")]
-        public void TrackBuilder_throws_exception_if_token_is_empty()
+        public void GetObject_TokenPropertyIsEmpty_ThrowsException()
         {
-            var builder = new TrackBuilder();
-            var md = new MixpanelData(_specialPropsBindings);
-            md.SetProperty(MixpanelProperty.Event, "event");
-            md.SetProperty(MixpanelProperty.Token, "");
-            builder.GetObject(md);
+            _md.SetProperty(MixpanelProperty.Event, "event");
+            _md.SetProperty(MixpanelProperty.Token, "");
+
+            Assert.That(
+                () => { _builder.GetObject(_md); },
+                Throws
+                    .TypeOf<MixpanelRequiredPropertyNullOrEmptyException>()
+                    .And.Message.EqualTo("'token' property can't be empty."));
         }
     }
 }

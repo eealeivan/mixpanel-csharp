@@ -10,27 +10,35 @@ namespace Mixpanel.Tests
     [TestFixture]
     public class PropertiesDiggerTests
     {
-        [Test]
-        public void PropertiesDigger_parses_string_key_object_value_dictionary()
-        {
-            var now = DateTime.Now;
+        private PropertiesDigger _digger;
+        private DateTime _now;
 
+        [SetUp]
+        public void SetUp()
+        {
+            _digger = new PropertiesDigger();
+            _now = DateTime.Now;
+        }
+
+        [Test]
+        public void Get_StringKeyObjectValueDictionary_Parsed()
+        {
             var inDic = new Dictionary<string, object>
             {
                 {"property1", 1},
                 {"property2", "val"},
-                {"property3", now}
+                {"property3", _now}
             };
 
-            var outDic = new PropertiesDigger().Get(inDic);
-            Assert.AreEqual(3, outDic.Count);
-            Assert.AreEqual(1, outDic["property1"]);
-            Assert.AreEqual("val", outDic["property2"]);
-            Assert.AreEqual(now, outDic["property3"]);
+            var outDic = _digger.Get(inDic);
+            Assert.That(outDic.Count, Is.EqualTo(3));
+            Assert.That(outDic["property1"], Is.EqualTo(1));
+            Assert.That(outDic["property2"], Is.EqualTo("val"));
+            Assert.That(outDic["property3"], Is.EqualTo(_now));
         }
 
         [Test]
-        public void PropertiesDigger_parses_string_key_non_object_value_dictionary()
+        public void Get_StringKeyNonObjectValueDictionary_Parsed()
         {
             var inDic = new Dictionary<string, decimal>
             {
@@ -38,80 +46,75 @@ namespace Mixpanel.Tests
                 {"property2", 2M}
             };
 
-            var outDic = new PropertiesDigger().Get(inDic);
-            Assert.AreEqual(2, outDic.Count);
-            Assert.AreEqual(1M, outDic["property1"]);
-            Assert.AreEqual(2M, outDic["property2"]);
+            var outDic = _digger.Get(inDic);
+            Assert.That(outDic.Count, Is.EqualTo(2));
+            Assert.That(outDic["property1"], Is.EqualTo(1M));
+            Assert.That(outDic["property2"], Is.EqualTo(2M));
         }
 
         [Test]
-        public void PropertiesDigger_parses_non_string_key_dictionary()
+        public void Get_NonStringKeyDictionary_Parsed()
         {
-            var now = DateTime.Now;
             var inDic = new Dictionary<object, object>
             {
                 {"property1", 1M},
                 {2, "val2"},
-                {"property3", now}
+                {"property3", _now}
             };
 
-            var outDic = new PropertiesDigger().Get(inDic);
-            Assert.AreEqual(2, outDic.Count);
-            Assert.AreEqual(1M, outDic["property1"]);
-            Assert.AreEqual(now, outDic["property3"]);
+            var outDic = _digger.Get(inDic);
+            Assert.That(outDic.Count, Is.EqualTo(2));
+            Assert.That(outDic["property1"], Is.EqualTo(1M));
+            Assert.That(outDic["property3"], Is.EqualTo(_now));
         }
 
 
         [Test]
-        public void PropertiesDigger_parses_hash_table()
+        public void Get_Hashtable_Parsed()
         {
-            var now = DateTime.Now;
-
             var hashtable = new Hashtable
             {
                 {"property1", 1M},
                 {2, "val2"},
-                {"property3", now}
+                {"property3", _now}
             };
 
-            var outDic = new PropertiesDigger().Get(hashtable);
-            Assert.AreEqual(2, outDic.Count);
-            Assert.AreEqual(1M, outDic["property1"]);
-            Assert.AreEqual(now, outDic["property3"]);
+            var outDic = _digger.Get(hashtable);
+            Assert.That(outDic.Count, Is.EqualTo(2));
+            Assert.That(outDic["property1"], Is.EqualTo(1M));
+            Assert.That(outDic["property3"], Is.EqualTo(_now));
         }
 
         [Test]
-        public void PropertiesDigger_parses_expando_object()
+        public void Get_ExpandoObject_Parsed()
         {
-            var now = DateTime.Now;
             dynamic expando = new ExpandoObject();
             expando.property1 = 1M;
-            expando.property2 = "val2";
-            expando.property3 = now;
+            expando.Property2 = "val";
+            expando.property3 = _now;
 
-            var outDic = new PropertiesDigger().Get(expando);
-            Assert.AreEqual(3, outDic.Count);
-            Assert.AreEqual(1, outDic["property1"]);
-            Assert.AreEqual("val2", outDic["property2"]);
-            Assert.AreEqual(now, outDic["property3"]);
+            var outDic = _digger.Get(expando);
+            Assert.That(outDic.Count, Is.EqualTo(3));
+            Assert.That(outDic["property1"], Is.EqualTo(1M));
+            Assert.That(outDic["Property2"], Is.EqualTo("val"));
+            Assert.That(outDic["property3"], Is.EqualTo(_now));
         }
 
         [Test]
-        public void PropertiesDigger_parses_dynamic()
+        public void Get_Dynamic_Parsed()
         {
-            var now = DateTime.Now;
             dynamic dyn = new
             {
                 Property1 = 1M,
-                Property2 = "val2",
-                Property3 = now
+                Property2 = "val",
+                Property3 = _now
             };
 
-            var outDic = new PropertiesDigger().Get(dyn);
-            Assert.AreEqual(3, outDic.Count);
-            Assert.AreEqual(1, outDic["Property1"]);
-            Assert.AreEqual("val2", outDic["Property2"]);
-            Assert.AreEqual(now, outDic["Property3"]);
+            var outDic = _digger.Get(dyn);
+            Assert.That(outDic.Count, Is.EqualTo(3));
+            Assert.That(outDic["Property1"], Is.EqualTo(1M));
+            Assert.That(outDic["Property2"], Is.EqualTo("val"));
+            Assert.That(outDic["Property3"], Is.EqualTo(_now));
         }
 
         internal class Test1
@@ -122,80 +125,81 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        public void PropertiesDigger_parses_class()
+        public void Get_Class_Parsed()
         {
-            var now = DateTime.Now;
-            var test1 = new Test1
+            var test = new Test1
             {
                 Property1 = 1M,
-                Property2 = "val2",
-                Property3 = now
+                Property2 = "val",
+                Property3 = _now
             };
 
-            var outDic = new PropertiesDigger().Get(test1);
-            Assert.AreEqual(3, outDic.Count);
-            Assert.AreEqual(1, outDic["Property1"]);
-            Assert.AreEqual("val2", outDic["Property2"]);
-            Assert.AreEqual(now, outDic["Property3"]);
+            var outDic = _digger.Get(test);
+            Assert.That(outDic.Count, Is.EqualTo(3));
+            Assert.That(outDic["Property1"], Is.EqualTo(1M));
+            Assert.That(outDic["Property2"], Is.EqualTo("val"));
+            Assert.That(outDic["Property3"], Is.EqualTo(_now));
         }
 
 
         internal class Test2
         {
-            [MixpanelProperty("property1")]
+            [MixpanelProperty("property_1")]
             public decimal Property1 { get; set; }
 
             public string Property2 { get; set; }
 
-            [MixpanelProperty("property3")]
+            [MixpanelProperty("property_3")]
             public DateTime Property3 { get; set; }
         }
 
         [Test]
-        public void PropertiesDigger_parses_class_with_mixpanel_property_attribute()
+        public void Get_ClassWithMixpanelPropertyAttr_Parsed()
         {
-            var now = DateTime.Now;
-            var test1 = new Test2
+            var test = new Test2
             {
                 Property1 = 1M,
-                Property2 = "val2",
-                Property3 = now
+                Property2 = "val",
+                Property3 = _now
             };
 
-            var outDic = new PropertiesDigger().Get(test1);
-            Assert.AreEqual(3, outDic.Count);
-            Assert.AreEqual(1, outDic["property1"]);
-            Assert.AreEqual("val2", outDic["Property2"]);
-            Assert.AreEqual(now, outDic["property3"]);
+            var outDic = _digger.Get(test);
+            Assert.That(outDic.Count, Is.EqualTo(3));
+            Assert.That(outDic["property_1"], Is.EqualTo(1M));
+            Assert.That(outDic["Property2"], Is.EqualTo("val"));
+            Assert.That(outDic["property_3"], Is.EqualTo(_now));
         }
 
         internal class Test3
         {
-            [MixpanelProperty("property1")]
+            [MixpanelProperty("property_1")]
             public decimal Property1 { get; set; }
 
             [IgnoreDataMember]
             public string Property2 { get; set; }
 
-            [DataMember(Name = "property3")]
+            [DataMember(Name = "property_3")]
             public DateTime Property3 { get; set; }
+
+            public string Property4 { get; set; }
         }
 
         [Test]
-        public void PropertiesDigger_parses_class_with_ignore_data_member()
+        public void Get_ClassWithIgnoreDataMemberAttr_Parsed()
         {
-            var now = DateTime.Now;
-            var test1 = new Test3
+            var test = new Test3
             {
                 Property1 = 1M,
-                Property2 = "val2",
-                Property3 = now
+                Property2 = "val",
+                Property3 = _now,
+                Property4 = "p4"
             };
 
-            var outDic = new PropertiesDigger().Get(test1);
-            Assert.AreEqual(2, outDic.Count);
-            Assert.AreEqual(1, outDic["property1"]);
-            Assert.AreEqual(now, outDic["property3"]);
+            var outDic = _digger.Get(test);
+            Assert.That(outDic.Count, Is.EqualTo(3));
+            Assert.That(outDic["property_1"], Is.EqualTo(1M));
+            Assert.That(outDic["property_3"], Is.EqualTo(_now));
+            Assert.That(outDic["Property4"], Is.EqualTo("p4"));
         }
 
         [DataContract]
@@ -221,25 +225,24 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        public void PropertiesDigger_parses_class_with_all_possible_attributes()
+        public void Get_ClassWithAllAttributes_Parsed()
         {
-            var now = DateTime.Now;
-            var test4 = new Test4
+            var test = new Test4
             {
                 Property1 = 1M,
-                Property2 = "val2",
-                Property3 = now,
+                Property2 = "val",
+                Property3 = _now,
                 Property4 = "p4",
                 Property5 = "p5",
                 Property6 = "p6"
             };
 
-            var outDic = new PropertiesDigger().Get(test4);
-            Assert.AreEqual(4, outDic.Count);
-            Assert.AreEqual(1M, outDic["mp_property1"]);
-            Assert.AreEqual(now, outDic["property3"]);
-            Assert.AreEqual("p5", outDic["mp_property5"]);
-            Assert.AreEqual("p6", outDic["Property6"]);
+            var outDic = _digger.Get(test);
+            Assert.That(outDic.Count, Is.EqualTo(4));
+            Assert.That(outDic["mp_property1"], Is.EqualTo(1M));
+            Assert.That(outDic["property3"], Is.EqualTo(_now));
+            Assert.That(outDic["mp_property5"], Is.EqualTo("p5"));
+            Assert.That(outDic["Property6"], Is.EqualTo("p6"));
         }
     }
 }

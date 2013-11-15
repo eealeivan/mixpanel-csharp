@@ -8,18 +8,18 @@ namespace Mixpanel.Tests
     public class ExtensionsTests
     {
         [Test]
-        public void DateTimeExtensions_converts_date_time_to_unix_time()
+        public void DateTimeToUnixTime_Works()
         {
             // UTC time
             var utcDateTime = new DateTime(2013, 9, 26, 22, 21, 11, DateTimeKind.Utc);
-            Assert.AreEqual(1380234071L, utcDateTime.ToUnixTime());
+            Assert.That(utcDateTime.ToUnixTime(), Is.EqualTo(1380234071L));
 
             // Local time
             var localDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local);
-            Assert.AreEqual(1380234071L, localDateTime.ToUnixTime());
+            Assert.That(localDateTime.ToUnixTime(), Is.EqualTo(1380234071L));
 
             // Min value
-            Assert.AreEqual(-62135596800L, DateTime.MinValue.ToUnixTime());
+            Assert.That(DateTime.MinValue.ToUnixTime(), Is.EqualTo(-62135596800L));
         }
     }
 }

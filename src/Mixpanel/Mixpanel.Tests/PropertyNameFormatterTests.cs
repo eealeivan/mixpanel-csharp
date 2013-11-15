@@ -6,94 +6,93 @@ namespace Mixpanel.Tests
     [TestFixture]
     public class PropertyNameFormatterTests
     {
-        [Test]
-        public void PropertyNameFormatter_doesnt_change_property_with_default_config()
+        private PropertyNameFormatter _defaultFormatter;
+
+        [SetUp]
+        public void SetUp()
         {
             MixpanelGlobalConfig.Reset();
-
-            var formatter1 = new PropertyNameFormatter();
-            Assert.AreEqual("SomeCoolProperty", formatter1.Format("SomeCoolProperty"));
-            Assert.AreEqual("someCoolProperty", formatter1.Format("someCoolProperty"));
-
-            var formatter2 = new PropertyNameFormatter(new MixpanelConfig());
-            Assert.AreEqual("SomeCoolProperty", formatter2.Format("SomeCoolProperty"));
-            Assert.AreEqual("someCoolProperty", formatter2.Format("someCoolProperty"));
+            _defaultFormatter = new PropertyNameFormatter();
         }
 
         [Test]
-        public void PropertyNameFormatter_doesnt_change_property_if_none()
+        public void Format_DefaultConfig_PropertyNameNotChanged()
         {
-            MixpanelGlobalConfig.Reset();
+            Assert.That(_defaultFormatter.Format("SomeCoolProperty"), Is.EqualTo("SomeCoolProperty"));
+            Assert.That(_defaultFormatter.Format("someCoolProperty"), Is.EqualTo("someCoolProperty"));
+
+            var formatter = new PropertyNameFormatter(new MixpanelConfig());
+            Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("SomeCoolProperty"));
+            Assert.That(formatter.Format("someCoolProperty"), Is.EqualTo("someCoolProperty"));
+        }
+
+        [Test]
+        public void Format_NoneConfig_PropertyNameNotChanged()
+        {
             MixpanelGlobalConfig.PropertyNameFormat = PropertyNameFormat.None;
 
-            var formatter1 = new PropertyNameFormatter();
-            Assert.AreEqual("SomeCoolProperty", formatter1.Format("SomeCoolProperty"));
-            Assert.AreEqual("someCoolProperty", formatter1.Format("someCoolProperty"));
+            Assert.That(_defaultFormatter.Format("SomeCoolProperty"), Is.EqualTo("SomeCoolProperty"));
+            Assert.That(_defaultFormatter.Format("someCoolProperty"), Is.EqualTo("someCoolProperty"));
 
-            var formatter2 = new PropertyNameFormatter(
-                new MixpanelConfig {PropertyNameFormat = PropertyNameFormat.None});
-            Assert.AreEqual("SomeCoolProperty", formatter2.Format("SomeCoolProperty"));
-            Assert.AreEqual("someCoolProperty", formatter2.Format("someCoolProperty"));
+            var formatter = new PropertyNameFormatter(
+                new MixpanelConfig { PropertyNameFormat = PropertyNameFormat.None });
+            Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("SomeCoolProperty"));
+            Assert.That(formatter.Format("someCoolProperty"), Is.EqualTo("someCoolProperty"));
         }
 
         [Test]
-        public void PropertyNameFormatter_formats_property_to_sentence_title_case()
+        public void Format_SentenceTitleCaseConfig_PropertyNameChanged()
         {
-            MixpanelGlobalConfig.Reset();
             MixpanelGlobalConfig.PropertyNameFormat = PropertyNameFormat.SentenceTitleCase;
 
-            var formatter1 = new PropertyNameFormatter();
-            Assert.AreEqual("Some Cool Property", formatter1.Format("SomeCoolProperty"));
-            Assert.AreEqual("Some Cool Property", formatter1.Format("someCoolProperty"));
-            Assert.AreEqual("Prop", formatter1.Format("prop"));
-            Assert.AreEqual("Prop P", formatter1.Format("PropP"));
+            Assert.That(_defaultFormatter.Format("SomeCoolProperty"), Is.EqualTo("Some Cool Property"));
+            Assert.That(_defaultFormatter.Format("someCoolProperty"), Is.EqualTo("Some Cool Property"));
+            Assert.That(_defaultFormatter.Format("prop"), Is.EqualTo("Prop"));
+            Assert.That(_defaultFormatter.Format("PropP"), Is.EqualTo("Prop P"));
 
-            var formatter2 = new PropertyNameFormatter(
+            var formatter = new PropertyNameFormatter(
                 new MixpanelConfig { PropertyNameFormat = PropertyNameFormat.SentenceTitleCase });
-            Assert.AreEqual("Some Cool Property", formatter2.Format("SomeCoolProperty"));
-            Assert.AreEqual("Some Cool Property", formatter2.Format("someCoolProperty"));
-            Assert.AreEqual("Prop", formatter2.Format("prop"));
-            Assert.AreEqual("Prop P", formatter2.Format("PropP"));
+            Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("Some Cool Property"));
+            Assert.That(formatter.Format("someCoolProperty"), Is.EqualTo("Some Cool Property"));
+            Assert.That(formatter.Format("prop"), Is.EqualTo("Prop"));
+            Assert.That(formatter.Format("PropP"), Is.EqualTo("Prop P"));
         }
 
         [Test]
-        public void PropertyNameFormatter_formats_property_to_sentence_capitalized()
+        public void Format_SentenseCapitilizedConfig_PropertyNameChanged()
         {
-            MixpanelGlobalConfig.Reset();
             MixpanelGlobalConfig.PropertyNameFormat = PropertyNameFormat.SentenseCapitilized;
 
-            var formatter1 = new PropertyNameFormatter();
-            Assert.AreEqual("Some cool property", formatter1.Format("SomeCoolProperty"));
-            Assert.AreEqual("Some cool property", formatter1.Format("someCoolProperty"));
-            Assert.AreEqual("Prop", formatter1.Format("prop"));
-            Assert.AreEqual("Prop p", formatter1.Format("PropP"));
+            Assert.That(_defaultFormatter.Format("SomeCoolProperty"), Is.EqualTo("Some cool property"));
+            Assert.That(_defaultFormatter.Format("someCoolProperty"), Is.EqualTo("Some cool property"));
+            Assert.That(_defaultFormatter.Format("prop"), Is.EqualTo("Prop"));
+            Assert.That(_defaultFormatter.Format("PropP"), Is.EqualTo("Prop p"));
 
-            var formatter2 = new PropertyNameFormatter(
+            var formatter = new PropertyNameFormatter(
                 new MixpanelConfig { PropertyNameFormat = PropertyNameFormat.SentenseCapitilized });
-            Assert.AreEqual("Some cool property", formatter2.Format("SomeCoolProperty"));
-            Assert.AreEqual("Some cool property", formatter2.Format("someCoolProperty"));
-            Assert.AreEqual("Prop", formatter2.Format("prop"));
-            Assert.AreEqual("Prop p", formatter2.Format("PropP"));
+            Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("Some cool property"));
+            Assert.That(formatter.Format("someCoolProperty"), Is.EqualTo("Some cool property"));
+            Assert.That(formatter.Format("prop"), Is.EqualTo("Prop"));
+            Assert.That(formatter.Format("PropP"), Is.EqualTo("Prop p"));
+
         }
 
         [Test]
-        public void PropertyNameFormatter_formats_property_to_sentence_lower_case()
+        public void Format_SentenceLowerCaseConfig_PropertyNameChanged()
         {
-            MixpanelGlobalConfig.Reset();
             MixpanelGlobalConfig.PropertyNameFormat = PropertyNameFormat.SentenceLowerCase;
 
-            var formatter1 = new PropertyNameFormatter();
-            Assert.AreEqual("some cool property", formatter1.Format("SomeCoolProperty"));
-            Assert.AreEqual("some cool property", formatter1.Format("someCoolProperty"));
-            Assert.AreEqual("prop", formatter1.Format("prop"));
-            Assert.AreEqual("prop p", formatter1.Format("PropP"));
+            Assert.That(_defaultFormatter.Format("SomeCoolProperty"), Is.EqualTo("some cool property"));
+            Assert.That(_defaultFormatter.Format("someCoolProperty"), Is.EqualTo("some cool property"));
+            Assert.That(_defaultFormatter.Format("prop"), Is.EqualTo("prop"));
+            Assert.That(_defaultFormatter.Format("PropP"), Is.EqualTo("prop p"));
 
-            var formatter2 = new PropertyNameFormatter(
+            var formatter = new PropertyNameFormatter(
                 new MixpanelConfig { PropertyNameFormat = PropertyNameFormat.SentenceLowerCase });
-            Assert.AreEqual("some cool property", formatter2.Format("SomeCoolProperty"));
-            Assert.AreEqual("some cool property", formatter2.Format("someCoolProperty"));
-            Assert.AreEqual("prop", formatter2.Format("prop"));
-            Assert.AreEqual("prop p", formatter2.Format("PropP"));
+            Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("some cool property"));
+            Assert.That(formatter.Format("someCoolProperty"), Is.EqualTo("some cool property"));
+            Assert.That(formatter.Format("prop"), Is.EqualTo("prop"));
+            Assert.That(formatter.Format("PropP"), Is.EqualTo("prop p"));
         }
     }
 }
