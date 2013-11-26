@@ -3,15 +3,15 @@
 namespace Mixpanel
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public sealed class MixpanelPropertyAttribute : Attribute
+    public sealed class MixpanelNameAttribute : Attribute
     {
         public readonly string Name;
 
         /// <summary>
-        /// Creates an instance of <see cref="MixpanelPropertyAttribute"/> class.
+        /// Creates an instance of <see cref="MixpanelNameAttribute"/> class.
         /// </summary>
         /// <param name="name">Alternative name for property that will be sent to Mixpanel.</param>
-        public MixpanelPropertyAttribute(string name)
+        public MixpanelNameAttribute(string name)
         {
             Name = name;
         }

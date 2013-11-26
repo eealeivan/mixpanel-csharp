@@ -144,12 +144,12 @@ namespace Mixpanel.Tests
 
         internal class Test2
         {
-            [MixpanelProperty("property_1")]
+            [MixpanelName("property_1")]
             public decimal Property1 { get; set; }
 
             public string Property2 { get; set; }
 
-            [MixpanelProperty("property_3")]
+            [MixpanelName("property_3")]
             public DateTime Property3 { get; set; }
         }
 
@@ -172,7 +172,7 @@ namespace Mixpanel.Tests
 
         internal class Test3
         {
-            [MixpanelProperty("property_1")]
+            [MixpanelName("property_1")]
             public decimal Property1 { get; set; }
 
             [IgnoreDataMember]
@@ -205,7 +205,7 @@ namespace Mixpanel.Tests
         [DataContract]
         internal class Test4
         {
-            [MixpanelProperty("mp_property1")]
+            [MixpanelName(MixpanelProperty.DistinctId)]
             [DataMember(Name = "property1")]
             public decimal Property1 { get; set; }
 
@@ -217,7 +217,7 @@ namespace Mixpanel.Tests
 
             public string Property4 { get; set; }
 
-            [MixpanelProperty("mp_property5")]
+            [MixpanelName("mp_property5")]
             public string Property5 { get; set; }
 
             [DataMember]
@@ -239,7 +239,7 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(test);
             Assert.That(outDic.Count, Is.EqualTo(3));
-            Assert.That(outDic["mp_property1"], Is.EqualTo(1M));
+            Assert.That(outDic[MixpanelProperty.DistinctId], Is.EqualTo(1M));
             Assert.That(outDic["property3"], Is.EqualTo(_now));
             Assert.That(outDic["Property6"], Is.EqualTo("p6"));
         }

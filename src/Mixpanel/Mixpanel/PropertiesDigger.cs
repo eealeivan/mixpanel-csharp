@@ -67,13 +67,13 @@ namespace Mixpanel
                             continue;
                     }
 
-                    var mixpanelPropAttr = info.GetCustomAttribute<MixpanelPropertyAttribute>();
-                    if (mixpanelPropAttr != null)
+                    var mixpanelNameAttr = info.GetCustomAttribute<MixpanelNameAttribute>();
+                    if (mixpanelNameAttr != null)
                     {
                         res.Add(Tuple.Create(
-                            string.IsNullOrWhiteSpace(mixpanelPropAttr.Name)
+                            string.IsNullOrWhiteSpace(mixpanelNameAttr.Name)
                                 ? info.Name
-                                : mixpanelPropAttr.Name,
+                                : mixpanelNameAttr.Name,
                             info));
                         continue;
                     }
