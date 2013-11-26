@@ -198,7 +198,7 @@ namespace Mixpanel.Tests
             var outDic = _digger.Get(test);
             Assert.That(outDic.Count, Is.EqualTo(3));
             Assert.That(outDic["property_1"], Is.EqualTo(1M));
-            Assert.That(outDic["property_3"], Is.EqualTo(_now));
+            Assert.That(outDic["Property3"], Is.EqualTo(_now));
             Assert.That(outDic["Property4"], Is.EqualTo("p4"));
         }
 
@@ -238,10 +238,9 @@ namespace Mixpanel.Tests
             };
 
             var outDic = _digger.Get(test);
-            Assert.That(outDic.Count, Is.EqualTo(4));
+            Assert.That(outDic.Count, Is.EqualTo(3));
             Assert.That(outDic["mp_property1"], Is.EqualTo(1M));
             Assert.That(outDic["property3"], Is.EqualTo(_now));
-            Assert.That(outDic["mp_property5"], Is.EqualTo("p5"));
             Assert.That(outDic["Property6"], Is.EqualTo("p6"));
         }
     }

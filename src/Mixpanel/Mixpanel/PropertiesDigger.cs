@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace Mixpanel
 {
-    internal class PropertiesDigger
+    internal sealed class PropertiesDigger
     {
         public IDictionary<string, object> Get(object obj)
         {
@@ -34,55 +34,64 @@ namespace Mixpanel
             }
             else
             {
-                GetPropertiesFromObject(obj, props);
+                foreach (var propertyInfo in GetPropertyInfos(obj.GetType()))
+                {
+                    props.Add(propertyInfo.Item1, propertyInfo.Item2.GetValue(obj, null));
+                }
             }
 
             return props;
         }
 
-        private void GetPropertiesFromObject(object obj, Dictionary<string, object> props)
+        private static readonly ConcurrentDictionary<Type, List<Tuple<string, PropertyInfo>>>
+            PropertyInfosCache = new ConcurrentDictionary<Type, List<Tuple<string, PropertyInfo>>>();
+
+        private List<Tuple<string, PropertyInfo>> GetPropertyInfos(Type type)
         {
-            foreach (var propertyInfo in GetPropertyInfos(obj.GetType()))
+            return PropertyInfosCache.GetOrAdd(type, t =>
             {
-                props.Add(propertyInfo.Item1, propertyInfo.Item2.GetValue(obj, null));
-            }
-        }
+                bool isDataContract = t.GetCustomAttribute<DataContractAttribute>() != null;
+                var infos = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                var res = new List<Tuple<string, PropertyInfo>>(infos.Length);
 
-        private IEnumerable<Tuple<string, PropertyInfo>> GetPropertyInfos(Type type)
-        {
-            bool isDataContract = type.GetCustomAttribute<DataContractAttribute>() != null;
-
-            var infos = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var info in infos)
-            {
-                if(info.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
-                    continue;
-
-                var mixpanelPropAttr = info.GetCustomAttribute<MixpanelPropertyAttribute>();
-                if (mixpanelPropAttr != null)
+                foreach (var info in infos)
                 {
-                    yield return Tuple.Create(
-                        string.IsNullOrWhiteSpace(mixpanelPropAttr.Name) ? info.Name : mixpanelPropAttr.Name, 
-                        info);
-                    continue;
-                }
+                    if (info.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
+                        continue;
 
-                var dataMemberAttr = info.GetCustomAttribute<DataMemberAttribute>();
-                if (isDataContract && dataMemberAttr == null)
-                {
-                    continue;
-                }
+                    DataMemberAttribute dataMemberAttr = null;
+                    if (isDataContract)
+                    {
+                        dataMemberAttr = info.GetCustomAttribute<DataMemberAttribute>();
+                        if (dataMemberAttr == null)
+                            continue;
+                    }
 
-                if (dataMemberAttr != null)
-                {
-                    yield return Tuple.Create(
-                        string.IsNullOrWhiteSpace(dataMemberAttr.Name) ? info.Name : dataMemberAttr.Name,
-                        info);
-                    continue;
-                }
+                    var mixpanelPropAttr = info.GetCustomAttribute<MixpanelPropertyAttribute>();
+                    if (mixpanelPropAttr != null)
+                    {
+                        res.Add(Tuple.Create(
+                            string.IsNullOrWhiteSpace(mixpanelPropAttr.Name)
+                                ? info.Name
+                                : mixpanelPropAttr.Name,
+                            info));
+                        continue;
+                    }
 
-                yield return Tuple.Create(info.Name, info);
-            }
+                    if (dataMemberAttr != null)
+                    {
+                        res.Add(Tuple.Create(
+                            string.IsNullOrWhiteSpace(dataMemberAttr.Name)
+                                ? info.Name
+                                : dataMemberAttr.Name,
+                            info));
+                        continue;
+                    }
+
+                    res.Add(Tuple.Create(info.Name, info));
+                }
+                return res;
+            });
         }
     }
 }
