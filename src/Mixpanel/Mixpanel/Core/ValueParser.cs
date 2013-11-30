@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Linq;
 using Mixpanel.Misc;
 
 namespace Mixpanel.Core
@@ -7,7 +9,7 @@ namespace Mixpanel.Core
     {
         public const string MixpanelDateFormat = "yyyy-MM-ddTHH:mm:ss";
 
-        public Tuple<object, bool> Parse(object value)
+        public Tuple<object, bool> Parse(object value, bool isRecursiveCall = false)
         {
             if (value == null)
             {
@@ -32,7 +34,17 @@ namespace Mixpanel.Core
                 return Valid(value);
             }
 
-            //TODO: Add support for lists
+            if (!isRecursiveCall && value is IEnumerable)
+            {
+                var list = (
+                    from object val in (value as IEnumerable)
+                    select Parse(val, true)
+                    into parsedVal
+                    where parsedVal.Item2
+                    select parsedVal.Item1).ToList();
+
+                return list.Count > 0 ? Valid(list) : Invalid(list);
+            }
 
             return Invalid(value);
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Mixpanel.Core;
 using NUnit.Framework;
 
@@ -84,7 +85,7 @@ namespace Mixpanel.Tests
         [Test]
         public void Parse_Short_Parsed()
         {
-            var val = _vp.Parse((short) 5);
+            var val = _vp.Parse((short)5);
             Assert.That(val.Item1, Is.EqualTo(5));
             Assert.That(val.Item2, Is.True);
         }
@@ -92,7 +93,7 @@ namespace Mixpanel.Tests
         [Test]
         public void Parse_UnsignedShort_Parsed()
         {
-            var val = _vp.Parse((short) 5);
+            var val = _vp.Parse((short)5);
             Assert.That(val.Item1, Is.EqualTo(5));
             Assert.That(val.Item2, Is.True);
         }
@@ -116,7 +117,7 @@ namespace Mixpanel.Tests
         [Test]
         public void Parse_Byte_Parsed()
         {
-            var val = _vp.Parse((byte) 5);
+            var val = _vp.Parse((byte)5);
             Assert.That(val.Item1, Is.EqualTo(5));
             Assert.That(val.Item2, Is.True);
         }
@@ -124,7 +125,7 @@ namespace Mixpanel.Tests
         [Test]
         public void Parse_SignedByte_Parsed()
         {
-            var val = _vp.Parse((sbyte) 5);
+            var val = _vp.Parse((sbyte)5);
             Assert.That(val.Item1, Is.EqualTo(5));
             Assert.That(val.Item2, Is.True);
         }
@@ -158,6 +159,15 @@ namespace Mixpanel.Tests
         {
             var val = _vp.Parse(null);
             Assert.That(val.Item1, Is.Null);
+            Assert.That(val.Item2, Is.True);
+        }
+
+        [Test]
+        public void Parse_ListOfStrings_Parsed()
+        {
+            var list = new List<string> { "one", "two", "three" };
+            var val = _vp.Parse(list);
+            Assert.That(val.Item1, Is.EquivalentTo(list));
             Assert.That(val.Item2, Is.True);
         }
 
