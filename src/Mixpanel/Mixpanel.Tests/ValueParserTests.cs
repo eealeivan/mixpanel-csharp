@@ -1,5 +1,5 @@
 using System;
-using Mixpanel.Builders;
+using Mixpanel.Core;
 using NUnit.Framework;
 
 namespace Mixpanel.Tests

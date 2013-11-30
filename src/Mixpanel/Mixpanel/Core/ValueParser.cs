@@ -1,7 +1,7 @@
 ﻿using System;
 using Mixpanel.Misc;
 
-namespace Mixpanel.Builders
+namespace Mixpanel.Core
 {
     internal class ValueParser
     {

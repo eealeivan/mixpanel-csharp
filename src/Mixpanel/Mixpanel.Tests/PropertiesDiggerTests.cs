@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Runtime.Serialization;
+using Mixpanel.Core;
 using NUnit.Framework;
 
 namespace Mixpanel.Tests

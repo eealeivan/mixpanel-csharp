@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace Mixpanel
+namespace Mixpanel.Core
 {
     internal sealed class PropertiesDigger
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Mixpanel.Builders
+namespace Mixpanel.Core
 {
     internal class PropertyNameFormatter
     {

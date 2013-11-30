@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Mixpanel.Builders;
+using Mixpanel.Core;
 
 namespace Mixpanel
 {
@@ -79,16 +79,16 @@ namespace Mixpanel
             string @event, object props, object distinctId, string ip, DateTime? time)
         {
             var builder = new TrackBuilder(_config);
-            var md = new MixpanelData(TrackBuilder.SpecialPropsBindings, _config);
+            var od = new ObjectData(TrackBuilder.SpecialPropsBindings, _config);
 
-            md.ParseAndSetProperties(props);
-            md.SetProperty(MixpanelProperty.Event, @event);
-            md.SetProperty(MixpanelProperty.Token, _token);
-            md.SetProperty(MixpanelProperty.DistinctId, distinctId);
-            md.SetProperty(MixpanelProperty.Ip, ip);
-            md.SetProperty(MixpanelProperty.Time, time);
+            od.ParseAndSetProperties(props);
+            od.SetProperty(MixpanelProperty.Event, @event);
+            od.SetProperty(MixpanelProperty.Token, _token);
+            od.SetProperty(MixpanelProperty.DistinctId, distinctId);
+            od.SetProperty(MixpanelProperty.Ip, ip);
+            od.SetProperty(MixpanelProperty.Time, time);
 
-            return builder.GetObject(md);
+            return builder.GetObject(od);
         }
 
         #endregion

@@ -4,9 +4,9 @@ using System.Globalization;
 using Mixpanel.Exceptions;
 using Mixpanel.Misc;
 
-namespace Mixpanel.Builders
+namespace Mixpanel.Core
 {
-    internal class TrackBuilder : BuilderBase
+    internal class TrackBuilder : ObjectBuilderBase
     {
         public static readonly Dictionary<string, string> SpecialPropsBindings =
             new Dictionary<string, string>
@@ -28,12 +28,12 @@ namespace Mixpanel.Builders
         {
         }
 
-        public override IDictionary<string, object> GetObject(MixpanelData mixpanelData)
+        public override IDictionary<string, object> GetObject(ObjectData objectData)
         {
             var obj = new Dictionary<string, object>();
 
             // event
-            obj["event"] = mixpanelData.GetSpecialRequiredProp(MixpanelProperty.Event,
+            obj["event"] = objectData.GetSpecialRequiredProp(MixpanelProperty.Event,
                 x =>
                 {
                     if(String.IsNullOrWhiteSpace(x.ToString()))
@@ -46,7 +46,7 @@ namespace Mixpanel.Builders
             obj["properties"] = properties;
 
             // token
-            properties["token"] = mixpanelData.GetSpecialRequiredProp(MixpanelProperty.Token,
+            properties["token"] = objectData.GetSpecialRequiredProp(MixpanelProperty.Token,
                 x =>
                 {
                     if (String.IsNullOrWhiteSpace(x.ToString()))
@@ -56,21 +56,21 @@ namespace Mixpanel.Builders
                 x => x.ToString());
 
             // distinct_id
-            var distinctId = mixpanelData.GetSpecialProp(MixpanelProperty.DistinctId, x => x.ToString());
+            var distinctId = objectData.GetSpecialProp(MixpanelProperty.DistinctId, x => x.ToString());
             if (distinctId != null)
             {
                 properties["distinct_id"] = distinctId;
             }
 
             // ip
-            object ip = mixpanelData.GetSpecialProp(MixpanelProperty.Ip, x => x.ToString());
+            object ip = objectData.GetSpecialProp(MixpanelProperty.Ip, x => x.ToString());
             if (ip != null)
             {
                 properties["ip"] = ip;
             }
 
             // time
-            object time = mixpanelData.GetSpecialProp(MixpanelProperty.Time,
+            object time = objectData.GetSpecialProp(MixpanelProperty.Time,
                 x =>
                 {
                     DateTime dateTime;
@@ -87,7 +87,7 @@ namespace Mixpanel.Builders
             }
 
             // Other properties
-            foreach (var prop in mixpanelData.Props)
+            foreach (var prop in objectData.Props)
             {
                 properties[prop.Key] = prop.Value;
             }
