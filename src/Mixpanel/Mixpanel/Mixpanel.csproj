@@ -57,6 +57,7 @@
     <Compile Include="MixpanelClient.cs" />
     <Compile Include="MixpanelConfig.cs" />
     <Compile Include="MixpanelNameAttribute.cs" />
+    <Compile Include="MixpanelTest.cs" />
     <Compile Include="PropertiesDigger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MixpanelProperty.cs" />

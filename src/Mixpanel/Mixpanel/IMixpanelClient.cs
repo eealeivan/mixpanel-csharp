@@ -16,5 +16,9 @@ namespace Mixpanel
         bool Track(
             string @event, object props = null, object distinctId = null,
             string ip = null, DateTime? time = null);
+
+        MixpanelTest TrackTest(
+            string @event, object props = null, object distinctId = null,
+            string ip = null, DateTime? time = null);
     }
 }
