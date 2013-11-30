@@ -7,12 +7,15 @@ namespace Mixpanel
 {
     public class MixpanelClient : IMixpanelClient
     {
+        public const string UrlFormat = "http://api.mixpanel.com/{0}";
+        public const string EndpointTrack = "track";
+
         private readonly string _token;
         private readonly MixpanelConfig _config;
 
         public MixpanelClient(string token, MixpanelConfig config = null)
         {
-            if(string.IsNullOrWhiteSpace(token))
+            if(String.IsNullOrWhiteSpace(token))
                 throw new ArgumentNullException("token");
 
             _token = token;
@@ -28,7 +31,9 @@ namespace Mixpanel
             try
             {
                 var obj = CreateTrackObject(@event, props, distinctId, ip, time);
-                return Send("track", ToBase64(ToJson(obj)));
+                var url = string.Format(UrlFormat, EndpointTrack);
+                var formData = "data=" + ToBase64(ToJson(obj));
+                return Send(url, formData);
             }
             catch (Exception)
             {
@@ -103,9 +108,9 @@ namespace Mixpanel
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
         }
 
-        private bool Send(string endpoint, string data)
+        private bool Send(string url, string formData)
         {
-            return ConfigHelper.GetHttpPostFn(_config)(endpoint, data);
+            return ConfigHelper.GetHttpPostFn(_config)(url, formData);
         }
     }
 }
