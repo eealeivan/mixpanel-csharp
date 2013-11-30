@@ -98,7 +98,7 @@ namespace Mixpanel.Builders
             object val;
             if (SpecialProps.TryGetValue(propName, out val))
             {
-                if (convertFn != null)
+                if (val != null && convertFn != null)
                 {
                     val = convertFn(val);
                 }
