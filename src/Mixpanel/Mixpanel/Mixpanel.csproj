@@ -46,12 +46,15 @@
     <Compile Include="Builders\PropertyNameFormatter.cs" />
     <Compile Include="Builders\TrackBuilder.cs" />
     <Compile Include="Builders\ValueParser.cs" />
+    <Compile Include="ConfigHelper.cs" />
+    <Compile Include="DefaultHttpClient.cs" />
     <Compile Include="DefaultJsonSerializer.cs" />
     <Compile Include="Exceptions\MixpanelObjectStructureException.cs" />
     <Compile Include="Exceptions\MixpanelRequiredPropertyNullOrEmptyException.cs" />
     <Compile Include="Exceptions\MixpanelPropertyWrongTypeException.cs" />
     <Compile Include="IMixpanelClient.cs" />
     <Compile Include="Misc\DateTimeExtensions.cs" />
+    <Compile Include="MixpanelClient.cs" />
     <Compile Include="MixpanelConfig.cs" />
     <Compile Include="MixpanelNameAttribute.cs" />
     <Compile Include="PropertiesDigger.cs" />

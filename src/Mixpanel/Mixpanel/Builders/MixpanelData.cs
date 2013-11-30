@@ -71,40 +71,41 @@ namespace Mixpanel.Builders
         public object GetSpecialRequiredProp(string propName, 
             Action<object> validateFn = null, Func<object, object> convertFn = null)
         {
-            object propValue;
-            if (!SpecialProps.TryGetValue(propName, out propValue))
+            object val;
+            if (!SpecialProps.TryGetValue(propName, out val))
                 throw new MixpanelObjectStructureException(
                     string.Format("'{0}' property is not set.", propName));
 
-            if (propValue == null)
+            if (val == null)
                 throw new MixpanelRequiredPropertyNullOrEmptyException(
                     string.Format("'{0}' property can't be null.", propName));
 
             if (validateFn != null)
             {
-                validateFn(propValue);
+                validateFn(val);
             }
 
             if (convertFn != null)
             {
-                propValue = convertFn(propValue);
+                val = convertFn(val);
             }
 
-            return propValue;
+            return val;
         }
 
         public object GetSpecialProp(string propName, Func<object, object> convertFn = null)
         {
             object val;
-            if (SpecialProps.TryGetValue(propName, out val))
+            if (!SpecialProps.TryGetValue(propName, out val))
             {
-                if (val != null && convertFn != null)
-                {
-                    val = convertFn(val);
-                }
-                return val;
+                return null;
             }
-            return null;
+
+            if (val != null && convertFn != null)
+            {
+                val = convertFn(val);
+            }
+            return val;
         }
     }
 }
