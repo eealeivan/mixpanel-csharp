@@ -15,6 +15,7 @@ namespace Mixpanel.Tests
         [SetUp]
         public void SetUp()
         {
+            MixpanelGlobalConfig.Reset();
             _builder = new TrackBuilder();
             _od = new ObjectData(TrackBuilder.SpecialPropsBindings);
         }
@@ -38,9 +39,9 @@ namespace Mixpanel.Tests
             Assert.That(obj["properties"], Is.InstanceOf<IDictionary<string, object>>());
             var properties = (IDictionary<string, object>)obj["properties"];
 
+            Assert.That(properties.Count, Is.EqualTo(6));
             Assert.That(properties["token"], Is.EqualTo("aa11qq"));
             Assert.That(properties["distinct_id"], Is.EqualTo("123"));
-            Assert.That(properties["ip"], Is.EqualTo("111.111.111.111"));
             Assert.That(properties["ip"], Is.EqualTo("111.111.111.111"));
             Assert.That(properties["time"], Is.TypeOf<long>());
             Assert.That(properties["time"], Is.EqualTo(1380234824L));
@@ -70,6 +71,8 @@ namespace Mixpanel.Tests
             Assert.That(obj["event"], Is.EqualTo("test_event2"));
 
             var properties = (IDictionary<string, object>)obj["properties"];
+
+            Assert.That(properties.Count, Is.EqualTo(3));
             Assert.That(properties["token"], Is.EqualTo("token1"));
             Assert.That(properties["TestProp1"], Is.EqualTo("3"));
             Assert.That(properties["TestProp2"], Is.EqualTo("1"));
