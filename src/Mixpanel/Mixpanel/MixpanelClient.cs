@@ -28,16 +28,26 @@ namespace Mixpanel
             string @event, object props = null, object distinctId = null,
             string ip = null, DateTime? time = null)
         {
+            string url, formData;
             try
             {
                 var obj = CreateTrackObject(@event, props, distinctId, ip, time);
-                var url = string.Format(UrlFormat, EndpointTrack);
-                var formData = "data=" + ToBase64(ToJson(obj));
+                url = string.Format(UrlFormat, EndpointTrack);
+                formData = "data=" + ToBase64(ToJson(obj));
+            }
+            catch (Exception e)
+            {
+                LogError("Error creating 'track' object.", e);
+                return false;
+            }
+
+            try
+            {
                 return Send(url, formData);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // TODO: Add logging
+                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, formData), e);
                 return false;
             }
         }
@@ -111,6 +121,15 @@ namespace Mixpanel
         private bool Send(string url, string formData)
         {
             return ConfigHelper.GetHttpPostFn(_config)(url, formData);
+        }
+
+        private void LogError(string msg, Exception exception)
+        {
+            var logFn = ConfigHelper.GetErrorLogFn(_config);
+            if (logFn != null)
+            {
+                logFn(msg, exception);
+            }
         }
     }
 }

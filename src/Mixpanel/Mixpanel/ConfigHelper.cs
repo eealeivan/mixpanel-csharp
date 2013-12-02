@@ -25,5 +25,16 @@ namespace Mixpanel
 
             return new DefaultHttpClient().Post;
         }
+        
+        public static Action<string, Exception> GetErrorLogFn(MixpanelConfig config)
+        {
+            if (config != null && config.ErrorLogFn != null)
+                return config.ErrorLogFn;
+
+            if (MixpanelGlobalConfig.ErrorLogFn != null)
+                return MixpanelGlobalConfig.ErrorLogFn;
+
+            return null;
+        }
     }
 }
