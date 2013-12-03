@@ -45,6 +45,7 @@
     <Compile Include="Core\ObjectData.cs" />
     <Compile Include="Core\PropertiesDigger.cs" />
     <Compile Include="Core\PropertyNameFormatter.cs" />
+    <Compile Include="Core\PropertyNameSource.cs" />
     <Compile Include="Core\TrackBuilder.cs" />
     <Compile Include="Core\ValueParser.cs" />
     <Compile Include="ConfigHelper.cs" />

@@ -12,7 +12,7 @@ namespace Mixpanel.Core
             _config = config;
         }
 
-        public string Format(string propName)
+        public string Format(string propName, PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
             if(string.IsNullOrWhiteSpace(propName))
                 throw new ArgumentNullException("propName");
@@ -21,7 +21,8 @@ namespace Mixpanel.Core
                 ? _config.PropertyNameFormat
                 : MixpanelGlobalConfig.PropertyNameFormat;
 
-            if (propertyNameFormat == PropertyNameFormat.None)
+            if (propertyNameFormat == PropertyNameFormat.None || 
+                propertyNameSource != PropertyNameSource.Default)
             {
                 return propName;
             }

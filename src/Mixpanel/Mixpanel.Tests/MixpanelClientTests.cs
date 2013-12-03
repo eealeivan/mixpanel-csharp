@@ -65,7 +65,5 @@ namespace Mixpanel.Tests
             Assert.That(res.Json, Is.EqualTo(ExpectedTrackJson));
             Assert.That(res.Base64, Is.EqualTo(ExpectedTrackBase64));
         }
-
-        }
     }
 }

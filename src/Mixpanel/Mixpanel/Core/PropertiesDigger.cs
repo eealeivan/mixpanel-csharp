@@ -9,9 +9,9 @@ namespace Mixpanel.Core
 {
     internal sealed class PropertiesDigger
     {
-        public IDictionary<string, object> Get(object obj)
+        public IDictionary<string, Tuple<PropertyNameSource, object>> Get(object obj)
         {
-            var props = new Dictionary<string, object>();
+            var props = new Dictionary<string, Tuple<PropertyNameSource, object>>();
             if (obj == null) return props;
 
             if (obj is IDictionary<string, object>)
@@ -19,7 +19,7 @@ namespace Mixpanel.Core
                 var dic = obj as IDictionary<string, object>;
                 foreach (KeyValuePair<string, object> pair in dic)
                 {
-                    props.Add(pair.Key, pair.Value);
+                    props[pair.Key] = Tuple.Create(PropertyNameSource.Default, pair.Value);
                 }
             }
             else if (obj is IDictionary)
@@ -29,30 +29,31 @@ namespace Mixpanel.Core
                 {
                     var keyS = entry.Key as string;
                     if (keyS == null) continue;
-                    props[keyS] = entry.Value;
+                    props[keyS] = Tuple.Create(PropertyNameSource.Default, entry.Value);
                 }
             }
             else
             {
                 foreach (var propertyInfo in GetPropertyInfos(obj.GetType()))
                 {
-                    props.Add(propertyInfo.Item1, propertyInfo.Item2.GetValue(obj, null));
+                    props[propertyInfo.Item1] =
+                        Tuple.Create(propertyInfo.Item2, propertyInfo.Item3.GetValue(obj, null));
                 }
             }
 
             return props;
         }
 
-        private static readonly ConcurrentDictionary<Type, List<Tuple<string, PropertyInfo>>>
-            PropertyInfosCache = new ConcurrentDictionary<Type, List<Tuple<string, PropertyInfo>>>();
+        private static readonly ConcurrentDictionary<Type, List<Tuple<string, PropertyNameSource, PropertyInfo>>>
+            PropertyInfosCache = new ConcurrentDictionary<Type, List<Tuple<string, PropertyNameSource, PropertyInfo>>>();
 
-        private List<Tuple<string, PropertyInfo>> GetPropertyInfos(Type type)
+        private List<Tuple<string, PropertyNameSource, PropertyInfo>> GetPropertyInfos(Type type)
         {
             return PropertyInfosCache.GetOrAdd(type, t =>
             {
                 bool isDataContract = t.GetCustomAttribute<DataContractAttribute>() != null;
                 var infos = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-                var res = new List<Tuple<string, PropertyInfo>>(infos.Length);
+                var res = new List<Tuple<string, PropertyNameSource, PropertyInfo>>(infos.Length);
 
                 foreach (var info in infos)
                 {
@@ -70,25 +71,25 @@ namespace Mixpanel.Core
                     var mixpanelNameAttr = info.GetCustomAttribute<MixpanelNameAttribute>();
                     if (mixpanelNameAttr != null)
                     {
+                        var isMixpanelNameEmpty = string.IsNullOrWhiteSpace(mixpanelNameAttr.Name);
                         res.Add(Tuple.Create(
-                            string.IsNullOrWhiteSpace(mixpanelNameAttr.Name)
-                                ? info.Name
-                                : mixpanelNameAttr.Name,
+                            isMixpanelNameEmpty ? info.Name : mixpanelNameAttr.Name,
+                            isMixpanelNameEmpty ? PropertyNameSource.Default : PropertyNameSource.MixpanelName,
                             info));
                         continue;
                     }
 
                     if (dataMemberAttr != null)
                     {
+                        var isDataMemberNameEmpty = string.IsNullOrWhiteSpace(dataMemberAttr.Name);
                         res.Add(Tuple.Create(
-                            string.IsNullOrWhiteSpace(dataMemberAttr.Name)
-                                ? info.Name
-                                : dataMemberAttr.Name,
+                            isDataMemberNameEmpty ? info.Name : dataMemberAttr.Name,
+                            isDataMemberNameEmpty ? PropertyNameSource.Default : PropertyNameSource.DataMember,
                             info));
                         continue;
                     }
 
-                    res.Add(Tuple.Create(info.Name, info));
+                    res.Add(Tuple.Create(info.Name, PropertyNameSource.Default, info));
                 }
                 return res;
             });

@@ -38,11 +38,12 @@ namespace Mixpanel.Core
 
             foreach (var pair in _propertiesDigger.Get(props))
             {
-                SetProperty(pair.Key, pair.Value);
+                SetProperty(pair.Key, pair.Value.Item2, pair.Value.Item1);
             }
         }
 
-        public void SetProperty(string propertyName, object value)
+        public void SetProperty(string propertyName, object value, 
+            PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
             if (string.IsNullOrEmpty(propertyName)) return;
 
@@ -56,15 +57,16 @@ namespace Mixpanel.Core
             }
             else
             {
-                Props[_nameFormatter.Format(propertyName)] = parsedValue.Item1;
+                Props[_nameFormatter.Format(propertyName, propertyNameSource)] = parsedValue.Item1;
             }
         }
 
-        public void SetPropertyIfNotNull(string propertyName, object value)
+        public void SetPropertyIfNotNull(string propertyName, object value,
+            PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
             if(value == null) return;
 
-            SetProperty(propertyName, value);
+            SetProperty(propertyName, value, propertyNameSource);
         }
 
         /// <summary>
