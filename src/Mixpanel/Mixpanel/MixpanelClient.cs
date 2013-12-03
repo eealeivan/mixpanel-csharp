@@ -99,9 +99,9 @@ namespace Mixpanel
             od.ParseAndSetProperties(props);
             od.SetProperty(MixpanelProperty.Event, @event);
             od.SetProperty(MixpanelProperty.Token, _token);
-            od.SetProperty(MixpanelProperty.DistinctId, distinctId);
-            od.SetProperty(MixpanelProperty.Ip, ip);
-            od.SetProperty(MixpanelProperty.Time, time);
+            od.SetPropertyIfNotNull(MixpanelProperty.DistinctId, distinctId);
+            od.SetPropertyIfNotNull(MixpanelProperty.Ip, ip);
+            od.SetPropertyIfNotNull(MixpanelProperty.Time, time);
 
             return builder.GetObject(od);
         }

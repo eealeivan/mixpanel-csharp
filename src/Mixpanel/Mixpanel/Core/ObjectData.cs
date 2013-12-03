@@ -60,6 +60,13 @@ namespace Mixpanel.Core
             }
         }
 
+        public void SetPropertyIfNotNull(string propertyName, object value)
+        {
+            if(value == null) return;
+
+            SetProperty(propertyName, value);
+        }
+
         /// <summary>
         /// Gets special Mixpanel property and throws <see cref="MixpanelObjectStructureException"/> 
         /// if property is not set or <see cref="MixpanelRequiredPropertyNullOrEmptyException"/> if property
