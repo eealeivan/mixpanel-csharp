@@ -21,6 +21,7 @@ namespace Mixpanel.Tests
             Assert.That(_defaultFormatter.Format("SomeCoolProperty"), Is.EqualTo("SomeCoolProperty"));
             Assert.That(_defaultFormatter.Format("someCoolProperty"), Is.EqualTo("someCoolProperty"));
 
+            MixpanelGlobalConfig.PropertyNameFormat = PropertyNameFormat.SentenceTitleCase;
             var formatter = new PropertyNameFormatter(new MixpanelConfig());
             Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("SomeCoolProperty"));
             Assert.That(formatter.Format("someCoolProperty"), Is.EqualTo("someCoolProperty"));
@@ -34,6 +35,7 @@ namespace Mixpanel.Tests
             Assert.That(_defaultFormatter.Format("SomeCoolProperty"), Is.EqualTo("SomeCoolProperty"));
             Assert.That(_defaultFormatter.Format("someCoolProperty"), Is.EqualTo("someCoolProperty"));
 
+            MixpanelGlobalConfig.PropertyNameFormat = PropertyNameFormat.SentenceTitleCase;
             var formatter = new PropertyNameFormatter(
                 new MixpanelConfig { PropertyNameFormat = PropertyNameFormat.None });
             Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("SomeCoolProperty"));
@@ -50,6 +52,7 @@ namespace Mixpanel.Tests
             Assert.That(_defaultFormatter.Format("prop"), Is.EqualTo("Prop"));
             Assert.That(_defaultFormatter.Format("PropP"), Is.EqualTo("Prop P"));
 
+            MixpanelGlobalConfig.PropertyNameFormat = PropertyNameFormat.None;
             var formatter = new PropertyNameFormatter(
                 new MixpanelConfig { PropertyNameFormat = PropertyNameFormat.SentenceTitleCase });
             Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("Some Cool Property"));
@@ -68,6 +71,7 @@ namespace Mixpanel.Tests
             Assert.That(_defaultFormatter.Format("prop"), Is.EqualTo("Prop"));
             Assert.That(_defaultFormatter.Format("PropP"), Is.EqualTo("Prop p"));
 
+            MixpanelGlobalConfig.PropertyNameFormat = PropertyNameFormat.None;
             var formatter = new PropertyNameFormatter(
                 new MixpanelConfig { PropertyNameFormat = PropertyNameFormat.SentenseCapitilized });
             Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("Some cool property"));
@@ -87,6 +91,7 @@ namespace Mixpanel.Tests
             Assert.That(_defaultFormatter.Format("prop"), Is.EqualTo("prop"));
             Assert.That(_defaultFormatter.Format("PropP"), Is.EqualTo("prop p"));
 
+            MixpanelGlobalConfig.PropertyNameFormat = PropertyNameFormat.None;
             var formatter = new PropertyNameFormatter(
                 new MixpanelConfig { PropertyNameFormat = PropertyNameFormat.SentenceLowerCase });
             Assert.That(formatter.Format("SomeCoolProperty"), Is.EqualTo("some cool property"));

@@ -16,8 +16,9 @@ namespace Mixpanel.Tests
         private readonly string _ip = "111.111.111.111";
         private readonly DateTime _now = new DateTime(2013, 11, 30, 0, 0, 0, DateTimeKind.Utc);
 
-        private readonly string _expectedTrackJson = @"{""event"":""test"",""properties"":{""token"":""1234"",""distinct_id"":""456"",""ip"":""111.111.111.111"",""time"":1385769600,""Prop1"":""haha"",""Prop2"":2.5}}";
-        private readonly string _expectedTrackBase64 = "eyJldmVudCI6InRlc3QiLCJwcm9wZXJ0aWVzIjp7InRva2VuIjoiMTIzNCIsImRpc3RpbmN0X2lkIjoiNDU2IiwiaXAiOiIxMTEuMTExLjExMS4xMTEiLCJ0aW1lIjoxMzg1NzY5NjAwLCJQcm9wMSI6ImhhaGEiLCJQcm9wMiI6Mi41fX0=";
+        private const string ExpectedTrackJson = @"{""event"":""test"",""properties"":{""token"":""1234"",""distinct_id"":""456"",""ip"":""111.111.111.111"",""time"":1385769600,""Prop1"":""haha"",""Prop2"":2.5}}";
+        private const string ExpectedTrackBase64 = "eyJldmVudCI6InRlc3QiLCJwcm9wZXJ0aWVzIjp7InRva2VuIjoiMTIzNCIsImRpc3RpbmN0X2lkIjoiNDU2IiwiaXAiOiIxMTEuMTExLjExMS4xMTEiLCJ0aW1lIjoxMzg1NzY5NjAwLCJQcm9wMSI6ImhhaGEiLCJQcm9wMiI6Mi41fX0=";
+        private const string ExpectedTrackFormData = "data=" + ExpectedTrackBase64;
 
         [SetUp]
         public void SetUp()
@@ -41,8 +42,8 @@ namespace Mixpanel.Tests
         {
             _client.Track(_event, _props, _distinctId, _ip, _now);
 
-            Assert.That(_endpoint, Is.EqualTo("track"));
-            Assert.That(_data, Is.EqualTo(_expectedTrackBase64));
+            Assert.That(_endpoint, Is.EqualTo("http://api.mixpanel.com/track"));
+            Assert.That(_data, Is.EqualTo(ExpectedTrackFormData));
         }
 
         [Test]
@@ -61,8 +62,10 @@ namespace Mixpanel.Tests
             Assert.That(props["time"], Is.EqualTo(1385769600));
             Assert.That(props["Prop1"], Is.EqualTo("haha"));
             Assert.That(props["Prop2"], Is.EqualTo(2.5M));
-            Assert.That(res.Json, Is.EqualTo(_expectedTrackJson));
-            Assert.That(res.Base64, Is.EqualTo(_expectedTrackBase64));
+            Assert.That(res.Json, Is.EqualTo(ExpectedTrackJson));
+            Assert.That(res.Base64, Is.EqualTo(ExpectedTrackBase64));
+        }
+
         }
     }
 }
