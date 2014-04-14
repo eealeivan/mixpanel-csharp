@@ -9,6 +9,7 @@ namespace Mixpanel
     {
         public const string UrlFormat = "http://api.mixpanel.com/{0}";
         public const string EndpointTrack = "track";
+        public const string EndpointEngage = "engage";
 
         private readonly string _token;
         private readonly MixpanelConfig _config;
@@ -33,7 +34,7 @@ namespace Mixpanel
             {
                 var obj = CreateTrackObject(@event, props, distinctId, ip, time);
                 url = string.Format(UrlFormat, EndpointTrack);
-                formData = "data=" + ToBase64(ToJson(obj));
+                formData = GetFormData(obj);
             }
             catch (Exception e)
             {
@@ -41,15 +42,7 @@ namespace Mixpanel
                 return false;
             }
 
-            try
-            {
-                return Send(url, formData);
-            }
-            catch (Exception e)
-            {
-                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, formData), e);
-                return false;
-            }
+            return Send(url, formData);
         }
 
         public MixpanelTest TrackTest(
@@ -87,6 +80,7 @@ namespace Mixpanel
                 return res;
             }
 
+            res.Success = true;
             return res;
         }
 
@@ -108,6 +102,45 @@ namespace Mixpanel
 
         #endregion
 
+        #region PeopleSet
+
+        public bool PeopleSet(
+            object distinctId = null, object props = null, string ip = null, DateTime? time = null, bool ignoreTime = true)
+        {
+            string url, formData;
+            try
+            {
+                var obj = CreatePeopleSetObject(distinctId, props, ip, time, ignoreTime);
+                url = string.Format(UrlFormat, EndpointEngage);
+                formData = GetFormData(obj);
+            }
+            catch (Exception e)
+            {
+                LogError("Error creating 'people-set' object.", e);
+                return false;
+            }
+
+            return Send(url, formData);
+        }
+
+        private IDictionary<string, object> CreatePeopleSetObject(
+            object distinctId, object props, string ip, DateTime? time, bool ignoreTime)
+        {
+            var builder = new PeopleSetMessageBuilder(_config);
+            var od = new ObjectData(PeopleSetMessageBuilder.SpecialPropsBindings, _config);
+
+            od.ParseAndSetProperties(props);
+            od.SetProperty(MixpanelProperty.Token, _token);
+            od.SetPropertyIfNotNull(MixpanelProperty.DistinctId, distinctId);
+            od.SetPropertyIfNotNull(MixpanelProperty.Ip, ip);
+            od.SetPropertyIfNotNull(MixpanelProperty.Time, time);
+            od.SetPropertyIfNotNull(MixpanelProperty.IgnoreTime, ignoreTime);
+
+            return builder.GetObject(od);
+        }
+
+        #endregion PeopleSet
+
         private string ToJson(object obj)
         {
             return ConfigHelper.GetSerializeJsonFn(_config)(obj);
@@ -118,9 +151,22 @@ namespace Mixpanel
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
         }
 
+        private string GetFormData(IDictionary<string, object> obj)
+        {
+            return "data=" + ToBase64(ToJson(obj));
+        }
+
         private bool Send(string url, string formData)
         {
-            return ConfigHelper.GetHttpPostFn(_config)(url, formData);
+            try
+            {
+                return ConfigHelper.GetHttpPostFn(_config)(url, formData);
+            }
+            catch (Exception e)
+            {
+                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, formData), e);
+                return false;
+            }
         }
 
         private void LogError(string msg, Exception exception)

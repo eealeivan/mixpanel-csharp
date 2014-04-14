@@ -16,7 +16,7 @@ namespace Mixpanel
             PropertyNameFormat = PropertyNameFormat.None;
         }
     }
-
+    
     public class MixpanelConfig
     {
         public Func<object, string> SerializeJsonFn { get; set; }

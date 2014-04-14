@@ -28,10 +28,15 @@ namespace Mixpanel.Core
                 return Valid(valueDt.ToStableUniversalTime().ToString(MixpanelDateFormat));
             }
 
-            if (value is float || value is short || value is ushort || value is uint || 
+            if (value is float || value is short || value is ushort || value is uint ||
                 value is ulong || value is byte || value is sbyte || value is char)
             {
                 return Valid(value);
+            }
+
+            if (value is Guid)
+            {
+                return Valid(((Guid)value).ToString());
             }
 
             if (!isRecursiveCall && value is IEnumerable)
@@ -39,9 +44,9 @@ namespace Mixpanel.Core
                 var list = (
                     from object val in (value as IEnumerable)
                     select Parse(val, true)
-                    into parsedVal
-                    where parsedVal.Item2
-                    select parsedVal.Item1).ToList();
+                        into parsedVal
+                        where parsedVal.Item2
+                        select parsedVal.Item1).ToList();
 
                 return list.Count > 0 ? Valid(list) : Invalid(list);
             }
@@ -52,8 +57,8 @@ namespace Mixpanel.Core
         private Tuple<object, bool> Valid(object value)
         {
             return new Tuple<object, bool>(value, true);
-        } 
-        
+        }
+
         private Tuple<object, bool> Invalid(object value)
         {
             return new Tuple<object, bool>(value, false);

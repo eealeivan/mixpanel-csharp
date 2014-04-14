@@ -6,7 +6,7 @@ using Mixpanel.Misc;
 
 namespace Mixpanel.Core
 {
-    internal class TrackBuilder : ObjectBuilderBase
+    internal class TrackBuilder : MessageBuilderBase
     {
         public static readonly Dictionary<string, string> SpecialPropsBindings =
             new Dictionary<string, string>

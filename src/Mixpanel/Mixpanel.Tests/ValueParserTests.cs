@@ -171,6 +171,15 @@ namespace Mixpanel.Tests
             Assert.That(val.Item2, Is.True);
         }
 
+        [Test]
+        public void Parse_Guid_Parsed()
+        {
+            var guid = Guid.NewGuid();
+            var val = _vp.Parse(guid);
+            Assert.That(val.Item1, Is.EqualTo(guid.ToString()));
+            Assert.That(val.Item2, Is.True);
+        }
+
         #endregion
 
 

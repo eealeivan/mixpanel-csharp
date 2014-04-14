@@ -20,5 +20,9 @@ namespace Mixpanel
         MixpanelTest TrackTest(
             string @event, object props = null, object distinctId = null,
             string ip = null, DateTime? time = null);
+
+        bool PeopleSet(
+            object distinctId = null, object props = null, string ip = null, DateTime? time = null,
+            bool ignoreTime = true);
     }
 }

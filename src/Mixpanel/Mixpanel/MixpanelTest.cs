@@ -13,5 +13,7 @@ namespace Mixpanel
 
         public string Base64 { get; set; }
         public Exception Base64Exception { get; set; }
+
+        public bool Success { get; set; }
     }
 }
