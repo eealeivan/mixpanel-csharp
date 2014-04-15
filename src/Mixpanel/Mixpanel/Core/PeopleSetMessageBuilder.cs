@@ -11,6 +11,10 @@ namespace Mixpanel.Core
             {
                 {"$token", MixpanelProperty.Token},
                 {"token", MixpanelProperty.Token},
+                
+                {"distinct_id", MixpanelProperty.DistinctId},
+                {"distinctid", MixpanelProperty.DistinctId},
+                {"$distinct_id", MixpanelProperty.DistinctId},
 
                 {"$ip", MixpanelProperty.Ip},
                 {"ip", MixpanelProperty.Ip},
@@ -59,7 +63,7 @@ namespace Mixpanel.Core
                {
                    if (String.IsNullOrWhiteSpace(x.ToString()))
                        throw new MixpanelRequiredPropertyNullOrEmptyException(
-                           "'token' property can't be empty.");
+                           "'$token' property can't be empty.");
                },
                x => x.ToString());
 
@@ -69,7 +73,7 @@ namespace Mixpanel.Core
                {
                    if (String.IsNullOrWhiteSpace(x.ToString()))
                        throw new MixpanelRequiredPropertyNullOrEmptyException(
-                           "'distinct_id' property can't be empty.");
+                           "'$distinct_id' property can't be empty.");
                },
                x => x.ToString());
 
@@ -80,11 +84,9 @@ namespace Mixpanel.Core
                 obj["$ip"] = ip;
             }
 
-            SetSpecialProperties(obj, objectData, new Dictionary<string, string>
-            {
-                { MixpanelProperty.Time, "$time" },
-                { MixpanelProperty.IgnoreTime, "$ignore_time" },
-            });
+            // $time
+            SetSpecialProperty(obj, objectData, MixpanelProperty.Time, "$time", ConvertToUnixTime);
+            SetSpecialProperty(obj, objectData, MixpanelProperty.IgnoreTime, "$ignore_time");
 
             // $set
             var set = new Dictionary<string, object>();

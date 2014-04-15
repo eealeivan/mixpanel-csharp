@@ -70,17 +70,7 @@ namespace Mixpanel.Core
             }
 
             // time
-            object time = objectData.GetSpecialProp(MixpanelProperty.Time,
-                x =>
-                {
-                    DateTime dateTime;
-                    if (DateTime.TryParseExact(x.ToString(), ValueParser.MixpanelDateFormat,
-                        CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dateTime))
-                    {
-                        return dateTime.ToUnixTime();
-                    }
-                    return null;
-                });
+            object time = objectData.GetSpecialProp(MixpanelProperty.Time, ConvertToUnixTime);
             if (time != null)
             {
                 properties["time"] = time;

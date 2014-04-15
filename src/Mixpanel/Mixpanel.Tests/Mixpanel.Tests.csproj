@@ -51,6 +51,7 @@
     <Compile Include="ExtensionsTests.cs" />
     <Compile Include="MixpanelClientTests.cs" />
     <Compile Include="ObjectDataTests.cs" />
+    <Compile Include="PeopleSetMessageBuilderTests.cs" />
     <Compile Include="PropertiesDiggerTests.cs" />
     <Compile Include="PropertyNameFormatterTests.cs" />
     <Compile Include="TrackBuilderTests.cs" />

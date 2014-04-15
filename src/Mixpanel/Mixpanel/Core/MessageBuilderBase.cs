@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using Mixpanel.Misc;
 
 namespace Mixpanel.Core
 {
@@ -22,9 +25,10 @@ namespace Mixpanel.Core
         public abstract IDictionary<string, object> GetObject(ObjectData objectData);
 
         protected void SetSpecialProperty(
-            IDictionary<string, object> obj, ObjectData objData, string propName, string objPropName)
+            IDictionary<string, object> obj, ObjectData objData, string propName, string objPropName,
+            Func<object, object> convertFn = null)
         {
-            var val = objData.GetSpecialProp(propName);
+            var val = objData.GetSpecialProp(propName, convertFn);
             if (val != null)
             {
                 obj[objPropName] = val;
@@ -38,6 +42,22 @@ namespace Mixpanel.Core
             {
                 SetSpecialProperty(obj, objData, propName.Key, propName.Value);
             }
+        }
+
+        protected object ConvertToUnixTime(object val)
+        {
+            if (val == null)
+            {
+                return null;
+            }
+
+            DateTime dateTime;
+            if (DateTime.TryParseExact(val.ToString(), ValueParser.MixpanelDateFormat,
+                CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dateTime))
+            {
+                return dateTime.ToUnixTime();
+            }
+            return null;
         }
     }
 }
