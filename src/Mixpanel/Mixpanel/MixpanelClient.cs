@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Mixpanel.Core;
@@ -140,6 +141,88 @@ namespace Mixpanel
         }
 
         #endregion PeopleSet
+
+        public bool PeopleSetOnce(object props)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PeopleSetOnce(object distinctId, object props)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region PeopleAdd
+
+        /// <summary>
+        /// Sends data to http://api.mixpanel.com/engage/ using '$add' method.
+        /// Returns true if call was successful, false otherwise.
+        /// </summary>
+        /// <param name="props">
+        /// Object containg keys and numerical values. Should also contain 'distinct_id'
+        /// (if you can't have this property in the object, then use an overload).
+        /// </param>
+        public bool PeopleAdd(object props)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PeopleAdd(object distinctId, object props)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion PeopleAdd
+
+        public bool PeopleAppend(object props)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PeopleAppend(object distinctId, object props)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PeopleUnion(object props)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PeopleUnion(object distinctId, object props)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PeopleUnset(IEnumerable<string> props)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PeopleUnset(object distinctId, IEnumerable<string> props)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PeopleDelete(object distinctId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Alias(object distinctId, object alias)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TrackCharge(object distinctId, decimal amount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TrackCharge(object distinctId, decimal amount, DateTime time)
+        {
+            throw new NotImplementedException();
+        }
 
         private string ToJson(object obj)
         {
