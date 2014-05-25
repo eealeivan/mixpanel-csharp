@@ -6,7 +6,7 @@ using Mixpanel.Misc;
 
 namespace Mixpanel.Core
 {
-    internal class TrackBuilder : MessageBuilderBase
+    internal class TrackMessageBuilder : MessageBuilderBase
     {
         public static readonly Dictionary<string, string> SpecialPropsBindings =
             new Dictionary<string, string>
@@ -23,7 +23,7 @@ namespace Mixpanel.Core
                 {"time", MixpanelProperty.Time},
             };
 
-        public TrackBuilder(MixpanelConfig config = null)
+        public TrackMessageBuilder(MixpanelConfig config = null)
             : base(config)
         {
         }

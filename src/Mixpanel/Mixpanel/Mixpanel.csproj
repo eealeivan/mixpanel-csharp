@@ -43,11 +43,13 @@
   <ItemGroup>
     <Compile Include="Core\MessageBuilderBase.cs" />
     <Compile Include="Core\ObjectData.cs" />
+    <Compile Include="Core\PeopleMessageBuilderBase.cs" />
     <Compile Include="Core\PeopleSetMessageBuilder.cs" />
+    <Compile Include="Core\PeopleSetOnceMessageBuilder.cs" />
     <Compile Include="Core\PropertiesDigger.cs" />
     <Compile Include="Core\PropertyNameFormatter.cs" />
     <Compile Include="Core\PropertyNameSource.cs" />
-    <Compile Include="Core\TrackBuilder.cs" />
+    <Compile Include="Core\TrackMessageBuilder.cs" />
     <Compile Include="Core\ValueParser.cs" />
     <Compile Include="ConfigHelper.cs" />
     <Compile Include="DefaultHttpClient.cs" />

@@ -4,18 +4,11 @@ using Mixpanel.Exceptions;
 
 namespace Mixpanel.Core
 {
-    internal sealed class PeopleSetMessageBuilder : MessageBuilderBase
+    internal sealed class PeopleSetMessageBuilder : PeopleMessageBuilderBase
     {
         public static readonly Dictionary<string, string> SpecialPropsBindings =
            new Dictionary<string, string>
             {
-                {"$token", MixpanelProperty.Token},
-                {"token", MixpanelProperty.Token},
-                
-                {"distinct_id", MixpanelProperty.DistinctId},
-                {"distinctid", MixpanelProperty.DistinctId},
-                {"$distinct_id", MixpanelProperty.DistinctId},
-
                 {"$ip", MixpanelProperty.Ip},
                 {"ip", MixpanelProperty.Ip},
 
@@ -48,6 +41,15 @@ namespace Mixpanel.Core
                 {"phone", MixpanelProperty.Phone},
             };
 
+        static PeopleSetMessageBuilder()
+        {
+            // Add token and distinct_id bindings
+            foreach (var binding in CoreSpecialPropsBindings)
+            {
+                SpecialPropsBindings.Add(binding.Key, binding.Value);
+            }
+        }
+
         public PeopleSetMessageBuilder(MixpanelConfig config = null)
             : base(config)
         {
@@ -55,27 +57,7 @@ namespace Mixpanel.Core
 
         public override IDictionary<string, object> GetObject(ObjectData objectData)
         {
-            var obj = new Dictionary<string, object>();
-
-            // $token
-            obj["$token"] = objectData.GetSpecialRequiredProp(MixpanelProperty.Token,
-               x =>
-               {
-                   if (String.IsNullOrWhiteSpace(x.ToString()))
-                       throw new MixpanelRequiredPropertyNullOrEmptyException(
-                           "'$token' property can't be empty.");
-               },
-               x => x.ToString());
-
-            // $distinct_id
-            obj["$distinct_id"] = objectData.GetSpecialRequiredProp(MixpanelProperty.DistinctId,
-               x =>
-               {
-                   if (String.IsNullOrWhiteSpace(x.ToString()))
-                       throw new MixpanelRequiredPropertyNullOrEmptyException(
-                           "'$distinct_id' property can't be empty.");
-               },
-               x => x.ToString());
+            IDictionary<string, object> obj = GetCoreObject(objectData);
 
             // $ip
             object ip = objectData.GetSpecialProp(MixpanelProperty.Ip, x => x.ToString());

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Mixpanel.Core;
@@ -30,20 +29,8 @@ namespace Mixpanel
             string @event, object props = null, object distinctId = null,
             string ip = null, DateTime? time = null)
         {
-            string url, formData;
-            try
-            {
-                var obj = CreateTrackObject(@event, props, distinctId, ip, time);
-                url = string.Format(UrlFormat, EndpointTrack);
-                formData = GetFormData(obj);
-            }
-            catch (Exception e)
-            {
-                LogError("Error creating 'track' object.", e);
-                return false;
-            }
-
-            return Send(url, formData);
+            return SendMessage(
+                CreateTrackObject(@event, props, distinctId, ip, time), EndpointTrack, "Track");
         }
 
         public MixpanelTest TrackTest(
@@ -88,8 +75,8 @@ namespace Mixpanel
         private IDictionary<string, object> CreateTrackObject(
             string @event, object props, object distinctId, string ip, DateTime? time)
         {
-            var builder = new TrackBuilder(_config);
-            var od = new ObjectData(TrackBuilder.SpecialPropsBindings, _config);
+            var builder = new TrackMessageBuilder(_config);
+            var od = new ObjectData(TrackMessageBuilder.SpecialPropsBindings, _config);
 
             od.ParseAndSetProperties(props);
             od.SetProperty(MixpanelProperty.Event, @event);
@@ -105,52 +92,47 @@ namespace Mixpanel
 
         #region PeopleSet
 
-        public bool PeopleSet(
-            object distinctId = null, object props = null, string ip = null, DateTime? time = null, bool ignoreTime = true)
+        public bool PeopleSet(object props)
         {
-            string url, formData;
-            try
-            {
-                var obj = CreatePeopleSetObject(distinctId, props, ip, time, ignoreTime);
-                url = string.Format(UrlFormat, EndpointEngage);
-                formData = GetFormData(obj);
-            }
-            catch (Exception e)
-            {
-                LogError("Error creating 'people-set' object.", e);
-                return false;
-            }
-
-            return Send(url, formData);
+            return SendMessage(CreatePeopleSetObject(null, props), EndpointEngage, "PeopleSet");
         }
 
-        private IDictionary<string, object> CreatePeopleSetObject(
-            object distinctId, object props, string ip, DateTime? time, bool ignoreTime)
+        public bool PeopleSet(object distinctId, object props)
         {
-            var builder = new PeopleSetMessageBuilder(_config);
-            var od = new ObjectData(PeopleSetMessageBuilder.SpecialPropsBindings, _config);
+            return SendMessage(CreatePeopleSetObject(distinctId, props), EndpointEngage, "PeopleSet");
+        }
 
-            od.ParseAndSetProperties(props);
-            od.SetProperty(MixpanelProperty.Token, _token);
-            od.SetPropertyIfNotNull(MixpanelProperty.DistinctId, distinctId);
-            od.SetPropertyIfNotNull(MixpanelProperty.Ip, ip);
-            od.SetPropertyIfNotNull(MixpanelProperty.Time, time);
-            od.SetPropertyIfNotNull(MixpanelProperty.IgnoreTime, ignoreTime);
-
-            return builder.GetObject(od);
+        private IDictionary<string, object> CreatePeopleSetObject(object distinctId, object props)
+        {
+            return GetObject(
+                new PeopleSetMessageBuilder(_config), PeopleSetMessageBuilder.SpecialPropsBindings,
+                distinctId, props);
         }
 
         #endregion PeopleSet
 
+        #region PeopleSetOnce
+
         public bool PeopleSetOnce(object props)
         {
-            throw new NotImplementedException();
+            return SendMessage(
+                CreatePeopleSetOnceObject(null, props), EndpointEngage, "PeopleSetOnce");
         }
 
         public bool PeopleSetOnce(object distinctId, object props)
         {
-            throw new NotImplementedException();
+            return SendMessage(
+                CreatePeopleSetOnceObject(distinctId, props), EndpointEngage, "PeopleSetOnce");
         }
+
+        private IDictionary<string, object> CreatePeopleSetOnceObject(object distinctId, object props)
+        {
+            return GetObject(
+                new PeopleSetOnceMessageBuilder(_config), PeopleSetOnceMessageBuilder.SpecialPropsBindings,
+                distinctId, props);
+        }
+
+        #endregion PeopleSetOnce
 
         #region PeopleAdd
 
@@ -204,10 +186,26 @@ namespace Mixpanel
             throw new NotImplementedException();
         }
 
+        #region PeopleDelete
+
         public bool PeopleDelete(object distinctId)
         {
             throw new NotImplementedException();
         }
+
+        private IDictionary<string, object> CreatePeopleDeleteObject(object distinctId)
+        {
+            var builder = new PeopleSetMessageBuilder(_config);
+            var od = new ObjectData(PeopleSetMessageBuilder.SpecialPropsBindings, _config);
+
+            od.SetProperty(MixpanelProperty.Token, _token);
+            od.SetPropertyIfNotNull(MixpanelProperty.DistinctId, distinctId);
+
+            return builder.GetObject(od);
+        }
+
+        #endregion PeopleDelete
+        
 
         public bool Alias(object distinctId, object alias)
         {
@@ -222,6 +220,18 @@ namespace Mixpanel
         public bool TrackCharge(object distinctId, decimal amount, DateTime time)
         {
             throw new NotImplementedException();
+        }
+
+        private IDictionary<string, object> GetObject(
+            MessageBuilderBase builder, IDictionary<string, string> specialPropsBindings,
+            object distinctId, object props)
+        {
+            var od = new ObjectData(specialPropsBindings, _config);
+            od.ParseAndSetProperties(props);
+            od.SetProperty(MixpanelProperty.Token, _token);
+            od.SetPropertyIfNotNull(MixpanelProperty.DistinctId, distinctId);
+
+            return builder.GetObject(od);
         }
 
         private string ToJson(object obj)
@@ -239,8 +249,20 @@ namespace Mixpanel
             return "data=" + ToBase64(ToJson(obj));
         }
 
-        private bool Send(string url, string formData)
+        private bool SendMessage(IDictionary<string, object> obj, string endpoint, string messageType)
         {
+            string url, formData;
+            try
+            {
+                url = string.Format(UrlFormat, endpoint);
+                formData = GetFormData(obj);
+            }
+            catch (Exception e)
+            {
+                LogError(string.Format("Error creating '{0}' object.", messageType), e);
+                return false;
+            }
+
             try
             {
                 return ConfigHelper.GetHttpPostFn(_config)(url, formData);

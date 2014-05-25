@@ -21,7 +21,7 @@ namespace Mixpanel.Core
             ValueParser = new ValueParser();
             PropertyNameFormatter = new PropertyNameFormatter(config);
         }
-        
+
         public abstract IDictionary<string, object> GetObject(ObjectData objectData);
 
         protected void SetSpecialProperty(

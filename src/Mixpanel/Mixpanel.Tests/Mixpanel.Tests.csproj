@@ -54,7 +54,7 @@
     <Compile Include="PeopleSetMessageBuilderTests.cs" />
     <Compile Include="PropertiesDiggerTests.cs" />
     <Compile Include="PropertyNameFormatterTests.cs" />
-    <Compile Include="TrackBuilderTests.cs" />
+    <Compile Include="TrackMessageBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueParserTests.cs" />
   </ItemGroup>

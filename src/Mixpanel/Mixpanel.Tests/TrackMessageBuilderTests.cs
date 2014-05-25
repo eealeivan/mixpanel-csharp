@@ -7,17 +7,17 @@ using NUnit.Framework;
 namespace Mixpanel.Tests
 {
     [TestFixture]
-    public class TrackBuilderTests
+    public class TrackMessageBuilderTests
     {
-        private TrackBuilder _builder;
+        private TrackMessageBuilder _builder;
         private ObjectData _od;
 
         [SetUp]
         public void SetUp()
         {
             MixpanelGlobalConfig.Reset();
-            _builder = new TrackBuilder();
-            _od = new ObjectData(TrackBuilder.SpecialPropsBindings);
+            _builder = new TrackMessageBuilder();
+            _od = new ObjectData(TrackMessageBuilder.SpecialPropsBindings);
         }
 
         [Test]

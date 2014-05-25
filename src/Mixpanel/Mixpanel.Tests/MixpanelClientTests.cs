@@ -65,5 +65,42 @@ namespace Mixpanel.Tests
             Assert.That(res.Json, Is.EqualTo(ExpectedTrackJson));
             Assert.That(res.Base64, Is.EqualTo(ExpectedTrackBase64));
         }
+
+
+        public class MyClass
+        {
+            public string PropTest { get; set; }
+
+            [MixpanelName("Mega Date")]
+            public DateTime SuperMegaDate { get; set; }
+
+            public List<string> List { get; set; }
+        }
+
+        //[Test]
+        //public void Realtest()
+        //{
+        //    var config = new MixpanelConfig
+        //    {
+        //        PropertyNameFormat = PropertyNameFormat.SentenceLowerCase
+        //    };
+        //    //var props = new
+        //    //{
+        //    //    PropTest = "haha",
+        //    //    PropSuperTest = 2.5M,
+        //    //    MegaDate = DateTime.UtcNow,
+        //    //    DistinctId = "890"
+        //    //};
+        //    var props = new MyClass
+        //    {
+        //        PropTest = "huhu",
+        //        SuperMegaDate = DateTime.UtcNow,
+        //        List = new List<string> { "one", "two", "three" }
+        //    };
+        //    var res = new MixpanelClient("16acd719b243fb6aef1ded661b0ae657", config)
+        //        .Track(_event, props, _distinctId, null, DateTime.UtcNow);
+
+        //    Assert.That(res, Is.True);
+        //}
     }
 }

@@ -13,7 +13,7 @@ namespace Mixpanel.Tests
         [SetUp]
         public void SetUp()
         {
-            _od = new ObjectData(TrackBuilder.SpecialPropsBindings);
+            _od = new ObjectData(TrackMessageBuilder.SpecialPropsBindings);
         }
 
         [Test]
