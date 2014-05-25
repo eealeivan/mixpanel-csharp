@@ -23,7 +23,7 @@ namespace Mixpanel.Core
 
         public ObjectData(IDictionary<string, string> specialPropsBindings, MixpanelConfig config = null)
         {
-            _specialPropsBindings = specialPropsBindings;
+            _specialPropsBindings = specialPropsBindings ?? new Dictionary<string, string>();
             _valueParser = new ValueParser();
             _nameFormatter = new PropertyNameFormatter(config);
             _propertiesDigger = new PropertiesDigger();
