@@ -14,7 +14,7 @@ namespace Mixpanel.Tests
         [SetUp]
         public void SetUp()
         {
-            MixpanelGlobalConfig.Reset();
+            MixpanelConfig.Global.Reset();
             _builder = new PeopleSetMessageBuilder();
             _od = new ObjectData(PeopleSetMessageBuilder.SpecialPropsBindings);
         }

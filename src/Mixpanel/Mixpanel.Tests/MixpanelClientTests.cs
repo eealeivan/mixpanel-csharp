@@ -82,7 +82,7 @@ namespace Mixpanel.Tests
         //{
         //    var config = new MixpanelConfig
         //    {
-        //        PropertyNameFormat = PropertyNameFormat.SentenceLowerCase
+        //        MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.SentenceLowerCase
         //    };
         //    //var props = new
         //    //{

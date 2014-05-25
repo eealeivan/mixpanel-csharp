@@ -9,8 +9,8 @@ namespace Mixpanel
             if (config != null && config.SerializeJsonFn != null)
                 return config.SerializeJsonFn;
 
-            if (MixpanelGlobalConfig.SerializeJsonFn != null)
-                return MixpanelGlobalConfig.SerializeJsonFn;
+            if (MixpanelConfig.Global.SerializeJsonFn != null)
+                return MixpanelConfig.Global.SerializeJsonFn;
 
             return new DefaultJsonSerializer().Serialize;
         }
@@ -20,8 +20,8 @@ namespace Mixpanel
             if (config != null && config.HttpPostFn != null)
                 return config.HttpPostFn;
 
-            if (MixpanelGlobalConfig.HttpPostFn != null)
-                return MixpanelGlobalConfig.HttpPostFn;
+            if (MixpanelConfig.Global.HttpPostFn != null)
+                return MixpanelConfig.Global.HttpPostFn;
 
             return new DefaultHttpClient().Post;
         }
@@ -31,8 +31,8 @@ namespace Mixpanel
             if (config != null && config.ErrorLogFn != null)
                 return config.ErrorLogFn;
 
-            if (MixpanelGlobalConfig.ErrorLogFn != null)
-                return MixpanelGlobalConfig.ErrorLogFn;
+            if (MixpanelConfig.Global.ErrorLogFn != null)
+                return MixpanelConfig.Global.ErrorLogFn;
 
             return null;
         }

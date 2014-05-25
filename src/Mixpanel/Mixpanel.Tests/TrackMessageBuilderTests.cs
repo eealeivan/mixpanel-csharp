@@ -15,7 +15,7 @@ namespace Mixpanel.Tests
         [SetUp]
         public void SetUp()
         {
-            MixpanelGlobalConfig.Reset();
+            MixpanelConfig.Global.Reset();
             _builder = new TrackMessageBuilder();
             _od = new ObjectData(TrackMessageBuilder.SpecialPropsBindings);
         }

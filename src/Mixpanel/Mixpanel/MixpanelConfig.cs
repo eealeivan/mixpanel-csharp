@@ -2,34 +2,26 @@
 
 namespace Mixpanel
 {
-    public static class MixpanelGlobalConfig
-    {
-        public static Func<object, string> SerializeJsonFn { get; set; }
-        public static Func<string, string, bool> HttpPostFn { get; set; }
-        public static Action<string, Exception> ErrorLogFn { get; set; } 
-        public static PropertyNameFormat PropertyNameFormat { get; set; }
-
-        public static void Reset()
-        {
-            SerializeJsonFn = null;
-            HttpPostFn = null;
-            PropertyNameFormat = PropertyNameFormat.None;
-        }
-    }
-    
     public class MixpanelConfig
     {
         public Func<object, string> SerializeJsonFn { get; set; }
         public Func<string, string, bool> HttpPostFn { get; set; }
         public Action<string, Exception> ErrorLogFn { get; set; } 
-        public PropertyNameFormat PropertyNameFormat { get; set; }
-    }
+        public MixpanelPropertyNameFormat MixpanelPropertyNameFormat { get; set; }
 
-    public enum PropertyNameFormat
-    {
-        None,
-        SentenceTitleCase,
-        SentenseCapitilized,
-        SentenceLowerCase
+        public static MixpanelConfig Global { get; private set; }
+
+        static MixpanelConfig()
+        {
+            Global = new MixpanelConfig();
+        }
+
+        public void Reset()
+        {
+            SerializeJsonFn = null;
+            HttpPostFn = null;
+            ErrorLogFn = null;
+            MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.None;
+        }
     }
 }

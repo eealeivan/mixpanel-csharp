@@ -18,18 +18,18 @@ namespace Mixpanel.Core
                 throw new ArgumentNullException("propName");
 
             var propertyNameFormat = _config != null
-                ? _config.PropertyNameFormat
-                : MixpanelGlobalConfig.PropertyNameFormat;
+                ? _config.MixpanelPropertyNameFormat
+                : MixpanelConfig.Global.MixpanelPropertyNameFormat;
 
-            if (propertyNameFormat == PropertyNameFormat.None || 
+            if (propertyNameFormat == MixpanelPropertyNameFormat.None || 
                 propertyNameSource != PropertyNameSource.Default)
             {
                 return propName;
             }
 
-            bool sentenseTitleCase = propertyNameFormat == PropertyNameFormat.SentenceTitleCase;
-            bool sentenceCapitalized = propertyNameFormat == PropertyNameFormat.SentenseCapitilized;
-            bool sentenceLowerCase = propertyNameFormat == PropertyNameFormat.SentenceLowerCase;
+            bool sentenseTitleCase = propertyNameFormat == MixpanelPropertyNameFormat.SentenceTitleCase;
+            bool sentenceCapitalized = propertyNameFormat == MixpanelPropertyNameFormat.SentenseCapitilized;
+            bool sentenceLowerCase = propertyNameFormat == MixpanelPropertyNameFormat.SentenceLowerCase;
 
             var newName = new StringBuilder(propName.Length + 5);
 
