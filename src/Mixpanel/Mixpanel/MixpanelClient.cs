@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Mixpanel.Core;
+using Mixpanel.Core.Message;
 
 namespace Mixpanel
 {
@@ -51,7 +52,7 @@ namespace Mixpanel
         private IDictionary<string, object> CreateTrackObject(
             string @event, object distinctId, object properties)
         {
-            return GetObject(
+            return GetMessageObject(
                 new TrackMessageBuilder(_config), TrackMessageBuilder.SpecialPropsBindings, properties,
                 new Dictionary<string, object>
                 {
@@ -86,9 +87,9 @@ namespace Mixpanel
 
         private IDictionary<string, object> CreatePeopleSetObject(object distinctId, object properties)
         {
-            return GetObject(
+            return GetMessageObject(
                 new PeopleSetMessageBuilder(_config), PeopleSetMessageBuilder.SpecialPropsBindings,
-                properties, new Dictionary<string, object> { { MixpanelProperty.DistinctId, distinctId } });
+                properties, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
         #endregion PeopleSet
@@ -108,9 +109,9 @@ namespace Mixpanel
 
         private IDictionary<string, object> CreatePeopleSetOnceObject(object distinctId, object properties)
         {
-            return GetObject(
-                new PeopleSetOnceMessageBuilder(_config), PeopleSetOnceMessageBuilder.SpecialPropsBindings,
-                properties, new Dictionary<string, object> { { MixpanelProperty.DistinctId, distinctId } });
+            return GetMessageObject(
+                new PeopleSetOnceMessageBuilder(_config), PeopleMessageBuilderBase.CoreSpecialPropsBindings,
+                properties, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
         #endregion PeopleSetOnce
@@ -169,20 +170,32 @@ namespace Mixpanel
 
         #region PeopleDelete
 
+        /// <summary>
+        /// Permanently delete the profile from Mixpanel, along with all of its properties. 
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
         public bool PeopleDelete(object distinctId)
         {
-            throw new NotImplementedException();
+            return SendMessage(CreatePeopleDeleteObject(distinctId), EndpointEngage, "PeopleDelete");
+        }
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (dictionary, JSON,
+        /// base64) of building 'PeopleDelete' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        public MixpanelMessageTest PeopleDeleteTest(object distinctId)
+        {
+            return TestMessage(() => CreatePeopleDeleteObject(distinctId));
         }
 
         private IDictionary<string, object> CreatePeopleDeleteObject(object distinctId)
         {
-            var builder = new PeopleSetMessageBuilder(_config);
-            var od = new ObjectData(PeopleSetMessageBuilder.SpecialPropsBindings, _config);
-
-            od.SetProperty(MixpanelProperty.Token, _token);
-            od.SetPropertyIfNotNull(MixpanelProperty.DistinctId, distinctId);
-
-            return builder.GetObject(od);
+            return GetMessageObject(
+                new PeopleDeleteMessageBuilder(_config), PeopleMessageBuilderBase.CoreSpecialPropsBindings,
+                null, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
         #endregion PeopleDelete
@@ -206,13 +219,13 @@ namespace Mixpanel
 
         //TODO: Tests. <Aleksandr Ivanov - 23-05-2014>
         //TODO: Add super properties to created objects. <Aleksandr Ivanov - 23-05-2014>
-        private ObjectData _superProperties;
+        private MessageData _superProperties;
 
         private void InitializeSuperProperties(object superProperties)
         {
             if (_superProperties == null)
             {
-                _superProperties = new ObjectData(null, _config);
+                _superProperties = new MessageData(null, _config);
             }
             else
             {
@@ -261,8 +274,7 @@ namespace Mixpanel
         #endregion Super properties
 
         /// <summary>
-        /// Creates new <see cref="ObjectData"/>, sets properties and returns the result of
-        /// <see cref="MessageBuilderBase.GetObject"/> method.
+        /// Returns dictionary that contains Mixpanel message and i sready to be serialized. 
         /// </summary>
         /// <param name="builder">
         /// An override of <see cref="MessageBuilderBase"/> to use to generate message data.
@@ -275,16 +287,21 @@ namespace Mixpanel
         /// Object created by calling method. Usually contains properties that are passed to calling method
         /// as arguments.
         /// </param>
-        private IDictionary<string, object> GetObject(
+        private IDictionary<string, object> GetMessageObject(
             MessageBuilderBase builder, IDictionary<string, string> specialPropsBindings,
             object userProperties, object extraProperties)
         {
-            var od = new ObjectData(specialPropsBindings, _config);
+            var od = new MessageData(specialPropsBindings, _config);
             od.ParseAndSetProperties(userProperties);
             od.SetProperty(MixpanelProperty.Token, _token);
             od.ParseAndSetPropertiesIfNotNull(extraProperties);
 
-            return builder.GetObject(od);
+            return builder.GetMessageObject(od);
+        }
+
+        private IDictionary<string, object> CreateExtraPropertiesForDistinctId(object distinctId)
+        {
+            return new Dictionary<string, object> { { MixpanelProperty.DistinctId, distinctId } };
         }
 
         private string ToJson(object obj)

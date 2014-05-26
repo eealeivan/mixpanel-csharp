@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Mixpanel.Exceptions;
 
-namespace Mixpanel.Core
+namespace Mixpanel.Core.Message
 {
-    internal sealed class ObjectData
+    internal sealed class MessageData
     {
         private readonly IDictionary<string, string> _specialPropsBindings;
         private readonly ValueParser _valueParser;
@@ -21,7 +21,7 @@ namespace Mixpanel.Core
         /// </summary>
         public IDictionary<string, object> Props { get; private set; }
 
-        public ObjectData(IDictionary<string, string> specialPropsBindings, MixpanelConfig config = null)
+        public MessageData(IDictionary<string, string> specialPropsBindings, MixpanelConfig config = null)
         {
             _specialPropsBindings = specialPropsBindings ?? new Dictionary<string, string>();
             _valueParser = new ValueParser();

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Mixpanel.Core;
+using Mixpanel.Core.Message;
 using NUnit.Framework;
 
 namespace Mixpanel.Tests
@@ -9,14 +10,14 @@ namespace Mixpanel.Tests
     public class PeopleSetMessageBuilderTests
     {
         private PeopleSetMessageBuilder _builder;
-        private ObjectData _od;
+        private MessageData _od;
 
         [SetUp]
         public void SetUp()
         {
             MixpanelConfig.Global.Reset();
             _builder = new PeopleSetMessageBuilder();
-            _od = new ObjectData(PeopleSetMessageBuilder.SpecialPropsBindings);
+            _od = new MessageData(PeopleSetMessageBuilder.SpecialPropsBindings);
         }
 
         [Test]
@@ -61,7 +62,7 @@ namespace Mixpanel.Tests
             const int testProp2 = 6;
             _od.SetProperty("TestProp2", testProp2);
 
-            var obj = _builder.GetObject(_od);
+            var obj = _builder.GetMessageObject(_od);
             Assert.That(obj.Count, Is.EqualTo(6));
             Assert.That(obj["$token"], Is.EqualTo(token));
             Assert.That(obj["$distinct_id"], Is.EqualTo(distinctId));

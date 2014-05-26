@@ -58,7 +58,25 @@ namespace Mixpanel
         bool PeopleUnset(IEnumerable<string> props); 
         bool PeopleUnset(object distinctId, IEnumerable<string> props);
 
+        #region PeopleDelete
+
+        /// <summary>
+        /// Permanently delete the profile from Mixpanel, along with all of its properties. 
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
         bool PeopleDelete(object distinctId);
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (dictionary, JSON,
+        /// base64) of building 'PeopleDelete' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        MixpanelMessageTest PeopleDeleteTest(object distinctId);
+
+        #endregion PeopleDelete
+
 
         bool Alias(object distinctId, object alias);
 

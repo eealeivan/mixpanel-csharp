@@ -14,5 +14,29 @@
         public const string Created = "created";
         public const string Email = "email";
         public const string Phone = "phone";
+
+        internal const string TrackEvent = "event";
+        internal const string TrackToken = "token";
+        internal const string TrackDistinctId = "distinct_id";
+        internal const string TrackTime = "time";
+        internal const string TrackIp = "ip";
+
+        internal const string TrackProperties = "properties";
+
+        internal const string PeopleToken = "$token";
+        internal const string PeopleDistinctId = "$distinct_id";
+        internal const string PeopleTime = "$time";
+        internal const string PeopleIp = "$ip";
+        internal const string PeopleIgnoreTime = "$ignore_time";
+        internal const string PeopleFirstName = "$first_name";
+        internal const string PeopleLastName = "$last_name";
+        internal const string PeopleName = "$name";
+        internal const string PeopleCreated = "$created";
+        internal const string PeopleEmail = "$email";
+        internal const string PeoplePhone = "$phone";
+        
+        internal const string PeopleSet = "$set";
+        internal const string PeopleSetOnce = "$set_once";
+        internal const string PeopleDelete = "$delete";
     }
 }

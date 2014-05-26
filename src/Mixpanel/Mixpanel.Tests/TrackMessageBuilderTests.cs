@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mixpanel.Core;
+using Mixpanel.Core.Message;
 using Mixpanel.Exceptions;
 using NUnit.Framework;
 
@@ -10,14 +11,14 @@ namespace Mixpanel.Tests
     public class TrackMessageBuilderTests
     {
         private TrackMessageBuilder _builder;
-        private ObjectData _od;
+        private MessageData _od;
 
         [SetUp]
         public void SetUp()
         {
             MixpanelConfig.Global.Reset();
             _builder = new TrackMessageBuilder();
-            _od = new ObjectData(TrackMessageBuilder.SpecialPropsBindings);
+            _od = new MessageData(TrackMessageBuilder.SpecialPropsBindings);
         }
 
         [Test]
@@ -32,7 +33,7 @@ namespace Mixpanel.Tests
             _od.SetProperty("TestProp1", "test value 1");
             _od.SetProperty("TestProp2", 5);
 
-            var obj = _builder.GetObject(_od);
+            var obj = _builder.GetMessageObject(_od);
             Assert.That(obj.Count, Is.EqualTo(2));
             Assert.That(obj["event"], Is.EqualTo("test_event"));
 
@@ -66,7 +67,7 @@ namespace Mixpanel.Tests
             _od.SetProperty("TestProp2", "2");
             _od.SetProperty("TestProp2", "1");
 
-            var obj = _builder.GetObject(_od);
+            var obj = _builder.GetMessageObject(_od);
 
             Assert.That(obj["event"], Is.EqualTo("test_event2"));
 
@@ -82,7 +83,7 @@ namespace Mixpanel.Tests
         public void GetObject_EventPropertyNotSet_ThrowsException()
         {
             Assert.That(
-               () => { _builder.GetObject(_od); },
+               () => { _builder.GetMessageObject(_od); },
                Throws
                    .TypeOf<MixpanelObjectStructureException>()
                    .And.Message.EqualTo("'event' property is not set."));
@@ -93,7 +94,7 @@ namespace Mixpanel.Tests
         {
             _od.SetProperty(MixpanelProperty.Event, null);
             Assert.That(
-               () => { _builder.GetObject(_od); },
+               () => { _builder.GetMessageObject(_od); },
                Throws
                    .TypeOf<MixpanelRequiredPropertyNullOrEmptyException>()
                    .And.Message.EqualTo("'event' property can't be null."));
@@ -104,7 +105,7 @@ namespace Mixpanel.Tests
         {
             _od.SetProperty(MixpanelProperty.Event, "");
             Assert.That(
-               () => { _builder.GetObject(_od); },
+               () => { _builder.GetMessageObject(_od); },
                Throws
                    .TypeOf<MixpanelRequiredPropertyNullOrEmptyException>()
                    .And.Message.EqualTo("'event' property can't be empty."));
@@ -115,7 +116,7 @@ namespace Mixpanel.Tests
         {
             _od.SetProperty(MixpanelProperty.Event, "event");
             Assert.That(
-                () => { _builder.GetObject(_od); },
+                () => { _builder.GetMessageObject(_od); },
                 Throws
                     .TypeOf<MixpanelObjectStructureException>()
                     .And.Message.EqualTo("'token' property is not set."));
@@ -128,7 +129,7 @@ namespace Mixpanel.Tests
             _od.SetProperty(MixpanelProperty.Token, null);
 
             Assert.That(
-                () => { _builder.GetObject(_od); },
+                () => { _builder.GetMessageObject(_od); },
                 Throws
                     .TypeOf<MixpanelRequiredPropertyNullOrEmptyException>()
                     .And.Message.EqualTo("'token' property can't be null."));
@@ -141,7 +142,7 @@ namespace Mixpanel.Tests
             _od.SetProperty(MixpanelProperty.Token, "");
 
             Assert.That(
-                () => { _builder.GetObject(_od); },
+                () => { _builder.GetMessageObject(_od); },
                 Throws
                     .TypeOf<MixpanelRequiredPropertyNullOrEmptyException>()
                     .And.Message.EqualTo("'token' property can't be empty."));

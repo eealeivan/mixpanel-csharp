@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Mixpanel.Misc;
 
-namespace Mixpanel.Core
+namespace Mixpanel.Core.Message
 {
     /// <summary>
     /// Base class for building mixpanel messages that will be serialized to json 
@@ -22,25 +22,41 @@ namespace Mixpanel.Core
             PropertyNameFormatter = new PropertyNameFormatter(config);
         }
 
-        public abstract IDictionary<string, object> GetObject(ObjectData objectData);
+        public abstract IDictionary<string, object> GetMessageObject(MessageData messageData);
+
+        protected void SetSpecialRequiredProperty(
+            IDictionary<string, object> obj, MessageData messageData, string propName,
+            Action<object> validateFn = null, Func<object, object> convertFn = null)
+        {
+            obj[propName] = messageData.GetSpecialRequiredProp(propName, validateFn, convertFn);
+        }
 
         protected void SetSpecialProperty(
-            IDictionary<string, object> obj, ObjectData objData, string propName, string objPropName,
+            IDictionary<string, object> obj, MessageData messageData, string propName,
             Func<object, object> convertFn = null)
         {
-            var val = objData.GetSpecialProp(propName, convertFn);
+            var val = messageData.GetSpecialProp(propName, convertFn);
             if (val != null)
             {
-                obj[objPropName] = val;
+                obj[propName] = val;
             }
         }
 
         protected void SetSpecialProperties(
-            IDictionary<string, object> obj, ObjectData objData, IDictionary<string, string> propNames)
+            IDictionary<string, object> obj, MessageData messageData,
+            IDictionary<string, Func<object, object>> propNames)
         {
             foreach (var propName in propNames)
             {
-                SetSpecialProperty(obj, objData, propName.Key, propName.Value);
+                SetSpecialProperty(obj, messageData, propName.Key, propName.Value);
+            }
+        }
+
+        protected void SetNormalProperties(IDictionary<string, object> obj, MessageData messageData)
+        {
+            foreach (var prop in messageData.Props)
+            {
+                obj[prop.Key] = prop.Value;
             }
         }
 

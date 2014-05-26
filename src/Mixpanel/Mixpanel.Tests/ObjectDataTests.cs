@@ -1,5 +1,6 @@
 ﻿using System;
 using Mixpanel.Core;
+using Mixpanel.Core.Message;
 using Mixpanel.Exceptions;
 using NUnit.Framework;
 
@@ -8,12 +9,12 @@ namespace Mixpanel.Tests
     [TestFixture]
     public class ObjectDataTests
     {
-        private ObjectData _od;
+        private MessageData _od;
 
         [SetUp]
         public void SetUp()
         {
-            _od = new ObjectData(TrackMessageBuilder.SpecialPropsBindings);
+            _od = new MessageData(TrackMessageBuilder.SpecialPropsBindings);
         }
 
         [Test]
