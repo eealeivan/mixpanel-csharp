@@ -16,7 +16,7 @@ namespace Mixpanel
 
         public MixpanelClient(string token, MixpanelConfig config = null, object superProperties = null)
         {
-            if(String.IsNullOrWhiteSpace(token))
+            if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentNullException("token");
 
             _token = token;
@@ -27,111 +27,90 @@ namespace Mixpanel
 
         #region Track
 
-        public bool Track(
-            string @event, object props = null, object distinctId = null,
-            string ip = null, DateTime? time = null)
+        public bool Track(string @event, object properties)
         {
-            return SendMessage(
-                CreateTrackObject(@event, props, distinctId, ip, time), EndpointTrack, "Track");
+            return Track(@event, null, properties);
         }
 
-        public MixpanelTest TrackTest(
-            string @event, object props = null, object distinctId = null, 
-            string ip = null, DateTime? time = null)
+        public bool Track(string @event, object distinctId, object properties)
         {
-            var res = new MixpanelTest();
-            try
-            {
-                res.Data = CreateTrackObject(@event, props, distinctId, ip, time);
-            }
-            catch (Exception e)
-            {
-                res.DataException = e;
-                return res;
-            }
+            return SendMessage(
+                CreateTrackObject(@event, distinctId, properties), EndpointTrack, "Track");
+        }
 
-            try
-            {
-                res.Json = ToJson(res.Data);
-            }
-            catch (Exception e)
-            {
-                res.JsonException = e;
-                return res;
-            }
+        public MixpanelMessageTest TrackTest(string @event, object properties)
+        {
+            return TrackTest(@event, null, properties);
+        }
 
-            try
-            {
-                res.Base64 = ToBase64(res.Json);
-            }
-            catch (Exception e)
-            {
-                res.Base64Exception = e;
-                return res;
-            }
-
-            res.Success = true;
-            return res;
+        public MixpanelMessageTest TrackTest(string @event, object distinctId, object properties)
+        {
+            return TestMessage(() => CreateTrackObject(@event, distinctId, properties));
         }
 
         private IDictionary<string, object> CreateTrackObject(
-            string @event, object props, object distinctId, string ip, DateTime? time)
+            string @event, object distinctId, object properties)
         {
-            var builder = new TrackMessageBuilder(_config);
-            var od = new ObjectData(TrackMessageBuilder.SpecialPropsBindings, _config);
-
-            od.ParseAndSetProperties(props);
-            od.SetProperty(MixpanelProperty.Event, @event);
-            od.SetProperty(MixpanelProperty.Token, _token);
-            od.SetPropertyIfNotNull(MixpanelProperty.DistinctId, distinctId);
-            od.SetPropertyIfNotNull(MixpanelProperty.Ip, ip);
-            od.SetPropertyIfNotNull(MixpanelProperty.Time, time);
-
-            return builder.GetObject(od);
+            return GetObject(
+                new TrackMessageBuilder(_config), TrackMessageBuilder.SpecialPropsBindings, properties,
+                new Dictionary<string, object>
+                {
+                    {MixpanelProperty.Event, @event},
+                    {MixpanelProperty.DistinctId, distinctId}
+                });
         }
 
         #endregion
 
         #region PeopleSet
 
-        public bool PeopleSet(object props)
+        public bool PeopleSet(object properties)
         {
-            return SendMessage(CreatePeopleSetObject(null, props), EndpointEngage, "PeopleSet");
+            return PeopleSet(null, properties);
         }
 
-        public bool PeopleSet(object distinctId, object props)
+        public bool PeopleSet(object distinctId, object properties)
         {
-            return SendMessage(CreatePeopleSetObject(distinctId, props), EndpointEngage, "PeopleSet");
+            return SendMessage(CreatePeopleSetObject(distinctId, properties), EndpointEngage, "PeopleSet");
         }
 
-        private IDictionary<string, object> CreatePeopleSetObject(object distinctId, object props)
+        public MixpanelMessageTest PeopleSetTest(object properties)
+        {
+            return PeopleSetTest(null, properties);
+        }
+
+        public MixpanelMessageTest PeopleSetTest(object distinctId, object properties)
+        {
+            return TestMessage(() => CreatePeopleSetObject(distinctId, properties));
+        }
+
+        private IDictionary<string, object> CreatePeopleSetObject(object distinctId, object properties)
         {
             return GetObject(
                 new PeopleSetMessageBuilder(_config), PeopleSetMessageBuilder.SpecialPropsBindings,
-                distinctId, props);
+                properties, new Dictionary<string, object> { { MixpanelProperty.DistinctId, distinctId } });
         }
 
         #endregion PeopleSet
 
         #region PeopleSetOnce
 
-        public bool PeopleSetOnce(object props)
+        public bool PeopleSetOnce(object properties)
         {
-            return SendMessage(
-                CreatePeopleSetOnceObject(null, props), EndpointEngage, "PeopleSetOnce");
+            return PeopleSetOnce(null, properties);
         }
 
-        public bool PeopleSetOnce(object distinctId, object props)
+        public bool PeopleSetOnce(object distinctId, object properties)
         {
             return SendMessage(
-                CreatePeopleSetOnceObject(distinctId, props), EndpointEngage, "PeopleSetOnce");
+                CreatePeopleSetOnceObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
         }
 
-        private IDictionary<string, object> CreatePeopleSetOnceObject(object distinctId, object props)
+        private IDictionary<string, object> CreatePeopleSetOnceObject(object distinctId, object properties)
         {
             return GetObject(
                 new PeopleSetOnceMessageBuilder(_config), PeopleSetOnceMessageBuilder.SpecialPropsBindings,
-                distinctId, props);
+                properties, new Dictionary<string, object> { { MixpanelProperty.DistinctId, distinctId } });
         }
 
         #endregion PeopleSetOnce
@@ -207,7 +186,6 @@ namespace Mixpanel
         }
 
         #endregion PeopleDelete
-        
 
         public bool Alias(object distinctId, object alias)
         {
@@ -222,18 +200,6 @@ namespace Mixpanel
         public bool TrackCharge(object distinctId, decimal amount, DateTime time)
         {
             throw new NotImplementedException();
-        }
-
-        private IDictionary<string, object> GetObject(
-            MessageBuilderBase builder, IDictionary<string, string> specialPropsBindings,
-            object distinctId, object props)
-        {
-            var od = new ObjectData(specialPropsBindings, _config);
-            od.ParseAndSetProperties(props);
-            od.SetProperty(MixpanelProperty.Token, _token);
-            od.SetPropertyIfNotNull(MixpanelProperty.DistinctId, distinctId);
-
-            return builder.GetObject(od);
         }
 
         #region Super properties
@@ -252,7 +218,7 @@ namespace Mixpanel
             {
                 _superProperties.Props.Clear();
             }
-            
+
             _superProperties.ParseAndSetProperties(superProperties);
         }
 
@@ -294,6 +260,33 @@ namespace Mixpanel
 
         #endregion Super properties
 
+        /// <summary>
+        /// Creates new <see cref="ObjectData"/>, sets properties and returns the result of
+        /// <see cref="MessageBuilderBase.GetObject"/> method.
+        /// </summary>
+        /// <param name="builder">
+        /// An override of <see cref="MessageBuilderBase"/> to use to generate message data.
+        /// </param>
+        /// <param name="specialPropsBindings">
+        /// Bindings for special properties.
+        /// </param>
+        /// <param name="userProperties">Object that contains user defined properties.</param>
+        /// <param name="extraProperties">
+        /// Object created by calling method. Usually contains properties that are passed to calling method
+        /// as arguments.
+        /// </param>
+        private IDictionary<string, object> GetObject(
+            MessageBuilderBase builder, IDictionary<string, string> specialPropsBindings,
+            object userProperties, object extraProperties)
+        {
+            var od = new ObjectData(specialPropsBindings, _config);
+            od.ParseAndSetProperties(userProperties);
+            od.SetProperty(MixpanelProperty.Token, _token);
+            od.ParseAndSetPropertiesIfNotNull(extraProperties);
+
+            return builder.GetObject(od);
+        }
+
         private string ToJson(object obj)
         {
             return ConfigHelper.GetSerializeJsonFn(_config)(obj);
@@ -332,6 +325,43 @@ namespace Mixpanel
                 LogError(string.Format("POST fails to '{0}' with data '{1}'", url, formData), e);
                 return false;
             }
+        }
+
+        private MixpanelMessageTest TestMessage(Func<IDictionary<string, object>> getMessageDataFn)
+        {
+            var res = new MixpanelMessageTest();
+
+            try
+            {
+                res.Data = getMessageDataFn();
+            }
+            catch (Exception e)
+            {
+                res.Exception = e;
+                return res;
+            }
+
+            try
+            {
+                res.Json = ToJson(res.Data);
+            }
+            catch (Exception e)
+            {
+                res.Exception = e;
+                return res;
+            }
+
+            try
+            {
+                res.Base64 = ToBase64(res.Json);
+            }
+            catch (Exception e)
+            {
+                res.Exception = e;
+                return res;
+            }
+
+            return res;
         }
 
         private void LogError(string msg, Exception exception)

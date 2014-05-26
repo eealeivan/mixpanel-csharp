@@ -1,33 +1,41 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Mixpanel
 {
     public interface IMixpanelClient
     {
+        #region Track
+
+        //TODO: Documentation. <Aleksandr Ivanov - 26-05-2014>
+
         /// <summary>
-        /// Sends an event to http://api.mixpanel.com/track/ endpoint.
+        /// Sends a message to http://api.mixpanel.com/track/ endpoint.
+        /// Returns <value>true</value> if call was successful, and <value>false</value> otherwise.
         /// </summary>
         /// <param name="event">Name of the event.</param>
-        /// <param name="props"></param>
-        /// <param name="distinctId"></param>
-        /// <param name="ip"></param>
-        /// <param name="time"></param>
-        /// <returns><value>true</value> if call was successful, and <value>false</value> otherwise.</returns>
-        bool Track(
-            string @event, object props = null, object distinctId = null,
-            string ip = null, DateTime? time = null);
+        /// <param name="properties"></param>
+        bool Track(string @event, object properties);
 
-        MixpanelTest TrackTest(
-            string @event, object props = null, object distinctId = null,
-            string ip = null, DateTime? time = null);
+        bool Track(string @event, object distinctId, object properties);
 
-        bool PeopleSet(object props);
-        bool PeopleSet(object distinctId, object props);
+        MixpanelMessageTest TrackTest(string @event, object properties);
+        MixpanelMessageTest TrackTest(string @event, object distinctId, object properties);
 
-        bool PeopleSetOnce(object props);
-        bool PeopleSetOnce(object distinctId, object props);
+        #endregion Track
+
+        #region PeopleSet
+
+        bool PeopleSet(object properties);
+        bool PeopleSet(object distinctId, object properties);
+
+        MixpanelMessageTest PeopleSetTest(object properties);
+        MixpanelMessageTest PeopleSetTest(object distinctId, object properties);
+
+        #endregion PeopleSet
+
+        bool PeopleSetOnce(object properties);
+        bool PeopleSetOnce(object distinctId, object properties);
 
         /// <summary>
         /// Sends data to http://api.mixpanel.com/engage/ using '$add' method.

@@ -11,10 +11,10 @@ namespace Mixpanel.Tests
         private string _endpoint, _data;
 
         private readonly string _event = "test";
-        private readonly object _props = new { Prop1 = "haha", Prop2 = 2.5M };
         private readonly string _distinctId = "456";
-        private readonly string _ip = "111.111.111.111";
-        private readonly DateTime _now = new DateTime(2013, 11, 30, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly string _ip = "111.111.111.111";
+        private static readonly DateTime _now = new DateTime(2013, 11, 30, 0, 0, 0, DateTimeKind.Utc);
+        private readonly object _props = new { Prop1 = "haha", Prop2 = 2.5M, Ip = _ip, Time = _now };
 
         private const string ExpectedTrackJson = @"{""event"":""test"",""properties"":{""token"":""1234"",""distinct_id"":""456"",""ip"":""111.111.111.111"",""time"":1385769600,""Prop1"":""haha"",""Prop2"":2.5}}";
         private const string ExpectedTrackBase64 = "eyJldmVudCI6InRlc3QiLCJwcm9wZXJ0aWVzIjp7InRva2VuIjoiMTIzNCIsImRpc3RpbmN0X2lkIjoiNDU2IiwiaXAiOiIxMTEuMTExLjExMS4xMTEiLCJ0aW1lIjoxMzg1NzY5NjAwLCJQcm9wMSI6ImhhaGEiLCJQcm9wMiI6Mi41fX0=";
@@ -40,7 +40,7 @@ namespace Mixpanel.Tests
         [Test]
         public void Track_SendSimpleObject_Sent()
         {
-            _client.Track(_event, _props, _distinctId, _ip, _now);
+            _client.Track(_event, _distinctId, _props);
 
             Assert.That(_endpoint, Is.EqualTo("http://api.mixpanel.com/track"));
             Assert.That(_data, Is.EqualTo(ExpectedTrackFormData));
@@ -49,7 +49,7 @@ namespace Mixpanel.Tests
         [Test]
         public void TrackTest_TestSimpleObject_CorrectValuesReturned()
         {
-            var res = _client.TrackTest(_event, _props, _distinctId, _ip, _now);
+            var res = _client.TrackTest(_event, _distinctId, _props);
 
             Assert.That(res.Data.Count, Is.EqualTo(2));
             Assert.That(res.Data["event"], Is.EqualTo("test"));

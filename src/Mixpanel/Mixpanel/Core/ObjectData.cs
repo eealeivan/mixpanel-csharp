@@ -42,6 +42,16 @@ namespace Mixpanel.Core
             }
         }
 
+        public void ParseAndSetPropertiesIfNotNull(object props)
+        {
+            if (props == null) return;
+
+            foreach (var pair in _propertiesDigger.Get(props))
+            {
+                SetPropertyIfNotNull(pair.Key, pair.Value.Item2, pair.Value.Item1);
+            }
+        }
+
         public void SetProperty(string propertyName, object value, 
             PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
