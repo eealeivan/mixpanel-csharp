@@ -5,34 +5,12 @@ using NUnit.Framework;
 namespace Mixpanel.Tests
 {
     [TestFixture]
-    public class MixpanelClientTests
+    public class MixpanelClientTests : MixpanelTestsBase
     {
         private MixpanelClient _client;
         private string _endpoint, _data;
 
-        private const string Event = "TestEvent";
-        private const string Token = "1234";
-        private const string DistinctId = "456";
-        private const string Ip = "111.111.111.111";
-        private static readonly DateTime Time = new DateTime(2013, 11, 30, 0, 0, 0, DateTimeKind.Utc);
-        private const long TimeUnix = 1385769600L;
-        private const string TimeFormat = "2013-11-30T00:00:00";
-
-        private const bool IgnoreTime = true;
-        private const string FirstName = "Darth";
-        private const string LastName = "Vader";
-        private const string Name = "Darth Vader";
-        private static readonly DateTime Created = new DateTime(2014, 10, 22, 0, 0, 0, DateTimeKind.Utc);
-        private const string CreatedFormat = "2014-10-22T00:00:00";
-        private const string Email = "darth.vader@mail.com";
-        private const string Phone = "589741";
-        private const string Alias = "999";
-
-        private const string StringPropertyName = "StringProperty";
-        private const string StringPropertyValue = "Tatooine";
-        private const string DecimalPropertyName = "DecimalProperty";
-        private const decimal DecimalPropertyValue = 2.5m;
-
+       
         //private readonly object _props = new { Prop1 = "haha", Prop2 = 2.5M, Ip = _ip, Time = _now };
 
         //private const string ExpectedTrackJson = @"{""event"":""test"",""properties"":{""token"":""1234"",""distinct_id"":""456"",""ip"":""111.111.111.111"",""time"":1385769600,""Prop1"":""haha"",""Prop2"":2.5}}";
@@ -82,7 +60,7 @@ namespace Mixpanel.Tests
             Assert.That(msg.Data.Count, Is.EqualTo(2));
             Assert.That(msg.Data[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
             Assert.That(msg.Data[MixpanelProperty.TrackProperties], Is.TypeOf<Dictionary<string, object>>());
-            var props = (Dictionary<string, object>) msg.Data[MixpanelProperty.TrackProperties];
+            var props = (Dictionary<string, object>)msg.Data[MixpanelProperty.TrackProperties];
             Assert.That(props.Count, Is.EqualTo(6));
             Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
             Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
@@ -126,8 +104,8 @@ namespace Mixpanel.Tests
             {
                 Ip,
                 Time,
-                IgnoreTime, 
-                FirstName, 
+                IgnoreTime,
+                FirstName,
                 LastName,
                 Name,
                 Created,
@@ -170,7 +148,7 @@ namespace Mixpanel.Tests
             Assert.That(msg.Data[MixpanelProperty.PeopleTime], Is.EqualTo(TimeUnix));
             Assert.That(msg.Data[MixpanelProperty.PeopleIgnoreTime], Is.EqualTo(IgnoreTime));
             Assert.That(msg.Data[MixpanelProperty.PeopleSet], Is.TypeOf<Dictionary<string, object>>());
-            var set = (Dictionary<string, object>) msg.Data[MixpanelProperty.PeopleSet];
+            var set = (Dictionary<string, object>)msg.Data[MixpanelProperty.PeopleSet];
             Assert.That(set.Count, Is.EqualTo(8));
             Assert.That(set[MixpanelProperty.PeopleFirstName], Is.EqualTo(FirstName));
             Assert.That(set[MixpanelProperty.PeopleLastName], Is.EqualTo(LastName));
@@ -183,6 +161,28 @@ namespace Mixpanel.Tests
         }
 
         #endregion PeopleSet
+
+        #region PeopleUnset
+
+        [Test]
+        public void PeopleUnsetTest_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleUnsetTest(DistinctId, StringProperties);
+
+            Assert.That(msg.Data.Count, Is.EqualTo(3));
+            Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
+            Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
+            Assert.That(msg.Data[MixpanelProperty.PeopleUnset], Is.TypeOf<List<object>>());
+            var unset = (List<object>) msg.Data[MixpanelProperty.PeopleUnset];
+            Assert.That(unset.Count, Is.EqualTo(StringProperties.Length));
+            for (int i = 0; i < StringProperties.Length; i++)
+            {
+                Assert.That(unset[i], Is.TypeOf<string>());
+                Assert.That(unset[i], Is.EqualTo(StringProperties[i]));
+            }
+        }
+
+        #endregion PeopleUnset
 
         #region PeopleDelete
 
@@ -209,7 +209,7 @@ namespace Mixpanel.Tests
 
             CheckPeopleTrackCharge(msg);
         }
-        
+
         [Test]
         public void PeopleTrackChargeTest_WithTime_CorrectValuesReturned()
         {

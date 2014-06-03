@@ -49,6 +49,7 @@
     <Compile Include="Core\Message\PeopleSetMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleSetOnceMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleTrackChargeMessageBuilder.cs" />
+    <Compile Include="Core\Message\PeopleUnsetMessageBuilder.cs" />
     <Compile Include="Core\Message\TrackMessageBuilder.cs" />
     <Compile Include="Core\Message\TrackMessageBuilderBase.cs" />
     <Compile Include="Core\PropertiesDigger.cs" />

@@ -5,7 +5,7 @@ namespace Mixpanel.Core.Message
 {
     internal class TrackMessageBuilder : TrackMessageBuilderBase
     {
-        public static readonly Dictionary<string, string> SpecialPropsBindings =
+        public static readonly Dictionary<string, string> SpecialPropsBindingsInternal =
             new Dictionary<string, string>
             {
                 {MixpanelProperty.Ip, MixpanelProperty.TrackIp},
@@ -16,13 +16,18 @@ namespace Mixpanel.Core.Message
         {
             foreach (var binding in CoreSpecialPropsBindings)
             {
-                SpecialPropsBindings.Add(binding.Key, binding.Value);
+                SpecialPropsBindingsInternal.Add(binding.Key, binding.Value);
             }
         }
 
         public TrackMessageBuilder(MixpanelConfig config = null)
             : base(config)
         {
+        }
+
+        public override IDictionary<string, string> SpecialPropsBindings
+        {
+            get { return SpecialPropsBindingsInternal; }
         }
 
         public override IDictionary<string, object> GetMessageObject(MessageData messageData)

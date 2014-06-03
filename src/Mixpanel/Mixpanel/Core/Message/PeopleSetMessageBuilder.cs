@@ -5,7 +5,7 @@ namespace Mixpanel.Core.Message
 {
     internal sealed class PeopleSetMessageBuilder : PeopleMessageBuilderBase
     {
-        public static readonly Dictionary<string, string> SpecialPropsBindings =
+        private static readonly Dictionary<string, string> SpecialPropsBindingsInternal =
            new Dictionary<string, string>
             {
                 {MixpanelProperty.PeopleIp, MixpanelProperty.PeopleIp},
@@ -44,13 +44,18 @@ namespace Mixpanel.Core.Message
         {
             foreach (var binding in CoreSpecialPropsBindings)
             {
-                SpecialPropsBindings.Add(binding.Key, binding.Value);
+                SpecialPropsBindingsInternal.Add(binding.Key, binding.Value);
             }
         }
 
         public PeopleSetMessageBuilder(MixpanelConfig config = null)
             : base(config)
         {
+        }
+
+        public override IDictionary<string, string> SpecialPropsBindings
+        {
+            get { return SpecialPropsBindingsInternal; }
         }
 
         public override IDictionary<string, object> GetMessageObject(MessageData messageData)

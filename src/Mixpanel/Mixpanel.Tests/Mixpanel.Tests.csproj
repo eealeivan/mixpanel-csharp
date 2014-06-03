@@ -50,7 +50,8 @@
   <ItemGroup>
     <Compile Include="ExtensionsTests.cs" />
     <Compile Include="MixpanelClientTests.cs" />
-    <Compile Include="ObjectDataTests.cs" />
+    <Compile Include="MessageDataTests.cs" />
+    <Compile Include="MixpanelTestsBase.cs" />
     <Compile Include="PeopleSetMessageBuilderTests.cs" />
     <Compile Include="PropertiesDiggerTests.cs" />
     <Compile Include="PropertyNameFormatterTests.cs" />

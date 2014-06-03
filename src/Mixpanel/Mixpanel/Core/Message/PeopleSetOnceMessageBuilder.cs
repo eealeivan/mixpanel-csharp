@@ -9,6 +9,11 @@ namespace Mixpanel.Core.Message
         {
         }
 
+        public override IDictionary<string, string> SpecialPropsBindings
+        {
+            get { return CoreSpecialPropsBindings; }
+        }
+
         public override IDictionary<string, object> GetMessageObject(MessageData messageData)
         {
             IDictionary<string, object> msg = GetCoreMessageObject(messageData);

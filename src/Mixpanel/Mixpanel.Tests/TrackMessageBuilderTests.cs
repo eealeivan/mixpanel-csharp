@@ -18,7 +18,7 @@ namespace Mixpanel.Tests
         {
             MixpanelConfig.Global.Reset();
             _builder = new TrackMessageBuilder();
-            _od = new MessageData(TrackMessageBuilder.SpecialPropsBindings);
+            _od = new MessageData(_builder.SpecialPropsBindings);
         }
 
         [Test]

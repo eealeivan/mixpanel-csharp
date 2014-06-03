@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Mime;
 using System.Text;
 using Mixpanel.Core.Message;
 
@@ -15,6 +14,11 @@ namespace Mixpanel
         private readonly string _token;
         private readonly MixpanelConfig _config;
 
+        /// <summary>
+        /// Func for getting current utc time. Simplifies testing.
+        /// </summary>
+        internal Func<DateTime> UtcNow { get; set; }
+
         public MixpanelClient(string token, MixpanelConfig config = null, object superProperties = null)
         {
             if (String.IsNullOrWhiteSpace(token))
@@ -27,8 +31,6 @@ namespace Mixpanel
 
             UtcNow = () => DateTime.UtcNow;
         }
-
-        internal Func<DateTime> UtcNow { get; set; }
 
         #region Track
 
@@ -57,7 +59,7 @@ namespace Mixpanel
             string @event, object distinctId, object properties)
         {
             return GetMessageObject(
-                new TrackMessageBuilder(_config), TrackMessageBuilder.SpecialPropsBindings, properties,
+                new TrackMessageBuilder(_config), properties,
                 new Dictionary<string, object>
                 {
                     {MixpanelProperty.Event, @event},
@@ -83,7 +85,7 @@ namespace Mixpanel
             object distinctId, object alias)
         {
             return GetMessageObject(
-                new AliasMessageBuilder(_config), AliasMessageBuilder.SpecialPropsBindings, null,
+                new AliasMessageBuilder(_config), null,
                 new Dictionary<string, object>
                 {
                     {MixpanelProperty.DistinctId, distinctId},
@@ -92,7 +94,6 @@ namespace Mixpanel
         }
 
         #endregion Alias
-
 
         #region PeopleSet
 
@@ -119,7 +120,7 @@ namespace Mixpanel
         private IDictionary<string, object> CreatePeopleSetMessageObject(object distinctId, object properties)
         {
             return GetMessageObject(
-                new PeopleSetMessageBuilder(_config), PeopleSetMessageBuilder.SpecialPropsBindings,
+                new PeopleSetMessageBuilder(_config),
                 properties, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
@@ -141,7 +142,7 @@ namespace Mixpanel
         private IDictionary<string, object> CreatePeopleSetOnceMessageObject(object distinctId, object properties)
         {
             return GetMessageObject(
-                new PeopleSetOnceMessageBuilder(_config), PeopleMessageBuilderBase.CoreSpecialPropsBindings,
+                new PeopleSetOnceMessageBuilder(_config),
                 properties, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
@@ -189,15 +190,67 @@ namespace Mixpanel
             throw new NotImplementedException();
         }
 
-        public bool PeopleUnset(IEnumerable<string> props)
+        #region PeopleUnset
+
+        /// <summary>
+        /// Takes a list of string property names, and permanently removes the properties 
+        /// and their values from a profile. Use this method if you have set 'distinct_id'
+        /// in super properties.
+        /// </summary>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        public bool PeopleUnset(IEnumerable<string> propertyNames)
         {
-            throw new NotImplementedException();
+            return PeopleUnset(null, propertyNames);
         }
 
-        public bool PeopleUnset(object distinctId, IEnumerable<string> props)
+        /// <summary>
+        /// Takes a list of string property names, and permanently removes the properties 
+        /// and their values from a profile.
+        /// </summary>
+        /// <param name="distinctId">User unique identifier. Will be converted to string.</param>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        public bool PeopleUnset(object distinctId, IEnumerable<string> propertyNames)
         {
-            throw new NotImplementedException();
+            return SendMessage(
+                CreatePeopleUnsetMessageObject(distinctId, propertyNames), EndpointEngage, "PeopleUnset");
         }
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (dictionary, JSON,
+        /// base64) of building 'PeopleUnset' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        public MixpanelMessageTest PeopleUnsetTest(IEnumerable<string> propertyNames)
+        {
+            return PeopleUnsetTest(null, propertyNames);
+        }
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (dictionary, JSON,
+        /// base64) of building 'PeopleUnset' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="distinctId">User unique identifier. Will be converted to string.</param>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        public MixpanelMessageTest PeopleUnsetTest(object distinctId, IEnumerable<string> propertyNames)
+        {
+            return TestMessage(() => CreatePeopleUnsetMessageObject(distinctId, propertyNames));
+        }
+
+        private IDictionary<string, object> CreatePeopleUnsetMessageObject(object distinctId, IEnumerable<string> propertyNames)
+        {
+            return GetMessageObject(
+                new PeopleUnsetMessageBuilder(_config),
+                null, new Dictionary<string, object>
+                {
+                    {MixpanelProperty.DistinctId, distinctId},
+                    {MixpanelProperty.PeopleUnset, propertyNames},
+                });
+        }
+
+        #endregion PeopleUnset
+
 
         #region PeopleDelete
 
@@ -225,7 +278,7 @@ namespace Mixpanel
         private IDictionary<string, object> CreatePeopleDeleteObject(object distinctId)
         {
             return GetMessageObject(
-                new PeopleDeleteMessageBuilder(_config), PeopleMessageBuilderBase.CoreSpecialPropsBindings,
+                new PeopleDeleteMessageBuilder(_config),
                 null, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
@@ -259,7 +312,7 @@ namespace Mixpanel
             object distinctId, decimal amount, DateTime time)
         {
             return GetMessageObject(
-                new PeopleTrackChargeMessageBuilder(), PeopleTrackChargeMessageBuilder.SpecialPropsBindings,
+                new PeopleTrackChargeMessageBuilder(),
                 null, new Dictionary<string, object>
                 {
                     {MixpanelProperty.DistinctId, distinctId},
@@ -269,7 +322,6 @@ namespace Mixpanel
         }
 
         #endregion
-
 
         #region Super properties
 
@@ -330,13 +382,10 @@ namespace Mixpanel
         #endregion Super properties
 
         /// <summary>
-        /// Returns dictionary that contains Mixpanel message and i sready to be serialized. 
+        /// Returns dictionary that contains Mixpanel message and is ready to be serialized. 
         /// </summary>
         /// <param name="builder">
         /// An override of <see cref="MessageBuilderBase"/> to use to generate message data.
-        /// </param>
-        /// <param name="specialPropsBindings">
-        /// Bindings for special properties.
         /// </param>
         /// <param name="userProperties">Object that contains user defined properties.</param>
         /// <param name="extraProperties">
@@ -344,10 +393,9 @@ namespace Mixpanel
         /// as arguments.
         /// </param>
         private IDictionary<string, object> GetMessageObject(
-            MessageBuilderBase builder, IDictionary<string, string> specialPropsBindings,
-            object userProperties, object extraProperties)
+            MessageBuilderBase builder, object userProperties, object extraProperties)
         {
-            var od = new MessageData(specialPropsBindings, _config);
+            var od = new MessageData(builder.SpecialPropsBindings, _config);
             od.ParseAndSetProperties(userProperties);
             od.SetProperty(MixpanelProperty.Token, _token);
             od.ParseAndSetPropertiesIfNotNull(extraProperties);

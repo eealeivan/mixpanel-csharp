@@ -24,6 +24,8 @@ namespace Mixpanel.Core.Message
             PropertyNameFormatter = new PropertyNameFormatter(config);
         }
 
+        public abstract IDictionary<string, string> SpecialPropsBindings { get; } 
+
         public abstract IDictionary<string, object> GetMessageObject(MessageData messageData);
 
         protected void SetSpecialRequiredProperty(

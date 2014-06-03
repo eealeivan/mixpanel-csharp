@@ -62,8 +62,42 @@ namespace Mixpanel
         bool PeopleUnion(object props);
         bool PeopleUnion(object distinctId, object props);
 
-        bool PeopleUnset(IEnumerable<string> props); 
-        bool PeopleUnset(object distinctId, IEnumerable<string> props);
+        #region PeopleSet
+
+        /// <summary>
+        /// Takes a list of string property names, and permanently removes the properties 
+        /// and their values from a profile. Use this method if you have set 'distinct_id'
+        /// in super properties.
+        /// </summary>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        bool PeopleUnset(IEnumerable<string> propertyNames);
+
+        /// <summary>
+        /// Takes a list of string property names, and permanently removes the properties 
+        /// and their values from a profile.
+        /// </summary>
+        /// <param name="distinctId">User unique identifier. Will be converted to string.</param>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        bool PeopleUnset(object distinctId, IEnumerable<string> propertyNames);
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (dictionary, JSON,
+        /// base64) of building 'PeopleUnset' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        MixpanelMessageTest PeopleUnsetTest(IEnumerable<string> propertyNames);
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (dictionary, JSON,
+        /// base64) of building 'PeopleUnset' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="distinctId">User unique identifier. Will be converted to string.</param>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        MixpanelMessageTest PeopleUnsetTest(object distinctId, IEnumerable<string> propertyNames);
+
+        #endregion PeopleSet
 
         #region PeopleDelete
 

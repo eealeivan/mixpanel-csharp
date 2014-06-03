@@ -9,7 +9,7 @@ namespace Mixpanel.Core.Message
         {
         }
 
-        public static readonly Dictionary<string, string> CoreSpecialPropsBindings =
+        protected static readonly Dictionary<string, string> CoreSpecialPropsBindings =
             new Dictionary<string, string>
             {
                 {MixpanelProperty.TrackEvent, MixpanelProperty.TrackEvent},

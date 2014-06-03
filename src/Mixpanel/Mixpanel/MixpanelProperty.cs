@@ -42,6 +42,7 @@
         internal const string PeopleSet = "$set";
         internal const string PeopleSetOnce = "$set_once";
         internal const string PeopleAppend = "$append";
+        internal const string PeopleUnset = "$unset";
         internal const string PeopleDelete = "$delete";
         internal const string PeopleTransactions = "$transactions";
     }

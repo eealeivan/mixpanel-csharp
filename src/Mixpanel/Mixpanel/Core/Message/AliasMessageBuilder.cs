@@ -4,7 +4,7 @@ namespace Mixpanel.Core.Message
 {
     internal class AliasMessageBuilder : TrackMessageBuilderBase
     {
-        public static readonly Dictionary<string, string> SpecialPropsBindings =
+        private static readonly IDictionary<string, string> SpecialPropsBindingsInternal =
             new Dictionary<string, string>
             {
                 {MixpanelProperty.Alias, MixpanelProperty.TrackAlias}
@@ -14,13 +14,18 @@ namespace Mixpanel.Core.Message
         {
             foreach (var binding in CoreSpecialPropsBindings)
             {
-                SpecialPropsBindings.Add(binding.Key, binding.Value);
+                SpecialPropsBindingsInternal.Add(binding.Key, binding.Value);
             }
         }
 
         public AliasMessageBuilder(MixpanelConfig config = null)
             : base(config)
         {
+        }
+
+        public override IDictionary<string, string> SpecialPropsBindings
+        {
+            get { return SpecialPropsBindingsInternal; }
         }
 
         public override IDictionary<string, object> GetMessageObject(MessageData messageData)
