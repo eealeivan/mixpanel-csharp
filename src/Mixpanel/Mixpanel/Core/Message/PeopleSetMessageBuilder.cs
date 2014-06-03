@@ -42,7 +42,6 @@ namespace Mixpanel.Core.Message
 
         static PeopleSetMessageBuilder()
         {
-            // Add token and distinct_id bindings
             foreach (var binding in CoreSpecialPropsBindings)
             {
                 SpecialPropsBindings.Add(binding.Key, binding.Value);

@@ -41,13 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Message\AliasMessageBuilder.cs" />
     <Compile Include="Core\Message\MessageBuilderBase.cs" />
     <Compile Include="Core\Message\MessageData.cs" />
     <Compile Include="Core\Message\PeopleDeleteMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleMessageBuilderBase.cs" />
     <Compile Include="Core\Message\PeopleSetMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleSetOnceMessageBuilder.cs" />
+    <Compile Include="Core\Message\PeopleTrackChargeMessageBuilder.cs" />
     <Compile Include="Core\Message\TrackMessageBuilder.cs" />
+    <Compile Include="Core\Message\TrackMessageBuilderBase.cs" />
     <Compile Include="Core\PropertiesDigger.cs" />
     <Compile Include="Core\PropertyNameFormatter.cs" />
     <Compile Include="Core\PropertyNameSource.cs" />

@@ -14,14 +14,17 @@
         public const string Created = "created";
         public const string Email = "email";
         public const string Phone = "phone";
+        public const string Alias = "alias";
 
         internal const string TrackEvent = "event";
         internal const string TrackToken = "token";
         internal const string TrackDistinctId = "distinct_id";
         internal const string TrackTime = "time";
         internal const string TrackIp = "ip";
+        internal const string TrackAlias = "alias";
 
         internal const string TrackProperties = "properties";
+        internal const string TrackCreateAlias = "$create_alias";
 
         internal const string PeopleToken = "$token";
         internal const string PeopleDistinctId = "$distinct_id";
@@ -34,9 +37,12 @@
         internal const string PeopleCreated = "$created";
         internal const string PeopleEmail = "$email";
         internal const string PeoplePhone = "$phone";
+        internal const string PeopleAmount = "$amount";
         
         internal const string PeopleSet = "$set";
         internal const string PeopleSetOnce = "$set_once";
+        internal const string PeopleAppend = "$append";
         internal const string PeopleDelete = "$delete";
+        internal const string PeopleTransactions = "$transactions";
     }
 }

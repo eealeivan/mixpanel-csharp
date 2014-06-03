@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mime;
 using System.Text;
-using Mixpanel.Core;
 using Mixpanel.Core.Message;
 
 namespace Mixpanel
@@ -24,7 +24,11 @@ namespace Mixpanel
             _config = config;
 
             InitializeSuperProperties(superProperties);
+
+            UtcNow = () => DateTime.UtcNow;
         }
+
+        internal Func<DateTime> UtcNow { get; set; }
 
         #region Track
 
@@ -36,7 +40,7 @@ namespace Mixpanel
         public bool Track(string @event, object distinctId, object properties)
         {
             return SendMessage(
-                CreateTrackObject(@event, distinctId, properties), EndpointTrack, "Track");
+                CreateTrackMessageObject(@event, distinctId, properties), EndpointTrack, "Track");
         }
 
         public MixpanelMessageTest TrackTest(string @event, object properties)
@@ -46,10 +50,10 @@ namespace Mixpanel
 
         public MixpanelMessageTest TrackTest(string @event, object distinctId, object properties)
         {
-            return TestMessage(() => CreateTrackObject(@event, distinctId, properties));
+            return TestMessage(() => CreateTrackMessageObject(@event, distinctId, properties));
         }
 
-        private IDictionary<string, object> CreateTrackObject(
+        private IDictionary<string, object> CreateTrackMessageObject(
             string @event, object distinctId, object properties)
         {
             return GetMessageObject(
@@ -63,6 +67,33 @@ namespace Mixpanel
 
         #endregion
 
+        #region Alias
+
+        public bool Alias(object distinctId, object alias)
+        {
+            return SendMessage(CreateAliasMessageObject(distinctId, alias), EndpointTrack, "Alias");
+        }
+
+        public MixpanelMessageTest AliasTest(object distinctId, object alias)
+        {
+            return TestMessage(() => CreateAliasMessageObject(distinctId, alias));
+        }
+
+        private IDictionary<string, object> CreateAliasMessageObject(
+            object distinctId, object alias)
+        {
+            return GetMessageObject(
+                new AliasMessageBuilder(_config), AliasMessageBuilder.SpecialPropsBindings, null,
+                new Dictionary<string, object>
+                {
+                    {MixpanelProperty.DistinctId, distinctId},
+                    {MixpanelProperty.Alias, alias}
+                });
+        }
+
+        #endregion Alias
+
+
         #region PeopleSet
 
         public bool PeopleSet(object properties)
@@ -72,7 +103,7 @@ namespace Mixpanel
 
         public bool PeopleSet(object distinctId, object properties)
         {
-            return SendMessage(CreatePeopleSetObject(distinctId, properties), EndpointEngage, "PeopleSet");
+            return SendMessage(CreatePeopleSetMessageObject(distinctId, properties), EndpointEngage, "PeopleSet");
         }
 
         public MixpanelMessageTest PeopleSetTest(object properties)
@@ -82,10 +113,10 @@ namespace Mixpanel
 
         public MixpanelMessageTest PeopleSetTest(object distinctId, object properties)
         {
-            return TestMessage(() => CreatePeopleSetObject(distinctId, properties));
+            return TestMessage(() => CreatePeopleSetMessageObject(distinctId, properties));
         }
 
-        private IDictionary<string, object> CreatePeopleSetObject(object distinctId, object properties)
+        private IDictionary<string, object> CreatePeopleSetMessageObject(object distinctId, object properties)
         {
             return GetMessageObject(
                 new PeopleSetMessageBuilder(_config), PeopleSetMessageBuilder.SpecialPropsBindings,
@@ -104,10 +135,10 @@ namespace Mixpanel
         public bool PeopleSetOnce(object distinctId, object properties)
         {
             return SendMessage(
-                CreatePeopleSetOnceObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
+                CreatePeopleSetOnceMessageObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
         }
 
-        private IDictionary<string, object> CreatePeopleSetOnceObject(object distinctId, object properties)
+        private IDictionary<string, object> CreatePeopleSetOnceMessageObject(object distinctId, object properties)
         {
             return GetMessageObject(
                 new PeopleSetOnceMessageBuilder(_config), PeopleMessageBuilderBase.CoreSpecialPropsBindings,
@@ -200,20 +231,45 @@ namespace Mixpanel
 
         #endregion PeopleDelete
 
-        public bool Alias(object distinctId, object alias)
+        #region PeopleTrackCharge
+
+        public bool PeopleTrackCharge(object distinctId, decimal amount)
         {
-            throw new NotImplementedException();
+            return PeopleTrackCharge(distinctId, amount, UtcNow());
         }
 
-        public bool TrackCharge(object distinctId, decimal amount)
+        public bool PeopleTrackCharge(object distinctId, decimal amount, DateTime time)
         {
-            throw new NotImplementedException();
+            return SendMessage(
+                CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
+                EndpointEngage, "PeopleTrackCharge");
         }
 
-        public bool TrackCharge(object distinctId, decimal amount, DateTime time)
+        public MixpanelMessageTest PeopleTrackChargeTest(object distinctId, decimal amount)
         {
-            throw new NotImplementedException();
+            return PeopleTrackChargeTest(distinctId, amount, UtcNow());
         }
+
+        public MixpanelMessageTest PeopleTrackChargeTest(object distinctId, decimal amount, DateTime time)
+        {
+            return TestMessage(() => CreatePeopleTrackChargeMessageObject(distinctId, amount, time));
+        }
+
+        private IDictionary<string, object> CreatePeopleTrackChargeMessageObject(
+            object distinctId, decimal amount, DateTime time)
+        {
+            return GetMessageObject(
+                new PeopleTrackChargeMessageBuilder(), PeopleTrackChargeMessageBuilder.SpecialPropsBindings,
+                null, new Dictionary<string, object>
+                {
+                    {MixpanelProperty.DistinctId, distinctId},
+                    {MixpanelProperty.Time, time},
+                    {MixpanelProperty.PeopleAmount, amount},
+                });
+        }
+
+        #endregion
+
 
         #region Super properties
 

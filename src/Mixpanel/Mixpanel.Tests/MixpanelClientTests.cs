@@ -16,6 +16,7 @@ namespace Mixpanel.Tests
         private const string Ip = "111.111.111.111";
         private static readonly DateTime Time = new DateTime(2013, 11, 30, 0, 0, 0, DateTimeKind.Utc);
         private const long TimeUnix = 1385769600L;
+        private const string TimeFormat = "2013-11-30T00:00:00";
 
         private const bool IgnoreTime = true;
         private const string FirstName = "Darth";
@@ -25,6 +26,7 @@ namespace Mixpanel.Tests
         private const string CreatedFormat = "2014-10-22T00:00:00";
         private const string Email = "darth.vader@mail.com";
         private const string Phone = "589741";
+        private const string Alias = "999";
 
         private const string StringPropertyName = "StringProperty";
         private const string StringPropertyValue = "Tatooine";
@@ -52,6 +54,7 @@ namespace Mixpanel.Tests
                         return true;
                     }
                 });
+            _client.UtcNow = () => DateTime.UtcNow;
         }
 
         //[Test]
@@ -63,12 +66,14 @@ namespace Mixpanel.Tests
         //    Assert.That(_data, Is.EqualTo(ExpectedTrackFormData));
         //}
 
+        #region Track
+
         [Test]
         public void TrackTest_AnonymousObject_CorrectValuesReturned()
         {
             var msg = _client.TrackTest(Event, DistinctId, new
             {
-                Ip, 
+                Ip,
                 Time,
                 StringProperty = StringPropertyValue,
                 DecimalProperty = DecimalPropertyValue
@@ -77,7 +82,7 @@ namespace Mixpanel.Tests
             Assert.That(msg.Data.Count, Is.EqualTo(2));
             Assert.That(msg.Data[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
             Assert.That(msg.Data[MixpanelProperty.TrackProperties], Is.TypeOf<Dictionary<string, object>>());
-            var props = (Dictionary<string, object>)msg.Data[MixpanelProperty.TrackProperties];
+            var props = (Dictionary<string, object>) msg.Data[MixpanelProperty.TrackProperties];
             Assert.That(props.Count, Is.EqualTo(6));
             Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
             Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
@@ -86,6 +91,31 @@ namespace Mixpanel.Tests
             Assert.That(props[StringPropertyName], Is.EqualTo(StringPropertyValue));
             Assert.That(props[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
         }
+
+        #endregion Track
+
+        #region Alias
+
+        [Test]
+        public void AliasTest_ValidValues_CorrectValuesReturned()
+        {
+            var msg = _client.AliasTest(DistinctId, Alias);
+            CheckAlias(msg);
+        }
+
+        private void CheckAlias(MixpanelMessageTest msg)
+        {
+            Assert.That(msg.Data.Count, Is.EqualTo(2));
+            Assert.That(msg.Data[MixpanelProperty.TrackEvent], Is.EqualTo(MixpanelProperty.TrackCreateAlias));
+            Assert.That(msg.Data[MixpanelProperty.TrackProperties], Is.TypeOf<Dictionary<string, object>>());
+            var props = (Dictionary<string, object>)msg.Data[MixpanelProperty.TrackProperties];
+            Assert.That(props.Count, Is.EqualTo(3));
+            Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
+            Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
+            Assert.That(props[MixpanelProperty.TrackAlias], Is.EqualTo(Alias));
+        }
+
+        #endregion Alias
 
         #region PeopleSet
 
@@ -154,6 +184,7 @@ namespace Mixpanel.Tests
 
         #endregion PeopleSet
 
+        #region PeopleDelete
 
         [Test]
         public void PeopleDeleteTest_CorrectValuesReturned()
@@ -165,6 +196,44 @@ namespace Mixpanel.Tests
             Assert.That(res.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
             Assert.That(res.Data[MixpanelProperty.PeopleDelete], Is.Empty);
         }
+
+        #endregion PeopleDelete
+
+        #region PeopleTrackCharge
+
+        [Test]
+        public void PeopleTrackChargeTest_NoTime_CorrectValuesReturned()
+        {
+            _client.UtcNow = () => Time;
+            var msg = _client.PeopleTrackChargeTest(DistinctId, DecimalPropertyValue);
+
+            CheckPeopleTrackCharge(msg);
+        }
+        
+        [Test]
+        public void PeopleTrackChargeTest_WithTime_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleTrackChargeTest(DistinctId, DecimalPropertyValue, Time);
+
+            CheckPeopleTrackCharge(msg);
+        }
+
+        private void CheckPeopleTrackCharge(MixpanelMessageTest msg)
+        {
+            Assert.That(msg.Data.Count, Is.EqualTo(3));
+            Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
+            Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
+            Assert.That(msg.Data[MixpanelProperty.PeopleAppend], Is.TypeOf<Dictionary<string, object>>());
+            var append = (Dictionary<string, object>)msg.Data[MixpanelProperty.PeopleAppend];
+            Assert.That(append.Count, Is.EqualTo(1));
+            Assert.That(append[MixpanelProperty.PeopleTransactions], Is.TypeOf<Dictionary<string, object>>());
+            var transactions = (Dictionary<string, object>)append[MixpanelProperty.PeopleTransactions];
+            Assert.That(transactions.Count, Is.EqualTo(2));
+            Assert.That(transactions[MixpanelProperty.PeopleTime], Is.EqualTo(TimeFormat));
+            Assert.That(transactions[MixpanelProperty.PeopleAmount], Is.EqualTo(DecimalPropertyValue));
+        }
+
+        #endregion PeopleTrackCharge
 
         public class MyClass
         {

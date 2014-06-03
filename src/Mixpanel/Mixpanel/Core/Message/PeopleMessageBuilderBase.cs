@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Mixpanel.Exceptions;
 
 namespace Mixpanel.Core.Message
 {
@@ -28,23 +26,13 @@ namespace Mixpanel.Core.Message
 
             // $token
             SetSpecialRequiredProperty(msg, messageData, MixpanelProperty.PeopleToken,
-                x =>
-                {
-                    if (String.IsNullOrWhiteSpace(x.ToString()))
-                        throw new MixpanelRequiredPropertyNullOrEmptyException(
-                            string.Format("'{0}' property can't be empty.", MixpanelProperty.PeopleToken));
-                },
+                x => ThrowIfPropertyIsNullOrEmpty(x, MixpanelProperty.PeopleToken),
                 x => x.ToString());
 
 
             // $distinct_id
             SetSpecialRequiredProperty(msg, messageData, MixpanelProperty.PeopleDistinctId,
-                x =>
-                {
-                    if (String.IsNullOrWhiteSpace(x.ToString()))
-                        throw new MixpanelRequiredPropertyNullOrEmptyException(
-                            string.Format("'{0}' property can't be empty.", MixpanelProperty.PeopleDistinctId));
-                },
+                x => ThrowIfPropertyIsNullOrEmpty(x, MixpanelProperty.PeopleDistinctId),
                 x => x.ToString());
 
             return msg;

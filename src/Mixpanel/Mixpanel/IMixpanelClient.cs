@@ -24,6 +24,13 @@ namespace Mixpanel
 
         #endregion Track
 
+        #region Alias
+
+        bool Alias(object distinctId, object alias);
+        MixpanelMessageTest AliasTest(object distinctId, object alias);
+
+        #endregion Alias
+
         #region PeopleSet
 
         bool PeopleSet(object properties);
@@ -77,11 +84,8 @@ namespace Mixpanel
 
         #endregion PeopleDelete
 
-
-        bool Alias(object distinctId, object alias);
-
-        bool TrackCharge(object distinctId, decimal amount);
-        bool TrackCharge(object distinctId, decimal amount, DateTime time);
+        bool PeopleTrackCharge(object distinctId, decimal amount);
+        bool PeopleTrackCharge(object distinctId, decimal amount, DateTime time);
 
         #region Super properties
 
@@ -114,5 +118,8 @@ namespace Mixpanel
         void SetSuperProperty(string propertyName, object propertyValue);
 
         #endregion Super properties
+
+        MixpanelMessageTest PeopleTrackChargeTest(object distinctId, decimal amount);
+        MixpanelMessageTest PeopleTrackChargeTest(object distinctId, decimal amount, DateTime time);
     }
 }

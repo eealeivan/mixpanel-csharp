@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using Mixpanel.Exceptions;
 using Mixpanel.Misc;
 
 namespace Mixpanel.Core.Message
@@ -74,6 +76,16 @@ namespace Mixpanel.Core.Message
                 return dateTime.ToUnixTime();
             }
             return null;
+        }
+
+        protected void ThrowIfPropertyIsNullOrEmpty(object val, string propertyName)
+        {
+            Debug.Assert(val != null);
+            Debug.Assert(propertyName != null);
+
+            if (String.IsNullOrWhiteSpace(val.ToString()))
+                throw new MixpanelRequiredPropertyNullOrEmptyException(
+                    string.Format("'{0}' property can't be empty.", propertyName));
         }
     }
 }
