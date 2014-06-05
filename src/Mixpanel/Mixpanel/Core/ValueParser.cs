@@ -32,7 +32,7 @@ namespace Mixpanel.Core
                 return Valid(((Guid)value).ToString());
             }
 
-            if (!isRecursiveCall && value is IEnumerable)
+            if (!isRecursiveCall && IsEnumerable(value))
             {
                 var list = (
                     from object val in (value as IEnumerable)
@@ -56,6 +56,11 @@ namespace Mixpanel.Core
                 return true;
             }
             return false;
+        }
+
+        public bool IsEnumerable(object value)
+        {
+            return value is IEnumerable;
         }
 
         private ParsedValue Valid(object value)

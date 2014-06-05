@@ -112,8 +112,54 @@ namespace Mixpanel
 
         #endregion PeopleAppend
 
-        bool PeopleUnion(object props);
-        bool PeopleUnion(object distinctId, object props);
+        #region PeopleUnion
+
+        /// <summary>
+        /// Takes an object containing keys and list values. The list values in the request are 
+        /// merged with the existing list on the user profile, ignoring duplicate list values.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        ///</param>
+        bool PeopleUnion(object properties);
+
+        /// <summary>
+        /// Takes an object containing keys and list values. The list values in the request are 
+        /// merged with the existing list on the user profile, ignoring duplicate list values.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        /// <returns></returns>
+        bool PeopleUnion(object distinctId, object properties);
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleUnion' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        MixpanelMessageTest PeopleUnionTest(object properties);
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleUnion' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        MixpanelMessageTest PeopleUnionTest(object distinctId, object properties);
+
+        #endregion
 
         #region PeopleSet
 

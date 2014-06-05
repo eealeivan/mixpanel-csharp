@@ -177,7 +177,7 @@ namespace Mixpanel
             return GetMessageObject(
                 new PeopleAddMessageBuilder(_config),
                 properties, CreateExtraPropertiesForDistinctId(distinctId),
-                MessagePropetyRules.NumericOnly);
+                MessagePropetyRules.NumericsOnly);
         }
 
         #endregion PeopleAdd
@@ -255,14 +255,34 @@ namespace Mixpanel
 
         #endregion PeopleAppend
 
-        public bool PeopleUnion(object props)
+        public bool PeopleUnion(object properties)
         {
-            throw new NotImplementedException();
+            return PeopleUnion(null, properties);
         }
 
-        public bool PeopleUnion(object distinctId, object props)
+        public bool PeopleUnion(object distinctId, object properties)
         {
-            throw new NotImplementedException();
+            return SendMessage(
+                CreatePeopleUnionMessageObject(distinctId, properties), EndpointEngage, "PeopleUnion");
+        }
+
+        public MixpanelMessageTest PeopleUnionTest(object properties)
+        {
+            return PeopleUnionTest(null, properties);
+        }
+
+        public MixpanelMessageTest PeopleUnionTest(object distinctId, object properties)
+        {
+            return TestMessage(() => CreatePeopleUnionMessageObject(distinctId, properties));
+        }
+
+        private IDictionary<string, object> CreatePeopleUnionMessageObject(
+            object distinctId, object properties)
+        {
+            return GetMessageObject(
+                new PeopleUnionMessageBuilder(_config),
+                properties, CreateExtraPropertiesForDistinctId(distinctId),
+                MessagePropetyRules.ListsOnly);
         }
 
         #region PeopleUnset

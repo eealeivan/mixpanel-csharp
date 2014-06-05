@@ -66,23 +66,37 @@ namespace Mixpanel.Core.Message
         {
             if (string.IsNullOrEmpty(propertyName)) return;
 
-            var parsedValue = _valueParser.Parse(value);
-            if (!parsedValue.IsValid) return;
+            var parsedProperty = _valueParser.Parse(value);
+            if (!parsedProperty.IsValid) return;
 
             string bindingProp;
             if (_specialPropsBindings.TryGetValue(propertyName.ToLower(), out bindingProp))
             {
-                SpecialProps[bindingProp] = parsedValue.Value;
+                SpecialProps[bindingProp] = parsedProperty.Value;
             }
             else
             {
-                if (_messagePropetyRules == MessagePropetyRules.NumericOnly &&
-                    !_valueParser.IsNumeric(parsedValue.Value))
+                switch (_messagePropetyRules)
                 {
-                    return;
+                    case MessagePropetyRules.None:
+                        break;
+                    case MessagePropetyRules.NumericsOnly:
+                        if (!_valueParser.IsNumeric(parsedProperty.Value))
+                        {
+                            return;
+                        }
+                        break;
+                    case MessagePropetyRules.ListsOnly:
+                        if (!_valueParser.IsEnumerable(parsedProperty.Value))
+                        {
+                            return;
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
 
-                Props[_nameFormatter.Format(propertyName, propertyNameSource)] = parsedValue.Value;
+                Props[_nameFormatter.Format(propertyName, propertyNameSource)] = parsedProperty.Value;
             }
         }
 
@@ -100,7 +114,10 @@ namespace Mixpanel.Core.Message
         /// value is null.
         /// </summary>
         /// <param name="propName">Name of the property.</param>
-        /// <param name="validateFn">Custom validation function. Value will not be null.</param>
+        /// <param name="validateFn">
+        /// Custom validation function. Value will not be null. If it was null an exception
+        /// will be thrown before.
+        /// </param>
         /// <param name="convertFn">Custom value convert function.</param>
         public object GetSpecialRequiredProp(string propName, 
             Action<object> validateFn = null, Func<object, object> convertFn = null)

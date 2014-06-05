@@ -207,6 +207,8 @@ namespace Mixpanel.Tests
 
         #endregion PeopleAdd
 
+        #region PeopleAppend
+
         [Test]
         public void PeopleAppendTest_ValidInput_CorrectValuesReturned()
         {
@@ -220,29 +222,73 @@ namespace Mixpanel.Tests
             Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
             Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
             Assert.That(msg.Data[MixpanelProperty.PeopleAppend], Is.TypeOf<Dictionary<string, object>>());
-            var append = (Dictionary<string, object>)msg.Data[MixpanelProperty.PeopleAppend];
+            var append = (Dictionary<string, object>) msg.Data[MixpanelProperty.PeopleAppend];
             Assert.That(append.Count, Is.EqualTo(2));
             Assert.That(append[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
             Assert.That(append[StringPropertyName], Is.EqualTo(StringPropertyValue));
         }
+
+        #endregion
+
+        #region PeopleUnion
+
+        [Test]
+        public void PeopleUnionTest_ListsInput_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleUnionTest(DistinctId, new Dictionary<string, object>
+            {
+                {DecimalPropertyName, DecimalPropertyArray},
+                {StringPropertyName, StringPropertyArray}
+            });
+
+            CheckPeopleUnion(msg);
+        }
+
+        [Test]
+        public void PeopleUnionTest_MixedInput_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleUnionTest(DistinctId, new Dictionary<string, object>
+            {
+                {DecimalPropertyName, DecimalPropertyArray},
+                {StringPropertyName, StringPropertyArray},
+                {IntPropertyName, IntPropertyValue},
+                {DoublePropertyName, DoublePropertyValue},
+            });
+
+            CheckPeopleUnion(msg);
+        }
+
+        private static void CheckPeopleUnion(MixpanelMessageTest msg)
+        {
+            Assert.That(msg.Data.Count, Is.EqualTo(3));
+            Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
+            Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
+            Assert.That(msg.Data[MixpanelProperty.PeopleUnion], Is.TypeOf<Dictionary<string, object>>());
+            var append = (Dictionary<string, object>) msg.Data[MixpanelProperty.PeopleUnion];
+            Assert.That(append.Count, Is.EqualTo(2));
+            Assert.That(append[DecimalPropertyName], Is.EquivalentTo(DecimalPropertyArray));
+            Assert.That(append[StringPropertyName], Is.EquivalentTo(StringPropertyArray));
+        }
+
+        #endregion PeopleUnion
 
         #region PeopleUnset
 
         [Test]
         public void PeopleUnsetTest_CorrectValuesReturned()
         {
-            var msg = _client.PeopleUnsetTest(DistinctId, StringProperties);
+            var msg = _client.PeopleUnsetTest(DistinctId, StringPropertyArray);
 
             Assert.That(msg.Data.Count, Is.EqualTo(3));
             Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
             Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
             Assert.That(msg.Data[MixpanelProperty.PeopleUnset], Is.TypeOf<List<object>>());
             var unset = (List<object>) msg.Data[MixpanelProperty.PeopleUnset];
-            Assert.That(unset.Count, Is.EqualTo(StringProperties.Length));
-            for (int i = 0; i < StringProperties.Length; i++)
+            Assert.That(unset.Count, Is.EqualTo(StringPropertyArray.Length));
+            for (int i = 0; i < StringPropertyArray.Length; i++)
             {
                 Assert.That(unset[i], Is.TypeOf<string>());
-                Assert.That(unset[i], Is.EqualTo(StringProperties[i]));
+                Assert.That(unset[i], Is.EqualTo(StringPropertyArray[i]));
             }
         }
 

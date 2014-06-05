@@ -33,7 +33,8 @@ namespace Mixpanel.Tests
         protected const int IntPropertyValue = 3; 
         protected const string DoublePropertyName = "DoubleProperty";
         protected const double DoublePropertyValue = 4.5d;
-        protected static readonly string[] StringProperties = {"Prop1", "Prop2"};
+        protected static readonly string[] StringPropertyArray = {"Prop1", "Prop2"};
+        protected static readonly decimal[] DecimalPropertyArray = {5.5m, 6.6m};
 
         #endregion Data
     }

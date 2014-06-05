@@ -3,6 +3,7 @@
     internal enum MessagePropetyRules
     {
         None,
-        NumericOnly
+        NumericsOnly,
+        ListsOnly
     }
 }

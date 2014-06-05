@@ -43,6 +43,7 @@
         internal const string PeopleSetOnce = "$set_once";
         internal const string PeopleAdd = "$add";
         internal const string PeopleAppend = "$append";
+        internal const string PeopleUnion = "$union";
         internal const string PeopleUnset = "$unset";
         internal const string PeopleDelete = "$delete";
         internal const string PeopleTransactions = "$transactions";
