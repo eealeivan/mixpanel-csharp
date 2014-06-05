@@ -60,9 +60,57 @@ namespace Mixpanel
 
         #endregion PeopleAdd
 
+        #region PeopleAppend
 
-        bool PeopleAppend(object props);
-        bool PeopleAppend(object distinctId, object props);
+        /// <summary>
+        /// Takes an object containing keys and values, and appends each to a list associated with 
+        /// the corresponding property name. Appending to a property that doesn't exist will result 
+        /// in assigning a list with one element to that property.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        bool PeopleAppend(object properties);
+
+        /// <summary>
+        /// Takes an object containing keys and values, and appends each to a list associated with 
+        /// the corresponding property name. Appending to a property that doesn't exist will result 
+        /// in assigning a list with one element to that property.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        bool PeopleAppend(object distinctId, object properties);
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleAppend' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        MixpanelMessageTest PeopleAppendTest(object properties);
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleAppend' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        MixpanelMessageTest PeopleAppendTest(object distinctId, object properties);
+
+        #endregion PeopleAppend
 
         bool PeopleUnion(object props);
         bool PeopleUnion(object distinctId, object props);
@@ -86,7 +134,7 @@ namespace Mixpanel
         bool PeopleUnset(object distinctId, IEnumerable<string> propertyNames);
 
         /// <summary>
-        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (dictionary, JSON,
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleUnset' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
         /// </summary>
@@ -94,7 +142,7 @@ namespace Mixpanel
         MixpanelMessageTest PeopleUnsetTest(IEnumerable<string> propertyNames);
 
         /// <summary>
-        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (dictionary, JSON,
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleUnset' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
         /// </summary>
@@ -114,7 +162,7 @@ namespace Mixpanel
         bool PeopleDelete(object distinctId);
 
         /// <summary>
-        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (dictionary, JSON,
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleDelete' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
         /// </summary>

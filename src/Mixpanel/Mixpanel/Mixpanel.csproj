@@ -46,6 +46,7 @@
     <Compile Include="Core\Message\MessageData.cs" />
     <Compile Include="Core\Message\MessagePropetyRules.cs" />
     <Compile Include="Core\Message\PeopleAddMessageBuilder.cs" />
+    <Compile Include="Core\Message\PeopleAppendMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleDeleteMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleMessageBuilderBase.cs" />
     <Compile Include="Core\Message\PeopleSetMessageBuilder.cs" />
@@ -74,7 +75,9 @@
     <Compile Include="MixpanelProperty.cs" />
     <Compile Include="MixpanelPropertyNameFormat.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Comments.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,0 +1,14 @@
+﻿Return:
+Returns true if call was successful, and false otherwise.
+
+DistinctId:
+Unique user profile identifier.
+
+Properties:
+/// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+/// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+
+Test:
+/// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+/// base64) of building 'TODO' message. If some error occurs during the process of 
+/// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.

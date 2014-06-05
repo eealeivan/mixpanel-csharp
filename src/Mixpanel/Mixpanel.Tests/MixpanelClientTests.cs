@@ -207,6 +207,25 @@ namespace Mixpanel.Tests
 
         #endregion PeopleAdd
 
+        [Test]
+        public void PeopleAppendTest_ValidInput_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleAppendTest(DistinctId, new Dictionary<string, object>
+            {
+                {DecimalPropertyName, DecimalPropertyValue},
+                {StringPropertyName, StringPropertyValue}
+            });
+
+            Assert.That(msg.Data.Count, Is.EqualTo(3));
+            Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
+            Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
+            Assert.That(msg.Data[MixpanelProperty.PeopleAppend], Is.TypeOf<Dictionary<string, object>>());
+            var append = (Dictionary<string, object>)msg.Data[MixpanelProperty.PeopleAppend];
+            Assert.That(append.Count, Is.EqualTo(2));
+            Assert.That(append[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
+            Assert.That(append[StringPropertyName], Is.EqualTo(StringPropertyValue));
+        }
+
         #region PeopleUnset
 
         [Test]

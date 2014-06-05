@@ -182,15 +182,78 @@ namespace Mixpanel
 
         #endregion PeopleAdd
 
-        public bool PeopleAppend(object props)
+        #region PeopleAppend
+
+        /// <summary>
+        /// Takes an object containing keys and values, and appends each to a list associated with 
+        /// the corresponding property name. Appending to a property that doesn't exist will result 
+        /// in assigning a list with one element to that property.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        public bool PeopleAppend(object properties)
         {
-            throw new NotImplementedException();
+            return PeopleAppend(null, properties);
         }
 
-        public bool PeopleAppend(object distinctId, object props)
+        /// <summary>
+        /// Takes an object containing keys and values, and appends each to a list associated with 
+        /// the corresponding property name. Appending to a property that doesn't exist will result 
+        /// in assigning a list with one element to that property.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        public bool PeopleAppend(object distinctId, object properties)
         {
-            throw new NotImplementedException();
+            return SendMessage(
+                CreatePeopleAppendMessageObject(distinctId, properties), EndpointEngage, "PeopleAppend");
         }
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleAppend' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        public MixpanelMessageTest PeopleAppendTest(object properties)
+        {
+            return PeopleAppendTest(null, properties);
+        }
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleAppend' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        public MixpanelMessageTest PeopleAppendTest(object distinctId, object properties)
+        {
+            return TestMessage(() => CreatePeopleAppendMessageObject(distinctId, properties));
+        }
+
+        private IDictionary<string, object> CreatePeopleAppendMessageObject(
+            object distinctId, object properties)
+        {
+            return GetMessageObject(
+                new PeopleAppendMessageBuilder(_config),
+                properties, CreateExtraPropertiesForDistinctId(distinctId));
+        }
+
+        #endregion PeopleAppend
 
         public bool PeopleUnion(object props)
         {
