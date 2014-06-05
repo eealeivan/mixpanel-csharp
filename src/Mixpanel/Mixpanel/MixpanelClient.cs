@@ -149,23 +149,35 @@ namespace Mixpanel
         #endregion PeopleSetOnce
 
         #region PeopleAdd
-
-        /// <summary>
-        /// Sends data to http://api.mixpanel.com/engage/ using '$add' method.
-        /// Returns true if call was successful, false otherwise.
-        /// </summary>
-        /// <param name="props">
-        /// Object containg keys and numerical values. Should also contain 'distinct_id'
-        /// (if you can't have this property in the object, then use an overload).
-        /// </param>
-        public bool PeopleAdd(object props)
+        
+        public bool PeopleAdd(object properties)
         {
-            throw new NotImplementedException();
+            return PeopleAdd(null, properties);
         }
 
-        public bool PeopleAdd(object distinctId, object props)
+        public bool PeopleAdd(object distinctId, object properties)
         {
-            throw new NotImplementedException();
+            return SendMessage(
+                CreatePeopleAddMessageObject(distinctId, properties), EndpointEngage, "PeopleAdd");
+        }
+
+        public MixpanelMessageTest PeopleAddTest(object properties)
+        {
+            return PeopleAddTest(null, properties);
+        }
+
+        public MixpanelMessageTest PeopleAddTest(object distinctId, object properties)
+        {
+            return TestMessage(() => CreatePeopleAddMessageObject(distinctId, properties));
+        }
+
+        private IDictionary<string, object> CreatePeopleAddMessageObject(
+            object distinctId, object properties)
+        {
+            return GetMessageObject(
+                new PeopleAddMessageBuilder(_config),
+                properties, CreateExtraPropertiesForDistinctId(distinctId),
+                MessagePropetyRules.NumericOnly);
         }
 
         #endregion PeopleAdd
@@ -392,10 +404,14 @@ namespace Mixpanel
         /// Object created by calling method. Usually contains properties that are passed to calling method
         /// as arguments.
         /// </param>
+        /// <param name="propetyRules">
+        /// Additional rules that will be appended to user defined properties.
+        /// </param>
         private IDictionary<string, object> GetMessageObject(
-            MessageBuilderBase builder, object userProperties, object extraProperties)
+            MessageBuilderBase builder, object userProperties, object extraProperties, 
+            MessagePropetyRules propetyRules = MessagePropetyRules.None)
         {
-            var od = new MessageData(builder.SpecialPropsBindings, _config);
+            var od = new MessageData(builder.SpecialPropsBindings, propetyRules, _config);
             od.ParseAndSetProperties(userProperties);
             od.SetProperty(MixpanelProperty.Token, _token);
             od.ParseAndSetPropertiesIfNotNull(extraProperties);

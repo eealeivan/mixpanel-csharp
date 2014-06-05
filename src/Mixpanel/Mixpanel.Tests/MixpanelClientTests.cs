@@ -162,6 +162,51 @@ namespace Mixpanel.Tests
 
         #endregion PeopleSet
 
+        #region PeopleAdd
+
+        [Test]
+        public void PeopleAddTest_OnlyNumericInput_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleAddTest(DistinctId, new Dictionary<string, object>
+            {
+                {DecimalPropertyName, DecimalPropertyValue},
+                {IntPropertyName, IntPropertyValue},
+                {DoublePropertyName, DoublePropertyValue}
+            });
+
+            CheckPeopleAdd(msg);
+        }
+
+        [Test]
+        public void PeopleAddTest_MixedInput_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleAddTest(DistinctId, new Dictionary<string, object>
+            {
+                {DecimalPropertyName, DecimalPropertyValue},
+                {IntPropertyName, IntPropertyValue},
+                {DoublePropertyName, DoublePropertyValue},
+                {MixpanelProperty.Created, Time},
+                {StringPropertyName, StringPropertyValue}
+            });
+
+            CheckPeopleAdd(msg);
+        }
+
+        private void CheckPeopleAdd(MixpanelMessageTest msg)
+        {
+            Assert.That(msg.Data.Count, Is.EqualTo(3));
+            Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
+            Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
+            Assert.That(msg.Data[MixpanelProperty.PeopleAdd], Is.TypeOf<Dictionary<string, object>>());
+            var add = (Dictionary<string, object>) msg.Data[MixpanelProperty.PeopleAdd];
+            Assert.That(add.Count, Is.EqualTo(3));
+            Assert.That(add[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
+            Assert.That(add[IntPropertyName], Is.EqualTo(IntPropertyValue));
+            Assert.That(add[DoublePropertyName], Is.EqualTo(DoublePropertyValue));
+        }
+
+        #endregion PeopleAdd
+
         #region PeopleUnset
 
         [Test]

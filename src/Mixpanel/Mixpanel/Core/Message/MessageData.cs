@@ -7,23 +7,32 @@ namespace Mixpanel.Core.Message
     internal sealed class MessageData
     {
         private readonly IDictionary<string, string> _specialPropsBindings;
+        private readonly MessagePropetyRules _messagePropetyRules;
         private readonly ValueParser _valueParser;
         private readonly PropertyNameFormatter _nameFormatter;
         private readonly PropertiesDigger _propertiesDigger;
 
         /// <summary>
-        /// Contais Mixpanel special properties like 'token', 'distinct_id' and etc.
+        /// Contais prsed mixpanel special properties like 'token', 'distinct_id' and etc.
         /// </summary>
         public IDictionary<string, object> SpecialProps { get; private set; }
 
         /// <summary>
-        /// Contains user properties
+        /// Contains parsed user properties.
         /// </summary>
         public IDictionary<string, object> Props { get; private set; }
 
-        public MessageData(IDictionary<string, string> specialPropsBindings, MixpanelConfig config = null)
+        public MessageData(IDictionary<string, string> specialPropsBindings, MixpanelConfig config = null) 
+            : this(specialPropsBindings, MessagePropetyRules.None, config)
+        {
+        }
+
+        public MessageData(
+            IDictionary<string, string> specialPropsBindings, 
+            MessagePropetyRules messagePropetyRules, MixpanelConfig config = null)
         {
             _specialPropsBindings = specialPropsBindings ?? new Dictionary<string, string>();
+            _messagePropetyRules = messagePropetyRules;
             _valueParser = new ValueParser();
             _nameFormatter = new PropertyNameFormatter(config);
             _propertiesDigger = new PropertiesDigger();
@@ -58,16 +67,22 @@ namespace Mixpanel.Core.Message
             if (string.IsNullOrEmpty(propertyName)) return;
 
             var parsedValue = _valueParser.Parse(value);
-            if (!parsedValue.Item2) return;
+            if (!parsedValue.IsValid) return;
 
             string bindingProp;
             if (_specialPropsBindings.TryGetValue(propertyName.ToLower(), out bindingProp))
             {
-                SpecialProps[bindingProp] = parsedValue.Item1;
+                SpecialProps[bindingProp] = parsedValue.Value;
             }
             else
             {
-                Props[_nameFormatter.Format(propertyName, propertyNameSource)] = parsedValue.Item1;
+                if (_messagePropetyRules == MessagePropetyRules.NumericOnly &&
+                    !_valueParser.IsNumeric(parsedValue.Value))
+                {
+                    return;
+                }
+
+                Props[_nameFormatter.Format(propertyName, propertyNameSource)] = parsedValue.Value;
             }
         }
 

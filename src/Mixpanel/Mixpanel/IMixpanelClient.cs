@@ -44,17 +44,22 @@ namespace Mixpanel
         bool PeopleSetOnce(object properties);
         bool PeopleSetOnce(object distinctId, object properties);
 
-        /// <summary>
-        /// Sends data to http://api.mixpanel.com/engage/ using '$add' method.
-        /// Returns true if call was successful, false otherwise.
-        /// </summary>
-        /// <param name="props">
-        /// Object containg keys and numerical values. Should also contain 'distinct_id'
-        /// (if you can't have this property in the object, then use an overload).
-        /// </param>
-        bool PeopleAdd(object props);
+        #region PeopleAdd
 
-        bool PeopleAdd(object distinctId, object props);
+        /// <summary>
+        /// The property values are added to the existing values of the properties on the profile. 
+        /// If the property is not present on the profile, the value will be added to 0. 
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and numeric values. All non numeric properties except '$distinct_id'
+        /// will be ignored.
+        /// </param>
+        bool PeopleAdd(object properties);
+
+        bool PeopleAdd(object distinctId, object properties);
+
+        #endregion PeopleAdd
+
 
         bool PeopleAppend(object props);
         bool PeopleAppend(object distinctId, object props);
@@ -155,5 +160,7 @@ namespace Mixpanel
 
         MixpanelMessageTest PeopleTrackChargeTest(object distinctId, decimal amount);
         MixpanelMessageTest PeopleTrackChargeTest(object distinctId, decimal amount, DateTime time);
+        MixpanelMessageTest PeopleAddTest(object properties);
+        MixpanelMessageTest PeopleAddTest(object distinctId, object properties);
     }
 }

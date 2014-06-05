@@ -4,7 +4,7 @@ namespace Mixpanel.Core.Message
 {
     internal sealed class PeopleUnsetMessageBuilder : PeopleMessageBuilderBase
     {
-        public static readonly Dictionary<string, string> SpecialPropsBindingsInternal =
+        private static readonly Dictionary<string, string> SpecialPropsBindingsInternal =
             new Dictionary<string, string>
             {
                 {MixpanelProperty.PeopleUnset, MixpanelProperty.PeopleUnset}

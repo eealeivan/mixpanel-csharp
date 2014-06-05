@@ -28,7 +28,11 @@ namespace Mixpanel.Tests
         protected const string StringPropertyName = "StringProperty";
         protected const string StringPropertyValue = "Tatooine";
         protected const string DecimalPropertyName = "DecimalProperty";
-        protected const decimal DecimalPropertyValue = 2.5m;
+        protected const decimal DecimalPropertyValue = 2.5m; 
+        protected const string IntPropertyName = "IntProperty";
+        protected const int IntPropertyValue = 3; 
+        protected const string DoublePropertyName = "DoubleProperty";
+        protected const double DoublePropertyValue = 4.5d;
         protected static readonly string[] StringProperties = {"Prop1", "Prop2"};
 
         #endregion Data
