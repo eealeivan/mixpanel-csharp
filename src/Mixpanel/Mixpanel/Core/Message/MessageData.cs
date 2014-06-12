@@ -47,7 +47,7 @@ namespace Mixpanel.Core.Message
 
             foreach (var pair in _propertiesDigger.Get(props))
             {
-                SetProperty(pair.Key, pair.Value.Item2, pair.Value.Item1);
+                SetProperty(pair.Key, pair.Value.Value, pair.Value.PropertyNameSource);
             }
         }
 
@@ -57,17 +57,17 @@ namespace Mixpanel.Core.Message
 
             foreach (var pair in _propertiesDigger.Get(props))
             {
-                SetPropertyIfNotNull(pair.Key, pair.Value.Item2, pair.Value.Item1);
+                SetPropertyIfNotNull(pair.Key, pair.Value.Value, pair.Value.PropertyNameSource);
             }
         }
 
-        public void SetProperty(string propertyName, object value, 
+        public bool SetProperty(string propertyName, object value, 
             PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
-            if (string.IsNullOrEmpty(propertyName)) return;
+            if (string.IsNullOrEmpty(propertyName)) return false;
 
             var parsedProperty = _valueParser.Parse(value);
-            if (!parsedProperty.IsValid) return;
+            if (!parsedProperty.IsValid) return false;
 
             string bindingProp;
             if (_specialPropsBindings.TryGetValue(propertyName.ToLower(), out bindingProp))
@@ -83,13 +83,13 @@ namespace Mixpanel.Core.Message
                     case MessagePropetyRules.NumericsOnly:
                         if (!_valueParser.IsNumeric(parsedProperty.Value))
                         {
-                            return;
+                            return false;
                         }
                         break;
                     case MessagePropetyRules.ListsOnly:
                         if (!_valueParser.IsEnumerable(parsedProperty.Value))
                         {
-                            return;
+                            return false;
                         }
                         break;
                     default:
@@ -98,14 +98,27 @@ namespace Mixpanel.Core.Message
 
                 Props[_nameFormatter.Format(propertyName, propertyNameSource)] = parsedProperty.Value;
             }
+
+            return true;
         }
 
-        public void SetPropertyIfNotNull(string propertyName, object value,
+        public bool SetPropertyIfNotNull(string propertyName, object value,
             PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
-            if(value == null) return;
+            if(value == null) return false;
 
-            SetProperty(propertyName, value, propertyNameSource);
+            return SetProperty(propertyName, value, propertyNameSource);
+        }
+
+        public void RemoveProperty(string propertyName,
+            PropertyNameSource propertyNameSource = PropertyNameSource.Default)
+        {
+            if(string.IsNullOrWhiteSpace(propertyName)) return;
+
+            if (!SpecialProps.Remove(propertyName))
+            {
+                Props.Remove(_nameFormatter.Format(propertyName, propertyNameSource));
+            }
         }
 
         /// <summary>

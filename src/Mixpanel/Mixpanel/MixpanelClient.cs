@@ -255,6 +255,8 @@ namespace Mixpanel
 
         #endregion PeopleAppend
 
+        #region PeopleUnion
+
         public bool PeopleUnion(object properties)
         {
             return PeopleUnion(null, properties);
@@ -284,6 +286,8 @@ namespace Mixpanel
                 properties, CreateExtraPropertiesForDistinctId(distinctId),
                 MessagePropetyRules.ListsOnly);
         }
+
+        #endregion PeopleUnion
 
         #region PeopleUnset
 
@@ -345,7 +349,6 @@ namespace Mixpanel
         }
 
         #endregion PeopleUnset
-
 
         #region PeopleDelete
 
@@ -420,8 +423,6 @@ namespace Mixpanel
 
         #region Super properties
 
-        //TODO: Tests. <Aleksandr Ivanov - 23-05-2014>
-        //TODO: Add super properties to created objects. <Aleksandr Ivanov - 23-05-2014>
         private MessageData _superProperties;
 
         private void InitializeSuperProperties(object superProperties)
@@ -438,7 +439,6 @@ namespace Mixpanel
             _superProperties.ParseAndSetProperties(superProperties);
         }
 
-
         /// <summary>
         /// Sets super properties that will be attached to every event for the current mixpanel client.
         /// All previosly set super properties will be removed.
@@ -446,8 +446,7 @@ namespace Mixpanel
         /// <param name="superProperties">
         /// Object with super properties to set.
         /// If some of the properties are not valid mixpanel properties they will be ignored. Check documentation
-        /// on project page https://github.com/eealeivan/mixpanel-csharp for valid property types. If custom 
-        /// property name formatting was set in config, then it will be applied to property names.
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for valid property types.
         /// </param>
         public void SetSuperProperties(object superProperties)
         {
@@ -456,22 +455,24 @@ namespace Mixpanel
 
         /// <summary>
         /// Sets a super property for the current mixpanel client. If property with given 
-        /// <param name="propertyName"></param> alredy exists, the it's value will be rewritten. 
+        /// <paramref name="propertyName"></paramref> already exists, then it's value will be rewritten. 
         /// </summary>
         /// <param name="propertyName">
-        /// The name of the property. If custom property name formatting was set, the it will be 
-        /// applied to this.
+        /// The name of the property.
         /// </param>
         /// <param name="propertyValue">
         /// The value of the property to set. If an invalid value is provided then super property will 
-        /// not be set, and if there is already property with given <param name="propertyName"></param> then
+        /// not be set, and if there is already property with given <paramref name="propertyName"></paramref> then
         /// it will be removed. Check documentation on project page https://github.com/eealeivan/mixpanel-csharp
         /// for supported property values.
         /// </param>
         public void SetSuperProperty(string propertyName, object propertyValue)
         {
-            //TODO: Remove prop if inavlid value was set. <Aleksandr Ivanov - 23-05-2014>
-            _superProperties.SetProperty(propertyName, propertyValue);
+            var res = _superProperties.SetProperty(propertyName, propertyValue);
+            if (!res)
+            {
+                _superProperties.RemoveProperty(propertyName);
+            }
         }
 
         #endregion Super properties
@@ -498,6 +499,16 @@ namespace Mixpanel
             od.ParseAndSetProperties(userProperties);
             od.SetProperty(MixpanelProperty.Token, _token);
             od.ParseAndSetPropertiesIfNotNull(extraProperties);
+
+            foreach (var superSpecialProperty in _superProperties.SpecialProps)
+            {
+                od.SpecialProps[superSpecialProperty.Key] = superSpecialProperty.Value;
+            }
+
+            foreach (var superProperty in _superProperties.Props)
+            {
+                od.Props[superProperty.Key] = superProperty.Value;
+            }
 
             return builder.GetMessageObject(od);
         }

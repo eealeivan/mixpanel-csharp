@@ -33,6 +33,10 @@ namespace Mixpanel.Tests
         protected const int IntPropertyValue = 3; 
         protected const string DoublePropertyName = "DoubleProperty";
         protected const double DoublePropertyValue = 4.5d;
+        protected const string InvalidPropertyName = "InvalidProperty";
+        protected static readonly object InvalidPropertyValue = new object(); 
+        protected const string InvalidPropertyName2 = "InvalidProperty2";
+        protected static readonly object InvalidPropertyValue2 = new object();
         protected static readonly string[] StringPropertyArray = {"Prop1", "Prop2"};
         protected static readonly decimal[] DecimalPropertyArray = {5.5m, 6.6m};
 

@@ -56,6 +56,8 @@
     <Compile Include="Core\Message\PeopleUnsetMessageBuilder.cs" />
     <Compile Include="Core\Message\TrackMessageBuilder.cs" />
     <Compile Include="Core\Message\TrackMessageBuilderBase.cs" />
+    <Compile Include="Core\ObjectProperty.cs" />
+    <Compile Include="Core\ObjectPropertyInfo.cs" />
     <Compile Include="Core\ParsedValue.cs" />
     <Compile Include="Core\PropertiesDigger.cs" />
     <Compile Include="Core\PropertyNameFormatter.cs" />

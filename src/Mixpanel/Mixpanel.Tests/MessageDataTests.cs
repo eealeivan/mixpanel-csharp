@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Mixpanel.Core;
 using Mixpanel.Core.Message;
 using Mixpanel.Exceptions;
 using NUnit.Framework;
@@ -129,6 +130,26 @@ namespace Mixpanel.Tests
                     .TypeOf<Exception>()
                     .And.Message.EqualTo(
                         string.Format("'token' should be equal to '{0}'.", Token + "2")));
+        }
+
+        [Test]
+        public void RemoveProperty_Works()
+        {
+            _md.SetProperty(MixpanelProperty.Event, Event, PropertyNameSource.MixpanelName);
+            _md.SetProperty(MixpanelProperty.DistinctId, DistinctId);
+            _md.SetProperty(DecimalPropertyName, DecimalPropertyValue, PropertyNameSource.DataMember);
+            _md.SetProperty(DoublePropertyName, DoublePropertyValue);
+
+            Assert.That(_md.SpecialProps.Count, Is.EqualTo(2));
+            Assert.That(_md.Props.Count, Is.EqualTo(2));
+
+            _md.RemoveProperty(MixpanelProperty.Event);
+            _md.RemoveProperty(MixpanelProperty.DistinctId);
+            _md.RemoveProperty(DecimalPropertyName);
+            _md.RemoveProperty(DoublePropertyName);
+
+            Assert.That(_md.SpecialProps.Count, Is.EqualTo(0));
+            Assert.That(_md.Props.Count, Is.EqualTo(0));
         }
     }
 }

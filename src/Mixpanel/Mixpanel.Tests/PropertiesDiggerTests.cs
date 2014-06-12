@@ -33,12 +33,12 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(inDic);
             Assert.That(outDic.Count, Is.EqualTo(3));
-            Assert.That(outDic["property1"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property1"].Item2, Is.EqualTo(1));
-            Assert.That(outDic["property2"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property2"].Item2, Is.EqualTo("val"));
-            Assert.That(outDic["property3"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property3"].Item2, Is.EqualTo(_now));
+            Assert.That(outDic["property1"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property1"].Value, Is.EqualTo(1));
+            Assert.That(outDic["property2"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property2"].Value, Is.EqualTo("val"));
+            Assert.That(outDic["property3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property3"].Value, Is.EqualTo(_now));
         }
 
         [Test]
@@ -52,10 +52,10 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(inDic);
             Assert.That(outDic.Count, Is.EqualTo(2));
-            Assert.That(outDic["property1"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property1"].Item2, Is.EqualTo(1M));
-            Assert.That(outDic["property2"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property2"].Item2, Is.EqualTo(2M));
+            Assert.That(outDic["property1"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property1"].Value, Is.EqualTo(1M));
+            Assert.That(outDic["property2"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property2"].Value, Is.EqualTo(2M));
         }
 
         [Test]
@@ -70,10 +70,10 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(inDic);
             Assert.That(outDic.Count, Is.EqualTo(2));
-            Assert.That(outDic["property1"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property1"].Item2, Is.EqualTo(1M));
-            Assert.That(outDic["property3"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property3"].Item2, Is.EqualTo(_now));
+            Assert.That(outDic["property1"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property1"].Value, Is.EqualTo(1M));
+            Assert.That(outDic["property3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property3"].Value, Is.EqualTo(_now));
         }
 
 
@@ -89,10 +89,10 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(hashtable);
             Assert.That(outDic.Count, Is.EqualTo(2));
-            Assert.That(outDic["property1"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property1"].Item2, Is.EqualTo(1M));
-            Assert.That(outDic["property3"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property3"].Item2, Is.EqualTo(_now));
+            Assert.That(outDic["property1"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property1"].Value, Is.EqualTo(1M));
+            Assert.That(outDic["property3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property3"].Value, Is.EqualTo(_now));
         }
 
         [Test]
@@ -105,12 +105,12 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(expando);
             Assert.That(outDic.Count, Is.EqualTo(3));
-            Assert.That(outDic["property1"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property1"].Item2, Is.EqualTo(1M));
-            Assert.That(outDic["Property2"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property2"].Item2, Is.EqualTo("val"));
-            Assert.That(outDic["property3"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["property3"].Item2, Is.EqualTo(_now));
+            Assert.That(outDic["property1"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property1"].Value, Is.EqualTo(1M));
+            Assert.That(outDic["Property2"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property2"].Value, Is.EqualTo("val"));
+            Assert.That(outDic["property3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["property3"].Value, Is.EqualTo(_now));
         }
 
         [Test]
@@ -125,12 +125,12 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(dyn);
             Assert.That(outDic.Count, Is.EqualTo(3));
-            Assert.That(outDic["Property1"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property1"].Item2, Is.EqualTo(1M));
-            Assert.That(outDic["Property2"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property2"].Item2, Is.EqualTo("val"));
-            Assert.That(outDic["Property3"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property3"].Item2, Is.EqualTo(_now));
+            Assert.That(outDic["Property1"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property1"].Value, Is.EqualTo(1M));
+            Assert.That(outDic["Property2"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property2"].Value, Is.EqualTo("val"));
+            Assert.That(outDic["Property3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property3"].Value, Is.EqualTo(_now));
         }
 
         internal class Test1
@@ -152,12 +152,12 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(test);
             Assert.That(outDic.Count, Is.EqualTo(3));
-            Assert.That(outDic["Property1"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property1"].Item2, Is.EqualTo(1M));
-            Assert.That(outDic["Property2"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property2"].Item2, Is.EqualTo("val"));
-            Assert.That(outDic["Property3"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property3"].Item2, Is.EqualTo(_now));
+            Assert.That(outDic["Property1"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property1"].Value, Is.EqualTo(1M));
+            Assert.That(outDic["Property2"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property2"].Value, Is.EqualTo("val"));
+            Assert.That(outDic["Property3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property3"].Value, Is.EqualTo(_now));
         }
 
 
@@ -184,12 +184,12 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(test);
             Assert.That(outDic.Count, Is.EqualTo(3));
-            Assert.That(outDic["property_1"].Item1, Is.EqualTo(PropertyNameSource.MixpanelName));
-            Assert.That(outDic["property_1"].Item2, Is.EqualTo(1M));
-            Assert.That(outDic["Property2"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property2"].Item2, Is.EqualTo("val"));
-            Assert.That(outDic["property_3"].Item1, Is.EqualTo(PropertyNameSource.MixpanelName));
-            Assert.That(outDic["property_3"].Item2, Is.EqualTo(_now));
+            Assert.That(outDic["property_1"].PropertyNameSource, Is.EqualTo(PropertyNameSource.MixpanelName));
+            Assert.That(outDic["property_1"].Value, Is.EqualTo(1M));
+            Assert.That(outDic["Property2"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property2"].Value, Is.EqualTo("val"));
+            Assert.That(outDic["property_3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.MixpanelName));
+            Assert.That(outDic["property_3"].Value, Is.EqualTo(_now));
         }
 
         internal class Test3
@@ -219,12 +219,12 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(test);
             Assert.That(outDic.Count, Is.EqualTo(3));
-            Assert.That(outDic["property_1"].Item1, Is.EqualTo(PropertyNameSource.MixpanelName));
-            Assert.That(outDic["property_1"].Item2, Is.EqualTo(1M));
-            Assert.That(outDic["Property3"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property3"].Item2, Is.EqualTo(_now));
-            Assert.That(outDic["Property4"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property4"].Item2, Is.EqualTo("p4"));
+            Assert.That(outDic["property_1"].PropertyNameSource, Is.EqualTo(PropertyNameSource.MixpanelName));
+            Assert.That(outDic["property_1"].Value, Is.EqualTo(1M));
+            Assert.That(outDic["Property3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property3"].Value, Is.EqualTo(_now));
+            Assert.That(outDic["Property4"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property4"].Value, Is.EqualTo("p4"));
         }
 
         [DataContract]
@@ -264,12 +264,12 @@ namespace Mixpanel.Tests
 
             var outDic = _digger.Get(test);
             Assert.That(outDic.Count, Is.EqualTo(3));
-            Assert.That(outDic[MixpanelProperty.DistinctId].Item1, Is.EqualTo(PropertyNameSource.MixpanelName));
-            Assert.That(outDic[MixpanelProperty.DistinctId].Item2, Is.EqualTo(1M));
-            Assert.That(outDic["property3"].Item1, Is.EqualTo(PropertyNameSource.DataMember));
-            Assert.That(outDic["property3"].Item2, Is.EqualTo(_now));
-            Assert.That(outDic["Property6"].Item1, Is.EqualTo(PropertyNameSource.Default));
-            Assert.That(outDic["Property6"].Item2, Is.EqualTo("p6"));
+            Assert.That(outDic[MixpanelProperty.DistinctId].PropertyNameSource, Is.EqualTo(PropertyNameSource.MixpanelName));
+            Assert.That(outDic[MixpanelProperty.DistinctId].Value, Is.EqualTo(1M));
+            Assert.That(outDic["property3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.DataMember));
+            Assert.That(outDic["property3"].Value, Is.EqualTo(_now));
+            Assert.That(outDic["Property6"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
+            Assert.That(outDic["Property6"].Value, Is.EqualTo("p6"));
         }
     }
 }
