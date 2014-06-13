@@ -151,5 +151,22 @@ namespace Mixpanel.Tests
             Assert.That(_md.SpecialProps.Count, Is.EqualTo(0));
             Assert.That(_md.Props.Count, Is.EqualTo(0));
         }
+
+        [Test]
+        public void ClearAllProperties_Works()
+        {
+            _md.SetProperty(MixpanelProperty.Event, Event, PropertyNameSource.MixpanelName);
+            _md.SetProperty(MixpanelProperty.DistinctId, DistinctId);
+            _md.SetProperty(DecimalPropertyName, DecimalPropertyValue, PropertyNameSource.DataMember);
+            _md.SetProperty(DoublePropertyName, DoublePropertyValue);
+
+            Assert.That(_md.SpecialProps.Count, Is.EqualTo(2));
+            Assert.That(_md.Props.Count, Is.EqualTo(2));
+
+            _md.ClearAllProperties();
+
+            Assert.That(_md.SpecialProps.Count, Is.EqualTo(0));
+            Assert.That(_md.Props.Count, Is.EqualTo(0));
+        }
     }
 }

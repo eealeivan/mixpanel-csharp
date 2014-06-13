@@ -27,8 +27,8 @@ namespace Mixpanel
             _token = token;
             _config = config;
 
-            InitializeSuperProperties(superProperties);
-
+            SetSuperProperties(superProperties);
+            
             UtcNow = () => DateTime.UtcNow;
         }
 
@@ -423,56 +423,20 @@ namespace Mixpanel
 
         #region Super properties
 
-        private MessageData _superProperties;
-
-        private void InitializeSuperProperties(object superProperties)
-        {
-            if (_superProperties == null)
-            {
-                _superProperties = new MessageData(null, _config);
-            }
-            else
-            {
-                _superProperties.Props.Clear();
-            }
-
-            _superProperties.ParseAndSetProperties(superProperties);
-        }
-
+        private object _superProperties;
+        
         /// <summary>
-        /// Sets super properties that will be attached to every event for the current mixpanel client.
+        /// Sets super properties that will be attached to every message for the current mixpanel client.
         /// All previosly set super properties will be removed.
         /// </summary>
         /// <param name="superProperties">
-        /// Object with super properties to set.
-        /// If some of the properties are not valid mixpanel properties they will be ignored. Check documentation
-        /// on project page https://github.com/eealeivan/mixpanel-csharp for valid property types.
+        /// Object containg keys and values that will be parsed. If some of the properties are not valid mixpanel 
+        /// properties they will be ignored. Check documentation  on project page 
+        /// https://github.com/eealeivan/mixpanel-csharp for supported object containers.
         /// </param>
         public void SetSuperProperties(object superProperties)
         {
-            InitializeSuperProperties(superProperties);
-        }
-
-        /// <summary>
-        /// Sets a super property for the current mixpanel client. If property with given 
-        /// <paramref name="propertyName"></paramref> already exists, then it's value will be rewritten. 
-        /// </summary>
-        /// <param name="propertyName">
-        /// The name of the property.
-        /// </param>
-        /// <param name="propertyValue">
-        /// The value of the property to set. If an invalid value is provided then super property will 
-        /// not be set, and if there is already property with given <paramref name="propertyName"></paramref> then
-        /// it will be removed. Check documentation on project page https://github.com/eealeivan/mixpanel-csharp
-        /// for supported property values.
-        /// </param>
-        public void SetSuperProperty(string propertyName, object propertyValue)
-        {
-            var res = _superProperties.SetProperty(propertyName, propertyValue);
-            if (!res)
-            {
-                _superProperties.RemoveProperty(propertyName);
-            }
+            _superProperties = superProperties;
         }
 
         #endregion Super properties
@@ -499,16 +463,7 @@ namespace Mixpanel
             od.ParseAndSetProperties(userProperties);
             od.SetProperty(MixpanelProperty.Token, _token);
             od.ParseAndSetPropertiesIfNotNull(extraProperties);
-
-            foreach (var superSpecialProperty in _superProperties.SpecialProps)
-            {
-                od.SpecialProps[superSpecialProperty.Key] = superSpecialProperty.Value;
-            }
-
-            foreach (var superProperty in _superProperties.Props)
-            {
-                od.Props[superProperty.Key] = superProperty.Value;
-            }
+            od.ParseAndSetProperties(_superProperties);
 
             return builder.GetMessageObject(od);
         }

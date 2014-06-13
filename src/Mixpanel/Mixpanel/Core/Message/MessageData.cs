@@ -121,6 +121,12 @@ namespace Mixpanel.Core.Message
             }
         }
 
+        public void ClearAllProperties()
+        {
+            SpecialProps.Clear();
+            Props.Clear();
+        }
+
         /// <summary>
         /// Gets special Mixpanel property and throws <see cref="MixpanelObjectStructureException"/> 
         /// if property is not set or <see cref="MixpanelRequiredPropertyNullOrEmptyException"/> if property

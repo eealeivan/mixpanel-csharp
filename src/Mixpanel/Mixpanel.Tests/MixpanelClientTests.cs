@@ -356,9 +356,9 @@ namespace Mixpanel.Tests
             _client.SetSuperProperties(new Dictionary<string, object>
             {
                 {MixpanelProperty.DistinctId, DistinctId},
-                {DoublePropertyName, DoublePropertyValue}
+                {DoublePropertyName, DoublePropertyValue},
+                {StringPropertyName, StringPropertyValue}
             });
-            _client.SetSuperProperty(StringPropertyName, StringPropertyValue);
 
             var msg = _client.TrackTest(Event, new Dictionary<string, object>
             {
@@ -383,9 +383,9 @@ namespace Mixpanel.Tests
             _client.SetSuperProperties(new Dictionary<string, object>
             {
                 {MixpanelProperty.DistinctId, DistinctId},
-                {InvalidPropertyName, InvalidPropertyValue}
+                {InvalidPropertyName, InvalidPropertyValue},
+                {InvalidPropertyName2, InvalidPropertyValue2}
             });
-            _client.SetSuperProperty(InvalidPropertyName2, InvalidPropertyValue2);
 
             var msg = _client.TrackTest(Event, new Dictionary<string, object>
             {
@@ -400,6 +400,32 @@ namespace Mixpanel.Tests
             Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
             Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
             Assert.That(props[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
+        }
+
+        [Test]
+        public void SuperProperties_FromClientConstructor_AddedToMessage()
+        {
+            var client = new MixpanelClient(Token, null, new Dictionary<string, object>
+            {
+                {MixpanelProperty.DistinctId, DistinctId},
+                {DoublePropertyName, DoublePropertyValue},
+                {StringPropertyName, StringPropertyValue}
+            });
+
+            var msg = client.PeopleSetTest(new Dictionary<string, object>
+            {
+                {DecimalPropertyName, DecimalPropertyValue}
+            });
+
+            Assert.That(msg.Data.Count, Is.EqualTo(3));
+            Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
+            Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
+            Assert.That(msg.Data[MixpanelProperty.PeopleSet], Is.TypeOf<Dictionary<string, object>>());
+            var set = (Dictionary<string, object>)msg.Data[MixpanelProperty.PeopleSet];
+            Assert.That(set.Count, Is.EqualTo(3));
+            Assert.That(set[DoublePropertyName], Is.EqualTo(DoublePropertyValue));
+            Assert.That(set[StringPropertyName], Is.EqualTo(StringPropertyValue));
+            Assert.That(set[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
         }
 
         #endregion SuperProperties
