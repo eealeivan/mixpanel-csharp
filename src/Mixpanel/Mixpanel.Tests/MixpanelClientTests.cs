@@ -445,7 +445,7 @@ namespace Mixpanel.Tests
         //{
         //    var config = new MixpanelConfig
         //    {
-        //        MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.SentenceLowerCase
+        //        MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.LowerCase
         //    };
         //    //var props = new
         //    //{

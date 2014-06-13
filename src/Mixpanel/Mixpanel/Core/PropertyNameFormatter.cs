@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Diagnostics;
 using System.Text;
 
 namespace Mixpanel.Core
@@ -14,8 +14,7 @@ namespace Mixpanel.Core
 
         public string Format(string propName, PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
-            if(string.IsNullOrWhiteSpace(propName))
-                throw new ArgumentNullException("propName");
+            Debug.Assert(!string.IsNullOrWhiteSpace(propName));
 
             var propertyNameFormat = _config != null
                 ? _config.MixpanelPropertyNameFormat
@@ -27,18 +26,18 @@ namespace Mixpanel.Core
                 return propName;
             }
 
-            bool sentenseTitleCase = propertyNameFormat == MixpanelPropertyNameFormat.SentenceTitleCase;
-            bool sentenceCapitalized = propertyNameFormat == MixpanelPropertyNameFormat.SentenseCapitilized;
-            bool sentenceLowerCase = propertyNameFormat == MixpanelPropertyNameFormat.SentenceLowerCase;
+            bool sentenseCase = propertyNameFormat == MixpanelPropertyNameFormat.SentenceCase;
+            bool titleCase = propertyNameFormat == MixpanelPropertyNameFormat.TitleCase;
+            bool lowerCase = propertyNameFormat == MixpanelPropertyNameFormat.LowerCase;
 
             var newName = new StringBuilder(propName.Length + 5);
 
             var firstLetter = propName[0];
-            if ((sentenseTitleCase || sentenceCapitalized) && !char.IsUpper(firstLetter))
+            if ((sentenseCase || titleCase) && !char.IsUpper(firstLetter))
             {
                 firstLetter = char.ToUpper(firstLetter);
             }
-            else if(sentenceLowerCase && !char.IsLower(firstLetter))
+            else if(lowerCase && !char.IsLower(firstLetter))
             {
                 firstLetter = char.ToLower(firstLetter);
             }
@@ -49,8 +48,13 @@ namespace Mixpanel.Core
                 var letter = propName[i];
                 if (char.IsUpper(letter))
                 {
-                    newName.Append(" ");
-                    if (sentenceCapitalized || sentenceLowerCase)
+                    // Do not add space if previous letter is space
+                    if (propName[i - 1] != ' ')
+                    {
+                        newName.Append(' ');
+                    }
+
+                    if (sentenseCase || lowerCase)
                     {
                         letter = char.ToLower(letter);
                     }
