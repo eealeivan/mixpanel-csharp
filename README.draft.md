@@ -76,3 +76,46 @@ JSON that will be sent to ```http://api.mixpanel.com/track/```:
   }
 }
 ```
+###People Set
+```csharp
+public bool PeopleSet(object properties)
+public bool PeopleSet(object distinctId, object properties)
+```
+Example:
+```csharp
+var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
+mc.PeopleSet(new {
+    DistinctId = "12345",
+    Ip = "111.111.111.111",
+    Time = new DateTime(2013, 11, 30, 0, 0, 0, DateTimeKind.Utc),
+    IgnoreTime = true,
+    FirstName = "Darth",
+    LastName = "Vader",
+    Name = "Darth Vader",
+    Created = new DateTime(2014, 10, 22, 0, 0, 0, DateTimeKind.Utc),
+    Email = "darth.vader@gmail.com",
+    Phone = "123456",
+    Sex = "M",
+    Kills = 215
+});
+```
+JSON that will be sent to ```http://api.mixpanel.com/engage/```:
+```json
+{
+    "$token": "e3bc4100330c35722740fb8c6f5abddc",
+    "$distinct_id": "12345",
+    "$ip": "111.111.111.111",
+    "$time": 1385769600,
+    "$ignore_time": true,
+    "$set": {
+        "$first_name": "Darth",
+        "$last_name": "Vader",
+        "$name": "Darth Vader",
+        "$created": "2014-10-22T00:00:00",
+        "$email": "darth.vader@gmail.com",
+        "$phone": "123456",
+        "Sex": "M",
+        "Kills": 215
+    }
+}
+```
