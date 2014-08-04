@@ -1,24 +1,93 @@
 # mixpanel-csharp
+[Mixpanel](https://mixpanel.com/) is great analitics platform, but unfortunetally there are no official integration library for .NET. So if you are writing code on .NET and want to use Mixpanel, then ```mixpanel-csharp``` can be an excellent choise. ```mixpanel-csharp``` main idea is to hide most api details (you don't need to remember what time formatting to use, or in which cases you should prefix properties with ```$```) and concentrate on data that you want to analize.
 
-Mixpanel C# integration library.
-
+Sample usage:
 ```csharp
 var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
-mc.Track("Level Complete", new { DistinctId = 123, LevelNumber = 5 });
+mc.Track("Level Complete", new { DistinctId = "12345", LevelNumber = 5 });
 ```
-This will send the following json to Mixpanel:
+This will send the following JSON to Mixpanel:
 ```json
 {
   "event": "Level Complete",
   "properties": {
     "token": "e3bc4100330c35722740fb8c6f5abddc",
-    "distinct_id": "123",
+    "distinct_id": "12345",
     "LevelNumber": 5
   }
 }
 ```
-
 ## Supported data types
+Most tracking methods in ```mixpanel-csharp``` has ```properties``` parameter of type ```object```. This is a place where magic happens. So what objects are acceptable?
+###Dictionary
+Just provide an object that inherits from ```IDictionary``` (or preferably ```IDictionary<string, object>```):
+```csharp
+var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
+mc.Track("Level Complete", new Dictionary<string, object>
+    {
+        {"DistinctId", "12345"},
+        {"Level Number", 5},
+        {"Level Name": "First Dungeon"}
+    });
+```
+###Anonymous type
+```csharp
+var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
+mc.Track("Level Complete", new
+    {
+        DistinctId = "12345",
+        LevelNumber = 5,
+        LevelName = "First Dungeon"
+    });
+```
+###Class
+```csharp
+class LevelCompletionInfo 
+{
+    public string DistinctId { get; set; }
+    public int LevelNumber { get; set; }
+    public string LevelName { get; set; }
+}
+
+var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
+mc.Track("Level Complete", new LevelCompletionInfo
+    {
+        DistinctId = "12345",
+        LevelNumber = 5,
+        LevelName = "First Dungeon"
+    });
+```
+If you already have some classes with needed data that you use in your application, you can use them too. ```mixpanel-csharp``` knows how to work with ```DataContract```, ```DataMember``` and ```IgnoreDataMember``` attributes. There is also ```MixpanelName``` attribute. With use of these attributes you can do a lot of things:
+```csharp
+[DataContract]
+class LevelCompletionInfo 
+{
+    [MixpanelName(MixpanelProperty.DistinctId)]
+    [DataMember(Name = "user_id")]
+    public string UserId { get; set; }
+    
+    [DataMember(Name = "level_number")]
+    public int LevelNumber { get; set; }
+    
+    [MixpanelName("Level Number")]
+    [DataMember(Name = "level_number")]
+    public string LevelName { get; set; }
+    
+    [IgnoreDataMember]
+    public string IgnoredProperty { get; set; }
+    
+    public decimal AnotherIgnoredProperty { get; set }
+}
+```
+How such class will be parsed?
+- ```UserId``` - has two attributes but ```MixpanelName``` has greater priority than ```DataMember```, so the value will be ```MixpanelProperty.DistinctId```;
+- ```UserId``` - ```DataMember``` will be used, so the value will be ```"level_number"```;
+- ```LevelName``` - ```MixpanelName``` will be used, the value will be ```"Level Number"```;
+- ```IgnoredProperty``` - ignored because of ```IgnoreDataMember``` attribute. 
+- ```AnotherIgnoredProperty``` -  ignored because it's not a part of```DataContract```.
+
+###Values
+
 Type | Description
 ---- | -----------
 All value types except structs | Check the [list of C# value types] (http://msdn.microsoft.com/en-us/library/bfft1t3c.aspx)
