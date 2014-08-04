@@ -79,12 +79,16 @@ class LevelCompletionInfo
     public decimal AnotherIgnoredProperty { get; set }
 }
 ```
+
 How such class will be parsed?
-- ```UserId``` - has two attributes but ```MixpanelName``` has greater priority than ```DataMember```, so the value will be ```MixpanelProperty.DistinctId```;
-- ```UserId``` - ```DataMember``` will be used, so the value will be ```"level_number"```;
-- ```LevelName``` - ```MixpanelName``` will be used, the value will be ```"Level Name"```;
-- ```IgnoredProperty``` - ignored because of ```IgnoreDataMember``` attribute. 
-- ```AnotherIgnoredProperty``` -  ignored because it's not a part of```DataContract```.
+
+Property Name | Parse preocess
+------------- | -------
+UserId | Has two attributes but ```MixpanelName``` has greater priority than ```DataMember```, so the value will be ```MixpanelProperty.DistinctId```
+LevelNumber | ```DataMember``` will be used, so the value will be *"level_number"*
+LevelName | ```MixpanelName``` will be used, the value will be *"Level Name"*
+IgnoredProperty | Ignored because of ```IgnoreDataMember``` attribute
+AnotherIgnoredProperty | ignored because it's not a part of ```DataContract```
 
 ###Values
 
@@ -129,10 +133,10 @@ MixpanelConfig.Global.MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.Ti
 ```
 There are following formatting options:
 
-Format | Result
+Format | Description
 ------ | ------
 None | No formatting is applied. This is default option.
-SentenceCase | Property name will be parsed in sentence with only first word capitalized.  ```"VeryLongProperty" -> "Very long property"```
+SentenceCase | Property name will be parsed in sentence with only first word capitalized. <br>```"VeryLongProperty" -> "Very long property"```
 TitleCase | Property name will be parsed in sentence with all words capitalized.  ```"VeryLongProperty" -> "Very Long Property"```
 LowerCase | Property name will be parsed in sentence with no words capitalized.  ```"VeryLongProperty" -> "very long property"```
 
