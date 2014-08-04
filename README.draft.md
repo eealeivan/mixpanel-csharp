@@ -93,25 +93,50 @@ Type | Description
 All value types except structs | Check the [list of C# value types] (http://msdn.microsoft.com/en-us/library/bfft1t3c.aspx)
 String | Passed as is
 DateTime | First converted to UTC (if needed) and then to Mixpanel date format 'YYYY-MM-DDThh:mm:ss'
-Guid | Converted to string using default *ToString()* method
+Guid | Converted to string using default ```ToString()``` method
 IEnumerable | Converted to Mixpanel list, if items are of supported types listed above
 
-## Extensibility
-mixpanel-csharp has a lot of extensibility points.
+##Configuration
+You can easily configure ```mixpanel-csharp```. Configuration is done using [```MixpanelConfig```](https://github.com/eealeivan/mixpanel-csharp/blob/master/src/Mixpanel/Mixpanel/MixpanelConfig.cs) class. You can use global configuration with ```MixpanelConfig.Global``` or create an instance of ```MixpanelConfig```and pass it to constructor of ```MixpanelClient```. In case when same property is set in global and local configuration, local one is used.
 
-### Json Serializer
-Mixpanel-csharp uses Microsoft's [JavaScriptSerializer](http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer(v=vs.110).aspx) by default and it was choosen just to keep the project dependency free. It's highly recommended that you use some other(faster) JSON serializer. 
-
-### HTTP Client
-If by some reason deafult HTTP client that does HTTP POST requests is not good for you you can provide your own implementation:
+###JSON Serializer
+```mixpanel-csharp``` uses Microsoft's [JavaScriptSerializer](http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer(v=vs.110).aspx) by default and it was choosen just to keep the project dependency free. It's **highly recommended** that you use some other(faster) JSON serializer. 
+TODO: JSON.NET example
+###HTTP POST Method
+If by some reason [https://github.com/eealeivan/mixpanel-csharp/blob/master/src/Mixpanel/Mixpanel/DefaultHttpClient.cs](deafult HTTP POST method) is not good for you you can provide your own implementation:
 ```csharp
-public bool CustomHttpPost(string url, string formData)
+public bool MixpanelHttpPost(string url, string formData)
 {
-  // Your code here
+  // Your code here...
 }
 
-MixpanelConfig.Global.HttpPostFn = CustomHttpPost;
+MixpanelConfig.Global.HttpPostFn = MixpanelHttpPost;
 ```
+###Error Logging
+All methods in ```mixpanel-csharp``` catch all exceptions and if you do not configure error logging you never know if something is wrong.
+```csharp
+public void LogMixpanelErrors(string message, Exception exception)
+{
+  // Error logging code...
+}
+
+MixpanelConfig.Global.ErrorLogFn = LogMixpanelErrors;
+```
+###Custom Property Name Formatting
+You can control how property names are formatted. 
+```csharp
+MixpanelConfig.Global.MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.TitleCase;
+```
+There are following formatting options:
+
+Format | Result
+------ | ------
+None | No formatting is applied. This is default option.
+SentenceCase | Property name will be parsed in sentence with only first word capitalized. ```"VeryLongProperty"``` -> ```"Very long property"```
+TitleCase | Property name will be parsed in sentence with all words capitalized. ```"VeryLongProperty"``` -> ```"Very Long Property"```
+LowerCase | Property name will be parsed in sentence with no words capitalized. ```"VeryLongProperty"``` -> ```"very long property"```
+
+> If class property has ```DataMember``` attribute with ```Name``` property set or ```MixpanelName``` attribute, then property name formatting is ignored.
 
 ## Tracking
 mixpanel-csharp supports both Mixpanel data types: events and profile updates. There are separate methods for each data type. 
