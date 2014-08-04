@@ -103,7 +103,7 @@ You can easily configure ```mixpanel-csharp```. Configuration is done using [```
 ```mixpanel-csharp``` uses Microsoft's [JavaScriptSerializer](http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer(v=vs.110).aspx) by default and it was choosen just to keep the project dependency free. It's **highly recommended** that you use some other(faster) JSON serializer. 
 TODO: JSON.NET example
 ###HTTP POST Method
-If by some reason [https://github.com/eealeivan/mixpanel-csharp/blob/master/src/Mixpanel/Mixpanel/DefaultHttpClient.cs](deafult HTTP POST method) is not good for you you can provide your own implementation:
+If by some reason [deafult HTTP POST method](https://github.com/eealeivan/mixpanel-csharp/blob/master/src/Mixpanel/Mixpanel/DefaultHttpClient.cs) is not good for you you can provide your own implementation:
 ```csharp
 public bool MixpanelHttpPost(string url, string formData)
 {
@@ -132,9 +132,9 @@ There are following formatting options:
 Format | Result
 ------ | ------
 None | No formatting is applied. This is default option.
-SentenceCase | Property name will be parsed in sentence with only first word capitalized. ```"VeryLongProperty"``` -> ```"Very long property"```
-TitleCase | Property name will be parsed in sentence with all words capitalized. ```"VeryLongProperty"``` -> ```"Very Long Property"```
-LowerCase | Property name will be parsed in sentence with no words capitalized. ```"VeryLongProperty"``` -> ```"very long property"```
+SentenceCase | Property name will be parsed in sentence with only first word capitalized.  ```"VeryLongProperty" -> "Very long property"```
+TitleCase | Property name will be parsed in sentence with all words capitalized.  ```"VeryLongProperty" -> "Very Long Property"```
+LowerCase | Property name will be parsed in sentence with no words capitalized.  ```"VeryLongProperty" -> "very long property"```
 
 > If class property has ```DataMember``` attribute with ```Name``` property set or ```MixpanelName``` attribute, then property name formatting is ignored.
 
