@@ -137,8 +137,8 @@ Format | Description
 ------ | ------
 None | No formatting is applied. This is default option.
 SentenceCase | Property name will be parsed in sentence with only first word capitalized. <br>```"VeryLongProperty" -> "Very long property"```
-TitleCase | Property name will be parsed in sentence with all words capitalized.  ```"VeryLongProperty" -> "Very Long Property"```
-LowerCase | Property name will be parsed in sentence with no words capitalized.  ```"VeryLongProperty" -> "very long property"```
+TitleCase | Property name will be parsed in sentence with all words capitalized. <br>```"VeryLongProperty" -> "Very Long Property"```
+LowerCase | Property name will be parsed in sentence with no words capitalized. <br>```"VeryLongProperty" -> "very long property"```
 
 > If class property has ```DataMember``` attribute with ```Name``` property set or ```MixpanelName``` attribute, then property name formatting is ignored.
 
