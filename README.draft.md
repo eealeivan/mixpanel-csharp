@@ -69,8 +69,8 @@ class LevelCompletionInfo
     [DataMember(Name = "level_number")]
     public int LevelNumber { get; set; }
     
-    [MixpanelName("Level Number")]
-    [DataMember(Name = "level_number")]
+    [MixpanelName("Level Name")]
+    [DataMember(Name = "level_name")]
     public string LevelName { get; set; }
     
     [IgnoreDataMember]
@@ -82,7 +82,7 @@ class LevelCompletionInfo
 How such class will be parsed?
 - ```UserId``` - has two attributes but ```MixpanelName``` has greater priority than ```DataMember```, so the value will be ```MixpanelProperty.DistinctId```;
 - ```UserId``` - ```DataMember``` will be used, so the value will be ```"level_number"```;
-- ```LevelName``` - ```MixpanelName``` will be used, the value will be ```"Level Number"```;
+- ```LevelName``` - ```MixpanelName``` will be used, the value will be ```"Level Name"```;
 - ```IgnoredProperty``` - ignored because of ```IgnoreDataMember``` attribute. 
 - ```AnotherIgnoredProperty``` -  ignored because it's not a part of```DataContract```.
 
