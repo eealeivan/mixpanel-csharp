@@ -41,8 +41,15 @@ namespace Mixpanel
 
         #endregion PeopleSet
 
+        #region PeopleSetOnce
+
         bool PeopleSetOnce(object properties);
         bool PeopleSetOnce(object distinctId, object properties);
+
+        MixpanelMessageTest PeopleSetOnceTest(object properties);
+        MixpanelMessageTest PeopleSetOnceTest(object distinctId, object properties);
+
+        #endregion PeopleSetOnce
 
         #region PeopleAdd
 

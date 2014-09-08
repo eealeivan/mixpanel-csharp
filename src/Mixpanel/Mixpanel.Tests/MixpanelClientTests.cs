@@ -163,7 +163,48 @@ namespace Mixpanel.Tests
 
         #endregion PeopleSet
 
-        //TODO: PeopleSetOnce
+        #region PeopleSetOnce
+
+        [Test]
+        public void PeopleSetOnceTest_AnonymousObject_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleSetOnceTest(DistinctId, new
+            {
+                IgnoreTime,
+                StringProperty = StringPropertyValue,
+                DecimalProperty = DecimalPropertyValue
+            });
+
+            CheckPeopleSetOnce(msg);
+        }
+
+        [Test]
+        public void PeopleSetOnceTest_Dictionary_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleSetOnceTest(DistinctId, new Dictionary<string, object>
+            {
+                { MixpanelProperty.IgnoreTime, IgnoreTime },
+                { StringPropertyName, StringPropertyValue },
+                { DecimalPropertyName, DecimalPropertyValue }
+            });
+
+            CheckPeopleSetOnce(msg);
+        }
+
+        private void CheckPeopleSetOnce(MixpanelMessageTest msg)
+        {
+            Assert.That(msg.Data.Count, Is.EqualTo(4));
+            Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
+            Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
+            Assert.That(msg.Data[MixpanelProperty.PeopleIgnoreTime], Is.EqualTo(IgnoreTime));
+            Assert.That(msg.Data[MixpanelProperty.PeopleSetOnce], Is.TypeOf<Dictionary<string, object>>());
+            var setOnce = (Dictionary<string, object>)msg.Data[MixpanelProperty.PeopleSetOnce];
+            Assert.That(setOnce.Count, Is.EqualTo(2));
+            Assert.That(setOnce[StringPropertyName], Is.EqualTo(StringPropertyValue));
+            Assert.That(setOnce[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
+        }
+
+        #endregion PeopleSetOnce
 
         #region PeopleAdd
 

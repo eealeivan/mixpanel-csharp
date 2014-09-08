@@ -139,6 +139,16 @@ namespace Mixpanel
                 CreatePeopleSetOnceMessageObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
         }
 
+        public MixpanelMessageTest PeopleSetOnceTest(object properties)
+        {
+            return PeopleSetOnceTest(null, properties);
+        }
+
+        public MixpanelMessageTest PeopleSetOnceTest(object distinctId, object properties)
+        {
+            return TestMessage(() => CreatePeopleSetOnceMessageObject(distinctId, properties));
+        }
+
         private IDictionary<string, object> CreatePeopleSetOnceMessageObject(object distinctId, object properties)
         {
             return GetMessageObject(
