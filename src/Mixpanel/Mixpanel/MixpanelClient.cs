@@ -15,7 +15,7 @@ namespace Mixpanel
         private readonly MixpanelConfig _config;
 
         /// <summary>
-        /// Func for getting current utc time. Simplifies testing.
+        /// Func for getting/setting current utc date. Simplifies testing.
         /// </summary>
         internal Func<DateTime> UtcNow { get; set; }
 
