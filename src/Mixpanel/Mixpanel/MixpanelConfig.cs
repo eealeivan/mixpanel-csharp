@@ -11,18 +11,18 @@ namespace Mixpanel
     {
         /// <summary>
         /// Gets or sets user defined JSON serialization function. Takes an object as a parameter and returns 
-        /// serialized JSON a string.
+        /// serialized JSON string.
         /// </summary>
         public Func<object, string> SerializeJsonFn { get; set; }
 
         /// <summary>
         /// Gets or sets user defined function that will make HTTP POST requests to mixpnael endpoints.
-        /// Takes 2 parameters: url and form data. Returns true if call was successful, and false otherwise.
+        /// Takes 2 string parameters: url and form data. Returns true if call was successful, and false otherwise.
         /// </summary>
         public Func<string, string, bool> HttpPostFn { get; set; }
 
         /// <summary>
-        /// Gets ot sets used defined function for retrievenig error logs. Takes 2 parameters: message and exception.
+        /// Gets ot sets user defined function for retrievenig error logs. Takes 2 parameters: message and exception.
         /// </summary>
         public Action<string, Exception> ErrorLogFn { get; set; } 
 
