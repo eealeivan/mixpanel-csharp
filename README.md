@@ -5,22 +5,22 @@ Sample usage:
 ```csharp
 var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
 mc.Track("Level Complete", new 
-  { 
+{ 
     DistinctId = "12345",
     Time = new DateTime(2013, 9, 26, 22, 33, 44, DateTimeKind.Utc),
     LevelNumber = 5
-  });
+});
 ```
 This will send the following JSON to Mixpanel:
 ```json
 {
-  "event": "Level Complete",
-  "properties": {
-    "token": "e3bc4100330c35722740fb8c6f5abddc",
-    "distinct_id": "12345",
-    "time": 1380234824,
-    "LevelNumber": 5
-  }
+    "event": "Level Complete",
+    "properties": {
+      "token": "e3bc4100330c35722740fb8c6f5abddc",
+      "distinct_id": "12345",
+      "time": 1380234824,
+      "LevelNumber": 5
+    }
 }
 ```
 As you can see ```mixpanel-csharp``` made all dirty work for you. ```DistinctId``` is renamed to ```distinct_id```, ```Time``` value is converted to UNIX time.
@@ -31,8 +31,8 @@ MixpanelConfig.Global.MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.Ti
 ```
 After that ```LevelNumber``` will be renamed to ```Level Number``` and the same rule will apply to all other properties.
 
-## Supported data types
-Most tracking methods in ```mixpanel-csharp``` has ```properties``` parameter of type ```object```. This is a place where magic happens. So what objects are acceptable?
+## Providing analytics data
+Most ```mixpanel-csharp``` methods that send data to Mixpanel API has ```properties``` parameter of type ```object```. This is a place where magic happens. You can choose between different types of objects.
 ###Dictionary
 Just provide an object that inherits from ```IDictionary``` (or preferably ```IDictionary<string, object>```):
 ```csharp
@@ -44,7 +44,8 @@ mc.Track("Level Complete", new Dictionary<string, object>
         {"Level Name": "First Dungeon"}
     });
 ```
-###Anonymous type
+> If you use dictionaries, then rules for property name formatting will be not applied.
+###Anonymous class
 ```csharp
 var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
 mc.Track("Level Complete", new
@@ -54,7 +55,7 @@ mc.Track("Level Complete", new
         LevelName = "First Dungeon"
     });
 ```
-###Class
+###Class with optional attributes
 ```csharp
 class LevelCompletionInfo 
 {
@@ -71,7 +72,7 @@ mc.Track("Level Complete", new LevelCompletionInfo
         LevelName = "First Dungeon"
     });
 ```
-If you already have some classes with needed data that you use in your application, you can use them too. ```mixpanel-csharp``` knows how to work with ```DataContract```, ```DataMember``` and ```IgnoreDataMember``` attributes. There is also ```MixpanelName``` attribute. With use of these attributes you can do a lot of things:
+If you already have some existing classes, you can use them too. ```mixpanel-csharp``` respects ```DataContract```, ```DataMember``` and ```IgnoreDataMember``` attributes. There is also ```MixpanelName``` attribute. With use of these attributes you can do a lot of things:
 ```csharp
 [DataContract]
 class LevelCompletionInfo 
@@ -104,7 +105,7 @@ LevelName | ```MixpanelName``` will be used, the value will be *"Level Name"*
 IgnoredProperty | Ignored because of ```IgnoreDataMember``` attribute
 AnotherIgnoredProperty | ignored because it's not a part of ```DataContract```
 
-###Values
+##Supported data types
 
 Type | Description
 ---- | -----------
