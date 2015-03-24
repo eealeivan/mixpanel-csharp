@@ -45,6 +45,7 @@ mc.Track("Level Complete", new Dictionary<string, object>
     });
 ```
 > If you use dictionaries, then rules for property name formatting will be not applied.
+
 ###Anonymous class
 ```csharp
 var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
