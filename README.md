@@ -1,10 +1,15 @@
 # mixpanel-csharp
-[Mixpanel](https://mixpanel.com/) is great analitics platform, but unfortunetally there are no official integration library for .NET. So if you are writing code on .NET and want to use Mixpanel, then ```mixpanel-csharp``` can be an excellent choise. ```mixpanel-csharp``` main idea is to hide most api details (you don't need to remember what time formatting to use, or in which cases you should prefix properties with ```$```) and concentrate on data that you want to analize.
+[Mixpanel](https://mixpanel.com/) is a great analitics platform, but unfortunetally there are no official integration library for .NET. So if you are writing code on .NET and want to use Mixpanel, then ```mixpanel-csharp``` can be an excellent choise. ```mixpanel-csharp``` main idea is to hide most api details (you don't need to remember what time formatting to use, or in which cases you should prefix properties with ```$```) and concentrate on data that you want to analize. It's also well documented, configurable and testable.
 
 Sample usage:
 ```csharp
 var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
-mc.Track("Level Complete", new { DistinctId = "12345", LevelNumber = 5 });
+mc.Track("Level Complete", new 
+  { 
+    DistinctId = "12345",
+    Time = new DateTime(2013, 9, 26, 22, 33, 44, DateTimeKind.Utc),
+    LevelNumber = 5
+  });
 ```
 This will send the following JSON to Mixpanel:
 ```json
@@ -13,10 +18,19 @@ This will send the following JSON to Mixpanel:
   "properties": {
     "token": "e3bc4100330c35722740fb8c6f5abddc",
     "distinct_id": "12345",
+    "time": 1380234824,
     "LevelNumber": 5
   }
 }
 ```
+As you can see ```mixpanel-csharp``` made all dirty work for you. ```DistinctId``` is renamed to ```distinct_id```, ```Time``` value is converted to UNIX time.
+
+Maybe you don't like that ```LevelNumber``` is still in pascal case. This can be changed easily:
+```csharp
+MixpanelConfig.Global.MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.TitleCase;
+```
+After that ```LevelNumber``` will be renamed to ```Level Number``` and the same rule will apply to all other properties.
+
 ## Supported data types
 Most tracking methods in ```mixpanel-csharp``` has ```properties``` parameter of type ```object```. This is a place where magic happens. So what objects are acceptable?
 ###Dictionary
