@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Mixpanel
 {
@@ -7,12 +8,7 @@ namespace Mixpanel
     {
         public bool Post(string url, string formData)
         {
-            var req = WebRequest.CreateHttp(url);
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.Accept = "*/*";
-            req.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
-            req.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            var req = CreateWebRequest(url);
 
             using (var reqStream = req.GetRequestStream())
             {
@@ -32,6 +28,40 @@ namespace Mixpanel
                     }
                 }
             }
+        }
+
+        public async Task<bool> PostAsync(string url, string formData)
+        {
+            var req = CreateWebRequest(url);
+            using (var reqStream = await req.GetRequestStreamAsync())
+            {
+                using (var writer = new StreamWriter(reqStream))
+                {
+                    writer.Write(formData);
+                }
+            }
+
+            using (var res = await req.GetResponseAsync())
+            {
+                using (var resStream = res.GetResponseStream())
+                {
+                    using (var reader = new StreamReader(resStream))
+                    {
+                        return await reader.ReadToEndAsync() == "1";
+                    }
+                }
+            }
+        }
+
+        private HttpWebRequest CreateWebRequest(string url)
+        {
+            var req = WebRequest.CreateHttp(url);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.Accept = "*/*";
+            req.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+            req.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            return req;
         }
     }
 }

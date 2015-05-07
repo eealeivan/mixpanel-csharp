@@ -1,5 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Mixpanel.Core;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace Mixpanel.Tests
@@ -10,12 +15,21 @@ namespace Mixpanel.Tests
         private MixpanelClient _client;
         private string _endpoint, _data;
 
-
-        //private readonly object _props = new { Prop1 = "haha", Prop2 = 2.5M, Ip = _ip, Time = _now };
-
-        //private const string ExpectedTrackJson = @"{""event"":""test"",""properties"":{""token"":""1234"",""distinct_id"":""456"",""ip"":""111.111.111.111"",""time"":1385769600,""Prop1"":""haha"",""Prop2"":2.5}}";
-        //private const string ExpectedTrackBase64 = "eyJldmVudCI6InRlc3QiLCJwcm9wZXJ0aWVzIjp7InRva2VuIjoiMTIzNCIsImRpc3RpbmN0X2lkIjoiNDU2IiwiaXAiOiIxMTEuMTExLjExMS4xMTEiLCJ0aW1lIjoxMzg1NzY5NjAwLCJQcm9wMSI6ImhhaGEiLCJQcm9wMiI6Mi41fX0=";
-        //private const string ExpectedTrackFormData = "data=" + ExpectedTrackBase64;
+        public string TrackUrl
+        {
+            get
+            {
+                return string.Format(MixpanelClient.UrlFormat, MixpanelClient.EndpointTrack);
+            }
+        }
+        
+        public string EngageUrl
+        {
+            get
+            {
+                return string.Format(MixpanelClient.UrlFormat, MixpanelClient.EndpointEngage);
+            }
+        }
 
         [SetUp]
         public void SetUp()
@@ -30,38 +44,75 @@ namespace Mixpanel.Tests
                         _endpoint = endpoint;
                         _data = data;
                         return true;
+                    },
+                    AsyncHttpPostFn = (endpoint, data) =>
+                    {
+                        _endpoint = endpoint;
+                        _data = data;
+                        return Task.Run(() => true);
                     }
                 });
             _client.UtcNow = () => DateTime.UtcNow;
             _client.SetSuperProperties(new object());
         }
 
-        //[Test]
-        //public void Track_SendSimpleObject_Sent()
-        //{
-        //    _client.Track(_event, DistinctId, _props);
-
-        //    Assert.That(_endpoint, Is.EqualTo("http://api.mixpanel.com/track"));
-        //    Assert.That(_data, Is.EqualTo(ExpectedTrackFormData));
-        //}
-
         #region Track
+
+        [Test]
+        public void Track_AnonymousObject_CorrectDataSent()
+        {
+            _client.Track(Event, DistinctId, GetTrackObject());
+            CheckTrack();
+        }
+        
+        [Test]
+        public async void TrackAsync_AnonymousObject_CorrectDataSent()
+        {
+            await _client.TrackAsync(Event, DistinctId, GetTrackObject());
+            CheckTrack();
+        }
 
         [Test]
         public void TrackTest_AnonymousObject_CorrectValuesReturned()
         {
-            var msg = _client.TrackTest(Event, DistinctId, new
+            var msg = _client.TrackTest(Event, DistinctId, GetTrackObject());
+            CheckTrackTest(msg);
+        }
+
+        private object GetTrackObject()
+        {
+            return new
             {
                 Ip,
                 Time,
                 StringProperty = StringPropertyValue,
                 DecimalProperty = DecimalPropertyValue
-            });
+            };
+        }
 
+        private void CheckTrack()
+        {
+            Assert.That(_endpoint, Is.EqualTo(TrackUrl));
+
+            var msg = ParseMessageData(_data);
+            Assert.That(msg.Count, Is.EqualTo(2));
+            Assert.That(msg[MixpanelProperty.TrackEvent].Value<string>(), Is.EqualTo(Event));
+            var props = (JObject)msg[MixpanelProperty.TrackProperties];
+            Assert.That(props.Count, Is.EqualTo(6));
+            Assert.That(props[MixpanelProperty.TrackToken].Value<string>(), Is.EqualTo(Token));
+            Assert.That(props[MixpanelProperty.TrackDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            Assert.That(props[MixpanelProperty.TrackIp].Value<string>(), Is.EqualTo(Ip));
+            Assert.That(props[MixpanelProperty.TrackTime].Value<long>(), Is.EqualTo(TimeUnix));
+            Assert.That(props[StringPropertyName].Value<string>(), Is.EqualTo(StringPropertyValue));
+            Assert.That(props[DecimalPropertyName].Value<decimal>(), Is.EqualTo(DecimalPropertyValue));
+        }
+
+        private static void CheckTrackTest(MixpanelMessageTest msg)
+        {
             Assert.That(msg.Data.Count, Is.EqualTo(2));
             Assert.That(msg.Data[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
             Assert.That(msg.Data[MixpanelProperty.TrackProperties], Is.TypeOf<Dictionary<string, object>>());
-            var props = (Dictionary<string, object>)msg.Data[MixpanelProperty.TrackProperties];
+            var props = (Dictionary<string, object>) msg.Data[MixpanelProperty.TrackProperties];
             Assert.That(props.Count, Is.EqualTo(6));
             Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
             Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
@@ -76,13 +127,41 @@ namespace Mixpanel.Tests
         #region Alias
 
         [Test]
+        public void Alias_ValidValues_CorrectDataSent()
+        {
+            _client.Alias(DistinctId, Alias);
+            CheckAlias();
+        } 
+        
+        [Test]
+        public async void AliasAsync_ValidValues_CorrectDataSent()
+        {
+            await _client.AliasAsync(DistinctId, Alias);
+            CheckAlias();
+        }
+        
+        [Test]
         public void AliasTest_ValidValues_CorrectValuesReturned()
         {
             var msg = _client.AliasTest(DistinctId, Alias);
-            CheckAlias(msg);
+            CheckAliasTest(msg);
         }
 
-        private void CheckAlias(MixpanelMessageTest msg)
+        private void CheckAlias()
+        {
+            Assert.That(_endpoint, Is.EqualTo(TrackUrl));
+
+            var msg = ParseMessageData(_data);
+            Assert.That(msg.Count, Is.EqualTo(2));
+            Assert.That(msg[MixpanelProperty.TrackEvent].Value<string>(), Is.EqualTo(MixpanelProperty.TrackCreateAlias));
+            var props = (JObject)msg[MixpanelProperty.TrackProperties];
+            Assert.That(props.Count, Is.EqualTo(3));
+            Assert.That(props[MixpanelProperty.TrackToken].Value<string>(), Is.EqualTo(Token));
+            Assert.That(props[MixpanelProperty.TrackDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            Assert.That(props[MixpanelProperty.TrackAlias].Value<string>(), Is.EqualTo(Alias));
+        } 
+        
+        private void CheckAliasTest(MixpanelMessageTest msg)
         {
             Assert.That(msg.Data.Count, Is.EqualTo(2));
             Assert.That(msg.Data[MixpanelProperty.TrackEvent], Is.EqualTo(MixpanelProperty.TrackCreateAlias));
@@ -99,9 +178,50 @@ namespace Mixpanel.Tests
         #region PeopleSet
 
         [Test]
+        public void PeopleSet_AnonymousObject_CorrectDataSent()
+        {
+            _client.PeopleSet(DistinctId, GetPeopleSetObject());
+            CheckPeopleSet();
+        }
+        
+        [Test]
+        public async void PeopleSetAsync_AnonymousObject_CorrectDataSent()
+        {
+            await _client.PeopleSetAsync(DistinctId, GetPeopleSetObject());
+            CheckPeopleSet();
+        } 
+        
+        [Test]
+        public void PeopleSet_Dictionary_CorrectDataSent()
+        {
+            _client.PeopleSet(DistinctId, GetPeopleSetDictionary());
+            CheckPeopleSet();
+        }
+        
+        [Test]
+        public async void PeopleSetAsync_Dictionary_CorrectDataSent()
+        {
+            await _client.PeopleSetAsync(DistinctId, GetPeopleSetDictionary());
+            CheckPeopleSet();
+        }
+        
+        [Test]
         public void PeopleSetTest_AnonymousObject_CorrectValuesReturned()
         {
-            var msg = _client.PeopleSetTest(DistinctId, new
+            var msg = _client.PeopleSetTest(DistinctId, GetPeopleSetObject());
+            CheckPeopleSetTest(msg);
+        }
+
+        [Test]
+        public void PeopleSetTest_Dictionary_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleSetTest(DistinctId, GetPeopleSetDictionary());
+            CheckPeopleSetTest(msg);
+        }
+
+        private object GetPeopleSetObject()
+        {
+            return new
             {
                 Ip,
                 Time,
@@ -114,15 +234,12 @@ namespace Mixpanel.Tests
                 Phone,
                 StringProperty = StringPropertyValue,
                 DecimalProperty = DecimalPropertyValue
-            });
-
-            CheckPeopleSet(msg);
+            };
         }
 
-        [Test]
-        public void PeopleSetTest_Dictionary_CorrectValuesReturned()
+        private Dictionary<string, object> GetPeopleSetDictionary()
         {
-            var msg = _client.PeopleSetTest(DistinctId, new Dictionary<string, object>
+            return new Dictionary<string, object>
             {
                 { MixpanelProperty.Ip, Ip },
                 { MixpanelProperty.Time, Time },
@@ -135,12 +252,33 @@ namespace Mixpanel.Tests
                 { MixpanelProperty.Phone, Phone },
                 { StringPropertyName, StringPropertyValue },
                 { DecimalPropertyName, DecimalPropertyValue }
-            });
-
-            CheckPeopleSet(msg);
+            };
         }
 
-        private void CheckPeopleSet(MixpanelMessageTest msg)
+        private void CheckPeopleSet()
+        {
+            Assert.That(_endpoint, Is.EqualTo(EngageUrl));
+
+            var msg = ParseMessageData(_data);
+            Assert.That(msg.Count, Is.EqualTo(6));
+            Assert.That(msg[MixpanelProperty.PeopleToken].Value<string>(), Is.EqualTo(Token));
+            Assert.That(msg[MixpanelProperty.PeopleDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            Assert.That(msg[MixpanelProperty.PeopleIp].Value<string>(), Is.EqualTo(Ip));
+            Assert.That(msg[MixpanelProperty.PeopleTime].Value<long>(), Is.EqualTo(TimeUnix));
+            Assert.That(msg[MixpanelProperty.PeopleIgnoreTime].Value<bool>(), Is.EqualTo(IgnoreTime));
+            var set = (JObject)msg[MixpanelProperty.PeopleSet];
+            Assert.That(set.Count, Is.EqualTo(8));
+            Assert.That(set[MixpanelProperty.PeopleFirstName].Value<string>(), Is.EqualTo(FirstName));
+            Assert.That(set[MixpanelProperty.PeopleLastName].Value<string>(), Is.EqualTo(LastName));
+            Assert.That(set[MixpanelProperty.PeopleName].Value<string>(), Is.EqualTo(Name));
+            Assert.That(ToDateTimeString(set[MixpanelProperty.PeopleCreated]), Is.EqualTo(CreatedFormat));
+            Assert.That(set[MixpanelProperty.PeopleEmail].Value<string>(), Is.EqualTo(Email));
+            Assert.That(set[MixpanelProperty.PeoplePhone].Value<string>(), Is.EqualTo(Phone));
+            Assert.That(set[StringPropertyName].Value<string>(), Is.EqualTo(StringPropertyValue));
+            Assert.That(set[DecimalPropertyName].Value<decimal>(), Is.EqualTo(DecimalPropertyValue));
+        }
+        
+        private void CheckPeopleSetTest(MixpanelMessageTest msg)
         {
             Assert.That(msg.Data.Count, Is.EqualTo(6));
             Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
@@ -471,40 +609,18 @@ namespace Mixpanel.Tests
 
         #endregion SuperProperties
 
-        public class MyClass
+        public JObject ParseMessageData(string data)
         {
-            public string PropTest { get; set; }
-
-            [MixpanelName("Mega Date")]
-            public DateTime SuperMegaDate { get; set; }
-
-            public List<string> List { get; set; }
+            // Remove "data="
+            var base64 = data.Remove(0, 5);
+            var json = Encoding.UTF8.GetString(Convert.FromBase64String(base64));
+            var msg = (JObject)JsonConvert.DeserializeObject(json);
+            return msg;
         }
 
-        //[Test]
-        //public void Realtest()
-        //{
-        //    var config = new MixpanelConfig
-        //    {
-        //        MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.LowerCase
-        //    };
-        //    //var props = new
-        //    //{
-        //    //    PropTest = "haha",
-        //    //    PropSuperTest = 2.5M,
-        //    //    MegaDate = DateTime.UtcNow,
-        //    //    DistinctId = "890"
-        //    //};
-        //    var props = new MyClass
-        //    {
-        //        PropTest = "huhu",
-        //        SuperMegaDate = DateTime.UtcNow,
-        //        List = new List<string> { "one", "two", "three" }
-        //    };
-        //    var res = new MixpanelClient("16acd719b243fb6aef1ded661b0ae657", config)
-        //        .Track(_event, props, _distinctId, null, DateTime.UtcNow);
-
-        //    Assert.That(res, Is.True);
-        //}
+        public string ToDateTimeString(JToken jToken)
+        {
+            return jToken.Value<DateTime>().ToString(ValueParser.MixpanelDateFormat);
+        }
     }
 }

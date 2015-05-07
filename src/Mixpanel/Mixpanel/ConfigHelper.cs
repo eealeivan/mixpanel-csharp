@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Mixpanel
 {
@@ -24,6 +25,17 @@ namespace Mixpanel
                 return MixpanelConfig.Global.HttpPostFn;
 
             return new DefaultHttpClient().Post;
+        }
+
+        public static Func<string, string, Task<bool>> GetAsyncHttpPostFn(MixpanelConfig config)
+        {
+            if (config != null && config.AsyncHttpPostFn != null)
+                return config.AsyncHttpPostFn;
+
+            if (MixpanelConfig.Global.AsyncHttpPostFn != null)
+                return MixpanelConfig.Global.AsyncHttpPostFn;
+
+            return new DefaultHttpClient().PostAsync;
         }
         
         public static Action<string, Exception> GetErrorLogFn(MixpanelConfig config)

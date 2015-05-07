@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Mixpanel.Core.Message;
 
 namespace Mixpanel
 {
-    public class MixpanelClient : IMixpanelClient
+    public sealed class MixpanelClient : IMixpanelClient
     {
-        private const string UrlFormat = "http://api.mixpanel.com/{0}";
-        private const string EndpointTrack = "track";
-        private const string EndpointEngage = "engage";
+        internal const string UrlFormat = "http://api.mixpanel.com/{0}";
+        internal const string EndpointTrack = "track";
+        internal const string EndpointEngage = "engage";
 
         private readonly string _token;
         private readonly MixpanelConfig _config;
@@ -79,6 +80,36 @@ namespace Mixpanel
         }
 
         /// <summary>
+        /// Adds an event to Mixpanel by sending a message to 'http://api.mixpanel.com/track/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="event">Name of the event.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public async Task<bool> TrackAsync(string @event, object properties)
+        {
+            return await TrackAsync(@event, null, properties);
+        }
+
+        /// <summary>
+        /// Adds an event to Mixpanel by sending a message to 'http://api.mixpanel.com/track/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="event">Name of the event.</param>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public async Task<bool> TrackAsync(string @event, object distinctId, object properties)
+        {
+            return await SendMessageAsync(
+                CreateTrackMessageObject(@event, distinctId, properties), EndpointTrack, "Track");
+        }
+
+        /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'Track' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
@@ -140,6 +171,18 @@ namespace Mixpanel
         }
 
         /// <summary>
+        /// Creates an alias to existing distinct id. 
+        /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Original unique user profile identifier to create alias for.</param>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        public async Task<bool> AliasAsync(object distinctId, object alias)
+        {
+            return await SendMessageAsync(CreateAliasMessageObject(distinctId, alias), EndpointTrack, "Alias");
+        }
+
+        /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'Alias' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
@@ -195,6 +238,36 @@ namespace Mixpanel
         public bool PeopleSet(object distinctId, object properties)
         {
             return SendMessage(CreatePeopleSetMessageObject(distinctId, properties), EndpointEngage, "PeopleSet");
+        }
+
+        /// <summary>
+        /// Sets <paramref name="properties"></paramref> for profile. If profile doesn't exists, then new profile
+        /// will be created. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public async Task<bool> PeopleSetAsync(object properties)
+        {
+            return await PeopleSetAsync(null, properties);
+        }
+
+        /// <summary>
+        /// Sets <paramref name="properties"></paramref> for profile. If profile doesn't exists, then new profile
+        /// will be created. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public async Task<bool> PeopleSetAsync(object distinctId, object properties)
+        {
+            return await SendMessageAsync(
+                CreatePeopleSetMessageObject(distinctId, properties), EndpointEngage, "PeopleSet");
         }
 
         /// <summary>
@@ -266,6 +339,36 @@ namespace Mixpanel
         public bool PeopleSetOnce(object distinctId, object properties)
         {
             return SendMessage(
+                CreatePeopleSetOnceMessageObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
+        }
+
+        /// <summary>
+        /// Sets <paramref name="properties"></paramref> for profile without overwriting existing values. 
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public async Task<bool> PeopleSetOnceAsync(object properties)
+        {
+            return await PeopleSetOnceAsync(null, properties);
+        }
+
+        /// <summary>
+        /// Sets <paramref name="properties"></paramref> for profile without overwriting existing values. 
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public async Task<bool> PeopleSetOnceAsync(object distinctId, object properties)
+        {
+            return await SendMessageAsync(
                 CreatePeopleSetOnceMessageObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
         }
 
@@ -342,6 +445,40 @@ namespace Mixpanel
         public bool PeopleAdd(object distinctId, object properties)
         {
             return SendMessage(
+                CreatePeopleAddMessageObject(distinctId, properties), EndpointEngage, "PeopleAdd");
+        }
+
+        /// <summary>
+        /// The property values are added to the existing values of the properties on the profile. 
+        /// If the property is not present on the profile, the value will be added to 0. 
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and numeric values. All non numeric properties except '$distinct_id'
+        /// will be ignored. Check documentation on project page 'https://github.com/eealeivan/mixpanel-csharp' 
+        /// for supported object containers.
+        /// </param>
+        public async Task<bool> PeopleAddAsync(object properties)
+        {
+            return await PeopleAddAsync(null, properties);
+        }
+
+        /// <summary>
+        /// The property values are added to the existing values of the properties on the profile. 
+        /// If the property is not present on the profile, the value will be added to 0. 
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and numeric values. All non numeric properties except '$distinct_id'
+        /// will be ignored. Check documentation on project page 'https://github.com/eealeivan/mixpanel-csharp' 
+        /// for supported object containers.
+        /// </param>
+        public async Task<bool> PeopleAddAsync(object distinctId, object properties)
+        {
+            return await SendMessageAsync(
                 CreatePeopleAddMessageObject(distinctId, properties), EndpointEngage, "PeopleAdd");
         }
 
@@ -424,6 +561,38 @@ namespace Mixpanel
         }
 
         /// <summary>
+        /// Appends each property value to list associated with the corresponding property name.
+        /// Appending to a property that doesn't exist will result in assigning a list with one element to that property.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        public async Task<bool> PeopleAppendAsync(object properties)
+        {
+            return await PeopleAppendAsync(null, properties);
+        }
+
+        /// <summary>
+        /// Appends each property value to list associated with the corresponding property name.
+        /// Appending to a property that doesn't exist will result in assigning a list with one element to that property.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        public async Task<bool> PeopleAppendAsync(object distinctId, object properties)
+        {
+            return await SendMessageAsync(
+                CreatePeopleAppendMessageObject(distinctId, properties), EndpointEngage, "PeopleAppend");
+        }
+
+        /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleAppend' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
@@ -499,6 +668,38 @@ namespace Mixpanel
         }
 
         /// <summary>
+        /// Property list values will be merged with the existing lists on the user profile, ignoring 
+        /// duplicate list values. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed and sent to Mixpanel. All non collection 
+        /// properties except '$distinct_id' will be ignored. Check documentation  on project page 
+        /// https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        ///</param>
+        public async Task<bool> PeopleUnionAsync(object properties)
+        {
+            return await PeopleUnionAsync(null, properties);
+        }
+
+        ///  <summary>
+        ///  Property list values will be merged with the existing lists on the user profile, ignoring 
+        ///  duplicate list values. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        ///  Returns true if call was successful, and false otherwise.
+        ///  </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        ///  Object containg keys and values that will be parsed and sent to Mixpanel. All non collection 
+        ///  properties except '$distinct_id' will be ignored. Check documentation  on project page 
+        ///  https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        public async Task<bool> PeopleUnionAsync(object distinctId, object properties)
+        {
+            return await SendMessageAsync(
+                CreatePeopleUnionMessageObject(distinctId, properties), EndpointEngage, "PeopleUnion");
+        }
+
+        /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleUnion' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
@@ -569,6 +770,30 @@ namespace Mixpanel
         }
 
         /// <summary>
+        /// Properties with names containing in <paramref name="propertyNames"/> will be permanently
+        /// removed. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        public async Task<bool> PeopleUnsetAsync(IEnumerable<string> propertyNames)
+        {
+            return await PeopleUnsetAsync(null, propertyNames);
+        }
+
+        /// <summary>
+        /// Properties with names containing in <paramref name="propertyNames"/> will be permanently
+        /// removed. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        public async Task<bool> PeopleUnsetAsync(object distinctId, IEnumerable<string> propertyNames)
+        {
+            return await SendMessageAsync(
+                CreatePeopleUnsetMessageObject(distinctId, propertyNames), EndpointEngage, "PeopleUnset");
+        }
+
+        /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleUnset' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
@@ -620,6 +845,18 @@ namespace Mixpanel
         }
 
         /// <summary>
+        /// Permanently delete the profile from Mixpanel, along with all of its properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        public async Task<bool> PeopleDeleteAsync(object distinctId)
+        {
+            return await SendMessageAsync(
+                CreatePeopleDeleteObject(distinctId), EndpointEngage, "PeopleDelete");
+        }
+
+        /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleDelete' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
@@ -663,6 +900,31 @@ namespace Mixpanel
         public bool PeopleTrackCharge(object distinctId, decimal amount, DateTime time)
         {
             return SendMessage(
+                CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
+                EndpointEngage, "PeopleTrackCharge");
+        }
+
+        /// <summary>
+        /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="amount">Amount of the transaction.</param>
+        public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount)
+        {
+            return await PeopleTrackChargeAsync(distinctId, amount, UtcNow());
+        }
+
+        /// <summary>
+        /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount, DateTime time)
+        {
+            return await SendMessageAsync(
                 CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
                 EndpointEngage, "PeopleTrackCharge");
         }
@@ -776,12 +1038,16 @@ namespace Mixpanel
             return "data=" + ToBase64(ToJson(obj));
         }
 
+        private string GenerateUrl(string endpoint)
+        {
+            return string.Format(UrlFormat, endpoint);
+        }
+
         private bool SendMessage(IDictionary<string, object> obj, string endpoint, string messageType)
         {
-            string url, formData;
+            string formData;
             try
             {
-                url = string.Format(UrlFormat, endpoint);
                 formData = GetFormData(obj);
             }
             catch (Exception e)
@@ -790,9 +1056,37 @@ namespace Mixpanel
                 return false;
             }
 
+            string url = GenerateUrl(endpoint);
             try
             {
-                return ConfigHelper.GetHttpPostFn(_config)(url, formData);
+                var httpPostFn = ConfigHelper.GetHttpPostFn(_config);
+                return httpPostFn(url, formData);
+            }
+            catch (Exception e)
+            {
+                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, formData), e);
+                return false;
+            }
+        }
+
+        private async Task<bool> SendMessageAsync(IDictionary<string, object> obj, string endpoint, string messageType)
+        {
+            string formData;
+            try
+            {
+                formData = GetFormData(obj);
+            }
+            catch (Exception e)
+            {
+                LogError(string.Format("Error creating '{0}' object.", messageType), e);
+                return false;
+            }
+
+            string url = GenerateUrl(endpoint);
+            try
+            {
+                var httpPostFn = ConfigHelper.GetAsyncHttpPostFn(_config);
+                return await httpPostFn(url, formData);
             }
             catch (Exception e)
             {

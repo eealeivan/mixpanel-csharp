@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Mixpanel
 {
@@ -16,10 +17,16 @@ namespace Mixpanel
         public Func<object, string> SerializeJsonFn { get; set; }
 
         /// <summary>
-        /// Gets or sets user defined function that will make HTTP POST requests to mixpnael endpoints.
+        /// Gets or sets user defined function that will make HTTP POST requests to mixpanel endpoints.
         /// Takes 2 string parameters: url and form data. Returns true if call was successful, and false otherwise.
         /// </summary>
         public Func<string, string, bool> HttpPostFn { get; set; }
+        
+        /// <summary>
+        /// Gets or sets user defined function that will make async HTTP POST requests to mixpanel endpoints.
+        /// Takes 2 string parameters: url and form data. Returns true if call was successful, and false otherwise.
+        /// </summary>
+        public Func<string, string, Task<bool>> AsyncHttpPostFn { get; set; }
 
         /// <summary>
         /// Gets ot sets user defined function for retrievenig error logs. Takes 2 parameters: message and exception.
@@ -48,6 +55,7 @@ namespace Mixpanel
         {
             SerializeJsonFn = null;
             HttpPostFn = null;
+            AsyncHttpPostFn = null;
             ErrorLogFn = null;
             MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.None;
         }
