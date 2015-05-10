@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Mixpanel.Core;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -22,7 +21,7 @@ namespace Mixpanel.Tests
                 return string.Format(MixpanelClient.UrlFormat, MixpanelClient.EndpointTrack);
             }
         }
-        
+
         public string EngageUrl
         {
             get
@@ -64,11 +63,25 @@ namespace Mixpanel.Tests
             _client.Track(Event, DistinctId, GetTrackObject());
             CheckTrack();
         }
-        
+
+        [Test]
+        public void Track_AnonymousObjectWithDistinctId_CorrectDataSent()
+        {
+            _client.Track(Event, GetTrackObject(includeDistinctId: true));
+            CheckTrack();
+        }
+
         [Test]
         public async void TrackAsync_AnonymousObject_CorrectDataSent()
         {
             await _client.TrackAsync(Event, DistinctId, GetTrackObject());
+            CheckTrack();
+        }
+
+        [Test]
+        public async void TrackAsync_AnonymousObjectWithDistinctId_CorrectDataSent()
+        {
+            await _client.TrackAsync(Event, GetTrackObject(includeDistinctId: true));
             CheckTrack();
         }
 
@@ -79,8 +92,69 @@ namespace Mixpanel.Tests
             CheckTrackTest(msg);
         }
 
-        private object GetTrackObject()
+        [Test]
+        public void TrackTest_AnonymousObjectWithDistinctId_CorrectValuesReturned()
         {
+            var msg = _client.TrackTest(Event, GetTrackObject(includeDistinctId: true));
+            CheckTrackTest(msg);
+        }
+
+        [Test]
+        public void Track_Dictionary_CorrectDataSent()
+        {
+            _client.Track(Event, DistinctId, GetTrackDictionary());
+            CheckTrack();
+        }
+
+        [Test]
+        public void Track_DictionaryWithDistinctId_CorrectDataSent()
+        {
+            _client.Track(Event, GetTrackDictionary(includeDistinctId: true));
+            CheckTrack();
+        }
+
+        [Test]
+        public async void TrackAsync_Dictionary_CorrectDataSent()
+        {
+            await _client.TrackAsync(Event, DistinctId, GetTrackDictionary());
+            CheckTrack();
+        }
+
+        [Test]
+        public async void TrackAsync_DictionaryWithDistinctId_CorrectDataSent()
+        {
+            await _client.TrackAsync(Event, GetTrackDictionary(includeDistinctId: true));
+            CheckTrack();
+        }
+
+        [Test]
+        public void TrackTest_Dictionary_CorrectValuesReturned()
+        {
+            var msg = _client.TrackTest(Event, DistinctId, GetTrackDictionary());
+            CheckTrackTest(msg);
+        }
+
+        [Test]
+        public void TrackTest_DictionaryWithDistinctId_CorrectValuesReturned()
+        {
+            var msg = _client.TrackTest(Event, GetTrackDictionary(includeDistinctId: true));
+            CheckTrackTest(msg);
+        }
+
+        private object GetTrackObject(bool includeDistinctId = false)
+        {
+            if (includeDistinctId)
+            {
+                return new
+                {
+                    Ip,
+                    Time,
+                    DistinctId,
+                    StringProperty = StringPropertyValue,
+                    DecimalProperty = DecimalPropertyValue
+                };
+            }
+
             return new
             {
                 Ip,
@@ -88,6 +162,24 @@ namespace Mixpanel.Tests
                 StringProperty = StringPropertyValue,
                 DecimalProperty = DecimalPropertyValue
             };
+        }
+
+        private Dictionary<string, object> GetTrackDictionary(bool includeDistinctId = false)
+        {
+            var dic = new Dictionary<string, object>
+            {
+                {MixpanelProperty.Ip, Ip},
+                {MixpanelProperty.Time, Time},
+                {StringPropertyName, StringPropertyValue},
+                {DecimalPropertyName, DecimalPropertyValue},
+            };
+
+            if (includeDistinctId)
+            {
+                dic[MixpanelProperty.DistinctId] = DistinctId;
+            }
+
+            return dic;
         }
 
         private void CheckTrack()
@@ -112,7 +204,7 @@ namespace Mixpanel.Tests
             Assert.That(msg.Data.Count, Is.EqualTo(2));
             Assert.That(msg.Data[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
             Assert.That(msg.Data[MixpanelProperty.TrackProperties], Is.TypeOf<Dictionary<string, object>>());
-            var props = (Dictionary<string, object>) msg.Data[MixpanelProperty.TrackProperties];
+            var props = (Dictionary<string, object>)msg.Data[MixpanelProperty.TrackProperties];
             Assert.That(props.Count, Is.EqualTo(6));
             Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
             Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
@@ -131,15 +223,15 @@ namespace Mixpanel.Tests
         {
             _client.Alias(DistinctId, Alias);
             CheckAlias();
-        } 
-        
+        }
+
         [Test]
         public async void AliasAsync_ValidValues_CorrectDataSent()
         {
             await _client.AliasAsync(DistinctId, Alias);
             CheckAlias();
         }
-        
+
         [Test]
         public void AliasTest_ValidValues_CorrectValuesReturned()
         {
@@ -159,8 +251,8 @@ namespace Mixpanel.Tests
             Assert.That(props[MixpanelProperty.TrackToken].Value<string>(), Is.EqualTo(Token));
             Assert.That(props[MixpanelProperty.TrackDistinctId].Value<string>(), Is.EqualTo(DistinctId));
             Assert.That(props[MixpanelProperty.TrackAlias].Value<string>(), Is.EqualTo(Alias));
-        } 
-        
+        }
+
         private void CheckAliasTest(MixpanelMessageTest msg)
         {
             Assert.That(msg.Data.Count, Is.EqualTo(2));
@@ -183,28 +275,28 @@ namespace Mixpanel.Tests
             _client.PeopleSet(DistinctId, GetPeopleSetObject());
             CheckPeopleSet();
         }
-        
+
         [Test]
         public async void PeopleSetAsync_AnonymousObject_CorrectDataSent()
         {
             await _client.PeopleSetAsync(DistinctId, GetPeopleSetObject());
             CheckPeopleSet();
-        } 
-        
+        }
+
         [Test]
         public void PeopleSet_Dictionary_CorrectDataSent()
         {
             _client.PeopleSet(DistinctId, GetPeopleSetDictionary());
             CheckPeopleSet();
         }
-        
+
         [Test]
         public async void PeopleSetAsync_Dictionary_CorrectDataSent()
         {
             await _client.PeopleSetAsync(DistinctId, GetPeopleSetDictionary());
             CheckPeopleSet();
         }
-        
+
         [Test]
         public void PeopleSetTest_AnonymousObject_CorrectValuesReturned()
         {
@@ -277,7 +369,7 @@ namespace Mixpanel.Tests
             Assert.That(set[StringPropertyName].Value<string>(), Is.EqualTo(StringPropertyValue));
             Assert.That(set[DecimalPropertyName].Value<decimal>(), Is.EqualTo(DecimalPropertyValue));
         }
-        
+
         private void CheckPeopleSetTest(MixpanelMessageTest msg)
         {
             Assert.That(msg.Data.Count, Is.EqualTo(6));
@@ -304,16 +396,24 @@ namespace Mixpanel.Tests
         #region PeopleSetOnce
 
         [Test]
+        public void PeopleSetOnce_AnonymousObject_CorrectDataSent()
+        {
+            _client.PeopleSetOnce(DistinctId, GetPeopleSetOnceObject());
+            CheckPeopleSetOnce();
+        }
+
+        [Test]
+        public async void PeopleSetOnceAsync_AnonymousObject_CorrectDataSent()
+        {
+            await _client.PeopleSetOnceAsync(DistinctId, GetPeopleSetOnceObject());
+            CheckPeopleSetOnce();
+        }
+
+        [Test]
         public void PeopleSetOnceTest_AnonymousObject_CorrectValuesReturned()
         {
-            var msg = _client.PeopleSetOnceTest(DistinctId, new
-            {
-                IgnoreTime,
-                StringProperty = StringPropertyValue,
-                DecimalProperty = DecimalPropertyValue
-            });
-
-            CheckPeopleSetOnce(msg);
+            var msg = _client.PeopleSetOnceTest(DistinctId, GetPeopleSetOnceObject());
+            CheckPeopleSetOnceTest(msg);
         }
 
         [Test]
@@ -326,10 +426,35 @@ namespace Mixpanel.Tests
                 { DecimalPropertyName, DecimalPropertyValue }
             });
 
-            CheckPeopleSetOnce(msg);
+            CheckPeopleSetOnceTest(msg);
         }
 
-        private void CheckPeopleSetOnce(MixpanelMessageTest msg)
+        private object GetPeopleSetOnceObject()
+        {
+            return new
+            {
+                IgnoreTime,
+                StringProperty = StringPropertyValue,
+                DecimalProperty = DecimalPropertyValue
+            };
+        }
+
+        private void CheckPeopleSetOnce()
+        {
+            Assert.That(_endpoint, Is.EqualTo(EngageUrl));
+
+            var msg = ParseMessageData(_data);
+            Assert.That(msg.Count, Is.EqualTo(4));
+            Assert.That(msg[MixpanelProperty.PeopleToken].Value<string>(), Is.EqualTo(Token));
+            Assert.That(msg[MixpanelProperty.PeopleDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            Assert.That(msg[MixpanelProperty.PeopleIgnoreTime].Value<bool>(), Is.EqualTo(IgnoreTime));
+            var setOnce = (JObject)msg[MixpanelProperty.PeopleSetOnce];
+            Assert.That(setOnce.Count, Is.EqualTo(2));
+            Assert.That(setOnce[StringPropertyName].Value<string>(), Is.EqualTo(StringPropertyValue));
+            Assert.That(setOnce[DecimalPropertyName].Value<decimal>(), Is.EqualTo(DecimalPropertyValue));
+        }
+
+        private void CheckPeopleSetOnceTest(MixpanelMessageTest msg)
         {
             Assert.That(msg.Data.Count, Is.EqualTo(4));
             Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
@@ -347,34 +472,101 @@ namespace Mixpanel.Tests
         #region PeopleAdd
 
         [Test]
-        public void PeopleAddTest_OnlyNumericInput_CorrectValuesReturned()
+        public void PeopleAdd_NumericInput_CorrectDataSent()
         {
-            var msg = _client.PeopleAddTest(DistinctId, new Dictionary<string, object>
-            {
-                {DecimalPropertyName, DecimalPropertyValue},
-                {IntPropertyName, IntPropertyValue},
-                {DoublePropertyName, DoublePropertyValue}
-            });
+            _client.PeopleAdd(DistinctId, GetPeopleAddDictionary());
+            CheckPeopleAdd();
+        }
 
-            CheckPeopleAdd(msg);
+        [Test]
+        public void PeopleAdd_NumericInputWithDistinctId_CorrectDataSent()
+        {
+            _client.PeopleAdd(GetPeopleAddDictionary(includeDistinctId: true));
+            CheckPeopleAdd();
+        }
+
+        [Test]
+        public void PeopleAdd_MixedInput_CorrectDataSent()
+        {
+            _client.PeopleAdd(DistinctId, GetPeopleAddDictionary(includeNonNumericValues: true));
+            CheckPeopleAdd();
+        }
+
+        [Test]
+        public async void PeopleAddAsync_NumericInput_CorrectDataSent()
+        {
+            await _client.PeopleAddAsync(DistinctId, GetPeopleAddDictionary());
+            CheckPeopleAdd();
+        }
+        
+        [Test]
+        public async void PeopleAddAsync_NumericInputWithDistinctId_CorrectDataSent()
+        {
+            await _client.PeopleAddAsync(GetPeopleAddDictionary(includeDistinctId: true));
+            CheckPeopleAdd();
+        }
+
+        [Test]
+        public async void PeopleAddAsync_MixedInput_CorrectDataSent()
+        {
+            await _client.PeopleAddAsync(DistinctId, GetPeopleAddDictionary(includeNonNumericValues: true));
+            CheckPeopleAdd();
+        }
+
+        [Test]
+        public void PeopleAddTest_NumericInput_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleAddTest(DistinctId, GetPeopleAddDictionary());
+            CheckPeopleAddTest(msg);
         }
 
         [Test]
         public void PeopleAddTest_MixedInput_CorrectValuesReturned()
         {
-            var msg = _client.PeopleAddTest(DistinctId, new Dictionary<string, object>
+            var msg = _client.PeopleAddTest(DistinctId, GetPeopleAddDictionary(includeNonNumericValues: true));
+            CheckPeopleAddTest(msg);
+        }
+
+        private Dictionary<string, object> GetPeopleAddDictionary(
+            bool includeDistinctId = false, bool includeNonNumericValues = false)
+        {
+            var dic = new Dictionary<string, object>
             {
                 {DecimalPropertyName, DecimalPropertyValue},
                 {IntPropertyName, IntPropertyValue},
-                {DoublePropertyName, DoublePropertyValue},
-                {MixpanelProperty.Created, Time},
-                {StringPropertyName, StringPropertyValue}
-            });
+                {DoublePropertyName, DoublePropertyValue}
+            };
 
-            CheckPeopleAdd(msg);
+            if (includeDistinctId)
+            {
+                dic[MixpanelProperty.DistinctId] = DistinctId;
+            }
+
+            if (includeNonNumericValues)
+            {
+                dic[MixpanelProperty.Created] = Time;
+                dic[StringPropertyName] = StringPropertyValue;
+            }
+
+            return dic;
         }
 
-        private void CheckPeopleAdd(MixpanelMessageTest msg)
+        private void CheckPeopleAdd()
+        {
+            Assert.That(_endpoint, Is.EqualTo(EngageUrl));
+
+            var msg = ParseMessageData(_data);
+            Assert.That(msg.Count, Is.EqualTo(3));
+            Assert.That(msg[MixpanelProperty.PeopleToken].Value<string>(), Is.EqualTo(Token));
+            Assert.That(msg[MixpanelProperty.PeopleDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            var add = (JObject)msg[MixpanelProperty.PeopleAdd];
+            Assert.That(add.Count, Is.EqualTo(3));
+            Assert.That(add[DecimalPropertyName].Value<decimal>(), Is.EqualTo(DecimalPropertyValue));
+            Assert.That(add[IntPropertyName].Value<int>(), Is.EqualTo(IntPropertyValue));
+            Assert.That(add[DoublePropertyName].Value<double>(), Is.EqualTo(DoublePropertyValue));
+        }
+
+        private void CheckPeopleAddTest(MixpanelMessageTest msg)
         {
             Assert.That(msg.Data.Count, Is.EqualTo(3));
             Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
@@ -392,19 +584,84 @@ namespace Mixpanel.Tests
         #region PeopleAppend
 
         [Test]
-        public void PeopleAppendTest_ValidInput_CorrectValuesReturned()
+        public void PeopleAppend_Dictionary_CorrectDataSent()
         {
-            var msg = _client.PeopleAppendTest(DistinctId, new Dictionary<string, object>
+            _client.PeopleAppend(DistinctId, GetPeopleAppendDictionary());
+            CheckPeopleAppend();
+        }
+        
+        [Test]
+        public void PeopleAppend_DictionaryWithDistinctId_CorrectDataSent()
+        {
+            _client.PeopleAppend(GetPeopleAppendDictionary(includeDistinctId: true));
+            CheckPeopleAppend();
+        } 
+        
+        [Test]
+        public async void PeopleAppendAsync_Dictionary_CorrectDataSent()
+        {
+            await _client.PeopleAppendAsync(DistinctId, GetPeopleAppendDictionary());
+            CheckPeopleAppend();
+        }
+        
+        [Test]
+        public async void PeopleAppendAsync_DictionaryWithDistinctId_CorrectDataSent()
+        {
+            await _client.PeopleAppendAsync(GetPeopleAppendDictionary(includeDistinctId: true));
+            CheckPeopleAppend();
+        }
+
+        [Test]
+        public void PeopleAppendTest_Dictionary_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleAppendTest(DistinctId, GetPeopleAppendDictionary());
+            CheckPeopleAppendTest(msg);
+        }
+        
+        [Test]
+        public void PeopleAppendTest_DictionaryWithDistinctId_CorrectValuesReturned()
+        {
+            var msg = _client.PeopleAppendTest(GetPeopleAppendDictionary(includeDistinctId: true));
+            CheckPeopleAppendTest(msg);
+        }
+
+        private Dictionary<string, object> GetPeopleAppendDictionary(bool includeDistinctId = false)
+        {
+            var dic = new Dictionary<string, object>
             {
                 {DecimalPropertyName, DecimalPropertyValue},
                 {StringPropertyName, StringPropertyValue}
-            });
+            };
 
+            if (includeDistinctId)
+            {
+                dic[MixpanelProperty.DistinctId] = DistinctId;
+            }
+
+            return dic;
+        }
+
+        private void CheckPeopleAppend()
+        {
+            Assert.That(_endpoint, Is.EqualTo(EngageUrl));
+
+            var msg = ParseMessageData(_data);
+            Assert.That(msg.Count, Is.EqualTo(3));
+            Assert.That(msg[MixpanelProperty.PeopleToken].Value<string>(), Is.EqualTo(Token));
+            Assert.That(msg[MixpanelProperty.PeopleDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            var append = (JObject)msg[MixpanelProperty.PeopleAppend];
+            Assert.That(append.Count, Is.EqualTo(2));
+            Assert.That(append[DecimalPropertyName].Value<decimal>(), Is.EqualTo(DecimalPropertyValue));
+            Assert.That(append[StringPropertyName].Value<string>(), Is.EqualTo(StringPropertyValue));
+        }
+
+        private void CheckPeopleAppendTest(MixpanelMessageTest msg)
+        {
             Assert.That(msg.Data.Count, Is.EqualTo(3));
             Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
             Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
             Assert.That(msg.Data[MixpanelProperty.PeopleAppend], Is.TypeOf<Dictionary<string, object>>());
-            var append = (Dictionary<string, object>)msg.Data[MixpanelProperty.PeopleAppend];
+            var append = (Dictionary<string, object>) msg.Data[MixpanelProperty.PeopleAppend];
             Assert.That(append.Count, Is.EqualTo(2));
             Assert.That(append[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
             Assert.That(append[StringPropertyName], Is.EqualTo(StringPropertyValue));
@@ -547,7 +804,7 @@ namespace Mixpanel.Tests
             Assert.That(msg.Data.Count, Is.EqualTo(2));
             Assert.That(msg.Data[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
             Assert.That(msg.Data[MixpanelProperty.TrackProperties], Is.TypeOf<Dictionary<string, object>>());
-            var props = (Dictionary<string, object>) msg.Data[MixpanelProperty.TrackProperties];
+            var props = (Dictionary<string, object>)msg.Data[MixpanelProperty.TrackProperties];
             Assert.That(props.Count, Is.EqualTo(5));
             Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
             Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
@@ -614,7 +871,7 @@ namespace Mixpanel.Tests
             // Remove "data="
             var base64 = data.Remove(0, 5);
             var json = Encoding.UTF8.GetString(Convert.FromBase64String(base64));
-            var msg = (JObject)JsonConvert.DeserializeObject(json);
+            var msg = JObject.Parse(json);
             return msg;
         }
 
