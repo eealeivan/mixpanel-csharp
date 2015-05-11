@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -30,6 +31,7 @@ namespace Mixpanel
             }
         }
 
+#if !(NET40 || NET35)
         public async Task<bool> PostAsync(string url, string formData)
         {
             var req = CreateWebRequest(url);
@@ -52,10 +54,12 @@ namespace Mixpanel
                 }
             }
         }
+#endif
+
 
         private HttpWebRequest CreateWebRequest(string url)
         {
-            var req = WebRequest.CreateHttp(url);
+            var req = (HttpWebRequest)WebRequest.CreateDefault(new Uri(url));
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
             req.Accept = "*/*";

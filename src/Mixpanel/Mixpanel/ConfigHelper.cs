@@ -27,6 +27,7 @@ namespace Mixpanel
             return new DefaultHttpClient().Post;
         }
 
+#if !(NET40 || NET35)
         public static Func<string, string, Task<bool>> GetAsyncHttpPostFn(MixpanelConfig config)
         {
             if (config != null && config.AsyncHttpPostFn != null)
@@ -37,7 +38,9 @@ namespace Mixpanel
 
             return new DefaultHttpClient().PostAsync;
         }
-        
+#endif
+
+
         public static Action<string, Exception> GetErrorLogFn(MixpanelConfig config)
         {
             if (config != null && config.ErrorLogFn != null)

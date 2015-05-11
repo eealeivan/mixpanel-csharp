@@ -4,6 +4,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
+#if (NET40 || NET35)
+using Mixpanel.Misc;
+#endif
+
 
 namespace Mixpanel.Core
 {

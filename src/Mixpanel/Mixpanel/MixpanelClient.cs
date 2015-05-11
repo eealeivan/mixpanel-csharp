@@ -43,7 +43,7 @@ namespace Mixpanel
             _config = config;
 
             SetSuperProperties(superProperties);
-            
+
             UtcNow = () => DateTime.UtcNow;
         }
 
@@ -79,6 +79,7 @@ namespace Mixpanel
                 CreateTrackMessageObject(@event, distinctId, properties), EndpointTrack, "Track");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Adds an event to Mixpanel by sending a message to 'http://api.mixpanel.com/track/' endpoint.
         /// Returns true if call was successful, and false otherwise.
@@ -108,6 +109,7 @@ namespace Mixpanel
             return await SendMessageAsync(
                 CreateTrackMessageObject(@event, distinctId, properties), EndpointTrack, "Track");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -170,6 +172,7 @@ namespace Mixpanel
             return SendMessage(CreateAliasMessageObject(distinctId, alias), EndpointTrack, "Alias");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Creates an alias to existing distinct id. 
         /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
@@ -181,6 +184,7 @@ namespace Mixpanel
         {
             return await SendMessageAsync(CreateAliasMessageObject(distinctId, alias), EndpointTrack, "Alias");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -240,6 +244,7 @@ namespace Mixpanel
             return SendMessage(CreatePeopleSetMessageObject(distinctId, properties), EndpointEngage, "PeopleSet");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Sets <paramref name="properties"></paramref> for profile. If profile doesn't exists, then new profile
         /// will be created. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -269,6 +274,7 @@ namespace Mixpanel
             return await SendMessageAsync(
                 CreatePeopleSetMessageObject(distinctId, properties), EndpointEngage, "PeopleSet");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -342,6 +348,7 @@ namespace Mixpanel
                 CreatePeopleSetOnceMessageObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Sets <paramref name="properties"></paramref> for profile without overwriting existing values. 
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -371,6 +378,7 @@ namespace Mixpanel
             return await SendMessageAsync(
                 CreatePeopleSetOnceMessageObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -448,6 +456,7 @@ namespace Mixpanel
                 CreatePeopleAddMessageObject(distinctId, properties), EndpointEngage, "PeopleAdd");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// The property values are added to the existing values of the properties on the profile. 
         /// If the property is not present on the profile, the value will be added to 0. 
@@ -481,6 +490,7 @@ namespace Mixpanel
             return await SendMessageAsync(
                 CreatePeopleAddMessageObject(distinctId, properties), EndpointEngage, "PeopleAdd");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -560,6 +570,7 @@ namespace Mixpanel
                 CreatePeopleAppendMessageObject(distinctId, properties), EndpointEngage, "PeopleAppend");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Appends each property value to list associated with the corresponding property name.
         /// Appending to a property that doesn't exist will result in assigning a list with one element to that property.
@@ -591,6 +602,7 @@ namespace Mixpanel
             return await SendMessageAsync(
                 CreatePeopleAppendMessageObject(distinctId, properties), EndpointEngage, "PeopleAppend");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -667,6 +679,7 @@ namespace Mixpanel
                 CreatePeopleUnionMessageObject(distinctId, properties), EndpointEngage, "PeopleUnion");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Property list values will be merged with the existing lists on the user profile, ignoring 
         /// duplicate list values. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -698,6 +711,7 @@ namespace Mixpanel
             return await SendMessageAsync(
                 CreatePeopleUnionMessageObject(distinctId, properties), EndpointEngage, "PeopleUnion");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -769,6 +783,7 @@ namespace Mixpanel
                 CreatePeopleUnsetMessageObject(distinctId, propertyNames), EndpointEngage, "PeopleUnset");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Properties with names containing in <paramref name="propertyNames"/> will be permanently
         /// removed. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -792,6 +807,7 @@ namespace Mixpanel
             return await SendMessageAsync(
                 CreatePeopleUnsetMessageObject(distinctId, propertyNames), EndpointEngage, "PeopleUnset");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -844,6 +860,7 @@ namespace Mixpanel
             return SendMessage(CreatePeopleDeleteObject(distinctId), EndpointEngage, "PeopleDelete");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Permanently delete the profile from Mixpanel, along with all of its properties.
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
@@ -855,6 +872,7 @@ namespace Mixpanel
             return await SendMessageAsync(
                 CreatePeopleDeleteObject(distinctId), EndpointEngage, "PeopleDelete");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -904,6 +922,7 @@ namespace Mixpanel
                 EndpointEngage, "PeopleTrackCharge");
         }
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
         /// Returns true if call was successful, and false otherwise.
@@ -928,6 +947,7 @@ namespace Mixpanel
                 CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
                 EndpointEngage, "PeopleTrackCharge");
         }
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -1006,7 +1026,7 @@ namespace Mixpanel
         /// Additional rules that will be appended to user defined properties.
         /// </param>
         private IDictionary<string, object> GetMessageObject(
-            MessageBuilderBase builder, object userProperties, object extraProperties, 
+            MessageBuilderBase builder, object userProperties, object extraProperties,
             MessagePropetyRules propetyRules = MessagePropetyRules.None)
         {
             var od = new MessageData(builder.SpecialPropsBindings, propetyRules, _config);
@@ -1069,6 +1089,7 @@ namespace Mixpanel
             }
         }
 
+#if !(NET40 || NET35)
         private async Task<bool> SendMessageAsync(IDictionary<string, object> obj, string endpoint, string messageType)
         {
             string formData;
@@ -1094,6 +1115,7 @@ namespace Mixpanel
                 return false;
             }
         }
+#endif
 
         private MixpanelMessageTest TestMessage(Func<IDictionary<string, object>> getMessageDataFn)
         {

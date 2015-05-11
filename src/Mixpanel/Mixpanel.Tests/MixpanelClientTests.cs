@@ -44,12 +44,14 @@ namespace Mixpanel.Tests
                         _data = data;
                         return true;
                     },
+#if !(NET40 || NET35)
                     AsyncHttpPostFn = (endpoint, data) =>
                     {
                         _endpoint = endpoint;
                         _data = data;
                         return Task.Run(() => true);
                     }
+#endif
                 });
             _client.UtcNow = () => DateTime.UtcNow;
             _client.SetSuperProperties(new object());
@@ -71,6 +73,7 @@ namespace Mixpanel.Tests
             CheckTrack();
         }
 
+#if !(NET35 || NET40)
         [Test]
         public async void TrackAsync_AnonymousObject_CorrectDataSent()
         {
@@ -84,6 +87,7 @@ namespace Mixpanel.Tests
             await _client.TrackAsync(Event, GetTrackObject(includeDistinctId: true));
             CheckTrack();
         }
+#endif
 
         [Test]
         public void TrackTest_AnonymousObject_CorrectValuesReturned()
@@ -113,6 +117,7 @@ namespace Mixpanel.Tests
             CheckTrack();
         }
 
+#if !(NET40 || NET35)
         [Test]
         public async void TrackAsync_Dictionary_CorrectDataSent()
         {
@@ -126,6 +131,7 @@ namespace Mixpanel.Tests
             await _client.TrackAsync(Event, GetTrackDictionary(includeDistinctId: true));
             CheckTrack();
         }
+#endif
 
         [Test]
         public void TrackTest_Dictionary_CorrectValuesReturned()
@@ -225,12 +231,14 @@ namespace Mixpanel.Tests
             CheckAlias();
         }
 
+#if !(NET40 || NET35)
         [Test]
         public async void AliasAsync_ValidValues_CorrectDataSent()
         {
             await _client.AliasAsync(DistinctId, Alias);
             CheckAlias();
         }
+#endif
 
         [Test]
         public void AliasTest_ValidValues_CorrectValuesReturned()
@@ -276,12 +284,14 @@ namespace Mixpanel.Tests
             CheckPeopleSet();
         }
 
+#if !(NET40 || NET35)
         [Test]
         public async void PeopleSetAsync_AnonymousObject_CorrectDataSent()
         {
             await _client.PeopleSetAsync(DistinctId, GetPeopleSetObject());
             CheckPeopleSet();
         }
+#endif
 
         [Test]
         public void PeopleSet_Dictionary_CorrectDataSent()
@@ -290,12 +300,14 @@ namespace Mixpanel.Tests
             CheckPeopleSet();
         }
 
+#if !(NET40 || NET35)
         [Test]
         public async void PeopleSetAsync_Dictionary_CorrectDataSent()
         {
             await _client.PeopleSetAsync(DistinctId, GetPeopleSetDictionary());
             CheckPeopleSet();
         }
+#endif
 
         [Test]
         public void PeopleSetTest_AnonymousObject_CorrectValuesReturned()
@@ -402,12 +414,14 @@ namespace Mixpanel.Tests
             CheckPeopleSetOnce();
         }
 
+#if !(NET40 || NET35)
         [Test]
         public async void PeopleSetOnceAsync_AnonymousObject_CorrectDataSent()
         {
             await _client.PeopleSetOnceAsync(DistinctId, GetPeopleSetOnceObject());
             CheckPeopleSetOnce();
         }
+#endif
 
         [Test]
         public void PeopleSetOnceTest_AnonymousObject_CorrectValuesReturned()
@@ -492,13 +506,14 @@ namespace Mixpanel.Tests
             CheckPeopleAdd();
         }
 
+#if !(NET40 || NET35)
         [Test]
         public async void PeopleAddAsync_NumericInput_CorrectDataSent()
         {
             await _client.PeopleAddAsync(DistinctId, GetPeopleAddDictionary());
             CheckPeopleAdd();
         }
-        
+
         [Test]
         public async void PeopleAddAsync_NumericInputWithDistinctId_CorrectDataSent()
         {
@@ -512,6 +527,7 @@ namespace Mixpanel.Tests
             await _client.PeopleAddAsync(DistinctId, GetPeopleAddDictionary(includeNonNumericValues: true));
             CheckPeopleAdd();
         }
+#endif
 
         [Test]
         public void PeopleAddTest_NumericInput_CorrectValuesReturned()
@@ -589,27 +605,29 @@ namespace Mixpanel.Tests
             _client.PeopleAppend(DistinctId, GetPeopleAppendDictionary());
             CheckPeopleAppend();
         }
-        
+
         [Test]
         public void PeopleAppend_DictionaryWithDistinctId_CorrectDataSent()
         {
             _client.PeopleAppend(GetPeopleAppendDictionary(includeDistinctId: true));
             CheckPeopleAppend();
-        } 
-        
+        }
+
+#if !(NET40 || NET35)
         [Test]
         public async void PeopleAppendAsync_Dictionary_CorrectDataSent()
         {
             await _client.PeopleAppendAsync(DistinctId, GetPeopleAppendDictionary());
             CheckPeopleAppend();
         }
-        
+
         [Test]
         public async void PeopleAppendAsync_DictionaryWithDistinctId_CorrectDataSent()
         {
             await _client.PeopleAppendAsync(GetPeopleAppendDictionary(includeDistinctId: true));
             CheckPeopleAppend();
         }
+#endif
 
         [Test]
         public void PeopleAppendTest_Dictionary_CorrectValuesReturned()
@@ -617,7 +635,7 @@ namespace Mixpanel.Tests
             var msg = _client.PeopleAppendTest(DistinctId, GetPeopleAppendDictionary());
             CheckPeopleAppendTest(msg);
         }
-        
+
         [Test]
         public void PeopleAppendTest_DictionaryWithDistinctId_CorrectValuesReturned()
         {
@@ -661,7 +679,7 @@ namespace Mixpanel.Tests
             Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
             Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
             Assert.That(msg.Data[MixpanelProperty.PeopleAppend], Is.TypeOf<Dictionary<string, object>>());
-            var append = (Dictionary<string, object>) msg.Data[MixpanelProperty.PeopleAppend];
+            var append = (Dictionary<string, object>)msg.Data[MixpanelProperty.PeopleAppend];
             Assert.That(append.Count, Is.EqualTo(2));
             Assert.That(append[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
             Assert.That(append[StringPropertyName], Is.EqualTo(StringPropertyValue));

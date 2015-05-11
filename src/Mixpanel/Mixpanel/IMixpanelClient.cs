@@ -31,6 +31,7 @@ namespace Mixpanel
         /// </param>
         bool Track(string @event, object distinctId, object properties);
 
+#if !(NET40 || NET35)
         /// <summary>
         /// Adds an event to Mixpanel by sending a message to 'http://api.mixpanel.com/track/' endpoint.
         /// Returns true if call was successful, and false otherwise.
@@ -53,7 +54,7 @@ namespace Mixpanel
         /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
         /// </param>
         Task<bool> TrackAsync(string @event, object distinctId, object properties);
-
+#endif
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'Track' message. If some error occurs during the process of 
@@ -93,7 +94,8 @@ namespace Mixpanel
         /// <param name="distinctId">Original unique user profile identifier to create alias for.</param>
         /// <param name="alias">Alias for original user profile identifier.</param>
         bool Alias(object distinctId, object alias);
-        
+
+#if !(NET40 || NET35)
         /// <summary>
         /// Creates an alias to existing distinct id. 
         /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
@@ -102,6 +104,8 @@ namespace Mixpanel
         /// <param name="distinctId">Original unique user profile identifier to create alias for.</param>
         /// <param name="alias">Alias for original user profile identifier.</param>
         Task<bool> AliasAsync(object distinctId, object alias);
+#endif
+
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -139,7 +143,8 @@ namespace Mixpanel
         /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
         /// </param>
         bool PeopleSet(object distinctId, object properties);
-        
+
+#if !(NET40 || NET35)
         /// <summary>
         /// Sets <paramref name="properties"></paramref> for profile. If profile doesn't exists, then new profile
         /// will be created. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -162,6 +167,8 @@ namespace Mixpanel
         /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
         /// </param>
         Task<bool> PeopleSetAsync(object distinctId, object properties);
+#endif
+
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -214,7 +221,8 @@ namespace Mixpanel
         /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
         /// </param>
         bool PeopleSetOnce(object distinctId, object properties);
-        
+
+#if !(NET40 || NET35)
         /// <summary>
         /// Sets <paramref name="properties"></paramref> for profile without overwriting existing values. 
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -237,6 +245,8 @@ namespace Mixpanel
         /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
         /// </param>
         Task<bool> PeopleSetOnceAsync(object distinctId, object properties);
+#endif
+
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -293,7 +303,8 @@ namespace Mixpanel
         /// for supported object containers.
         /// </param>
         bool PeopleAdd(object distinctId, object properties);
-        
+
+#if !(NET40 || NET35)
         /// <summary>
         /// The property values are added to the existing values of the properties on the profile. 
         /// If the property is not present on the profile, the value will be added to 0. 
@@ -320,6 +331,8 @@ namespace Mixpanel
         /// for supported object containers.
         /// </param>
         Task<bool> PeopleAddAsync(object distinctId, object properties);
+#endif
+
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -376,7 +389,8 @@ namespace Mixpanel
         /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
         /// </param>
         bool PeopleAppend(object distinctId, object properties);
-        
+
+#if !(NET40 || NET35)
         /// <summary>
         /// Appends each property value to list associated with the corresponding property name.
         /// Appending to a property that doesn't exist will result in assigning a list with one element to that property.
@@ -401,6 +415,8 @@ namespace Mixpanel
         /// on project page https://github.com/eealeivan/mixpanel-csharp for supported object containers.
         /// </param>
         Task<bool> PeopleAppendAsync(object distinctId, object properties);
+#endif
+
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -454,8 +470,9 @@ namespace Mixpanel
         ///  properties except '$distinct_id' will be ignored. Check documentation  on project page 
         ///  https://github.com/eealeivan/mixpanel-csharp for supported object containers.
         /// </param>
-        bool PeopleUnion(object distinctId, object properties);    
-        
+        bool PeopleUnion(object distinctId, object properties);
+
+#if !(NET40 || NET35)
         /// <summary>
         /// Property list values will be merged with the existing lists on the user profile, ignoring 
         /// duplicate list values. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -480,6 +497,8 @@ namespace Mixpanel
         ///  https://github.com/eealeivan/mixpanel-csharp for supported object containers.
         /// </param>
         Task<bool> PeopleUnionAsync(object distinctId, object properties);
+#endif
+
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -528,7 +547,8 @@ namespace Mixpanel
         /// <param name="distinctId">Unique user profile identifier.</param>
         /// <param name="propertyNames">List of property names to remove.</param>
         bool PeopleUnset(object distinctId, IEnumerable<string> propertyNames);
-        
+
+#if !(NET40 || NET35)
         /// <summary>
         /// Properties with names containing in <paramref name="propertyNames"/> will be permanently
         /// removed. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -545,6 +565,8 @@ namespace Mixpanel
         /// <param name="distinctId">Unique user profile identifier.</param>
         /// <param name="propertyNames">List of property names to remove.</param>
         Task<bool> PeopleUnsetAsync(object distinctId, IEnumerable<string> propertyNames);
+#endif
+
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -576,7 +598,8 @@ namespace Mixpanel
         /// </summary>
         /// <param name="distinctId">Unique user profile identifier.</param>
         bool PeopleDelete(object distinctId);
-        
+
+#if !(NET40 || NET35)
         /// <summary>
         /// Permanently delete the profile from Mixpanel, along with all of its properties.
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
@@ -584,6 +607,7 @@ namespace Mixpanel
         /// </summary>
         /// <param name="distinctId">Unique user profile identifier.</param>
         Task<bool> PeopleDeleteAsync(object distinctId);
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -614,7 +638,8 @@ namespace Mixpanel
         /// <param name="amount">Amount of the transaction.</param>
         /// <param name="time">The date transaction was done.</param>
         bool PeopleTrackCharge(object distinctId, decimal amount, DateTime time);
-        
+
+#if !(NET40 || NET35)
         /// <summary>
         /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
         /// Returns true if call was successful, and false otherwise.
@@ -631,6 +656,7 @@ namespace Mixpanel
         /// <param name="amount">Amount of the transaction.</param>
         /// <param name="time">The date transaction was done.</param>
         Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount, DateTime time);
+#endif
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,

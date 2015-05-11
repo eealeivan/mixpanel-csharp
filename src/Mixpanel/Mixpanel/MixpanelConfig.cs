@@ -21,17 +21,19 @@ namespace Mixpanel
         /// Takes 2 string parameters: url and form data. Returns true if call was successful, and false otherwise.
         /// </summary>
         public Func<string, string, bool> HttpPostFn { get; set; }
-        
+
+#if !(NET40 || NET35)
         /// <summary>
         /// Gets or sets user defined function that will make async HTTP POST requests to mixpanel endpoints.
         /// Takes 2 string parameters: url and form data. Returns true if call was successful, and false otherwise.
         /// </summary>
         public Func<string, string, Task<bool>> AsyncHttpPostFn { get; set; }
+#endif
 
         /// <summary>
         /// Gets ot sets user defined function for retrievenig error logs. Takes 2 parameters: message and exception.
         /// </summary>
-        public Action<string, Exception> ErrorLogFn { get; set; } 
+        public Action<string, Exception> ErrorLogFn { get; set; }
 
         /// <summary>
         /// Gets or sets the format for mixpanel properties.
@@ -55,7 +57,9 @@ namespace Mixpanel
         {
             SerializeJsonFn = null;
             HttpPostFn = null;
+#if !(NET40 || NET35)
             AsyncHttpPostFn = null;
+#endif
             ErrorLogFn = null;
             MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.None;
         }
