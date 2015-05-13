@@ -69,7 +69,8 @@
     <Compile Include="IMixpanelClient.cs" />
     <Compile Include="Misc\DateTimeExtensions.cs" />
     <Compile Include="Misc\ReflectionHelper.cs" />
-	<Compile Include="Misc\StringHelper.cs" />
+    <Compile Include="Misc\StringHelper.cs" />
+    <Compile Include="Misc\ThreadSafeCache.cs" />
     <Compile Include="MixpanelClient.cs" />
     <Compile Include="MixpanelConfig.cs" />
     <Compile Include="MixpanelNameAttribute.cs" />
