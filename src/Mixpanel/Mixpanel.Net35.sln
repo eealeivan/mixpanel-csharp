@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mixpanel.Net35", "Mixpanel\Mixpanel.Net35.csproj", "{E05A2DAB-9E1F-4160-AAB0-4481A1F5A871}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mixpanel.Tests.Net35", "Mixpanel.Tests\Mixpanel.Tests.Net35.csproj", "{CFFBAC79-E345-4953-83B4-177143D2B108}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E05A2DAB-9E1F-4160-AAB0-4481A1F5A871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E05A2DAB-9E1F-4160-AAB0-4481A1F5A871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E05A2DAB-9E1F-4160-AAB0-4481A1F5A871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E05A2DAB-9E1F-4160-AAB0-4481A1F5A871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFFBAC79-E345-4953-83B4-177143D2B108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFFBAC79-E345-4953-83B4-177143D2B108}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFFBAC79-E345-4953-83B4-177143D2B108}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFFBAC79-E345-4953-83B4-177143D2B108}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -20,15 +20,17 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Net45\Mixpanel.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release\Net45\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Net45\Mixpanel.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -67,6 +69,7 @@
     <Compile Include="IMixpanelClient.cs" />
     <Compile Include="Misc\DateTimeExtensions.cs" />
     <Compile Include="Misc\ReflectionHelper.cs" />
+	<Compile Include="Misc\StringHelper.cs" />
     <Compile Include="MixpanelClient.cs" />
     <Compile Include="MixpanelConfig.cs" />
     <Compile Include="MixpanelNameAttribute.cs" />

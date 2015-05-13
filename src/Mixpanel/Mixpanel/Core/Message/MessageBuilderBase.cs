@@ -85,7 +85,7 @@ namespace Mixpanel.Core.Message
             Debug.Assert(val != null);
             Debug.Assert(propertyName != null);
 
-            if (String.IsNullOrWhiteSpace(val.ToString()))
+            if (val.ToString().IsNullOrWhiteSpace())
                 throw new MixpanelRequiredPropertyNullOrEmptyException(
                     string.Format("'{0}' property can't be empty.", propertyName));
         }

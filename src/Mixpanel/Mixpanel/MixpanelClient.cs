@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+#if !(NET40 || NET35)
 using System.Threading.Tasks;
+#endif
 using Mixpanel.Core.Message;
+using Mixpanel.Misc;
 
 namespace Mixpanel
 {
@@ -36,7 +39,7 @@ namespace Mixpanel
         /// </param>
         public MixpanelClient(string token, MixpanelConfig config = null, object superProperties = null)
         {
-            if (String.IsNullOrWhiteSpace(token))
+            if (token.IsNullOrWhiteSpace())
                 throw new ArgumentNullException("token");
 
             _token = token;

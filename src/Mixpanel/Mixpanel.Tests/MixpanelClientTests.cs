@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+#if !NET35
 using System.Threading.Tasks;
+#endif
 using Mixpanel.Core;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;

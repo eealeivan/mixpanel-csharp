@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+#if !NET35
 using System.Collections.Concurrent;
+#endif
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -41,7 +43,7 @@ namespace Mixpanel.Core
                 foreach (var propertyInfo in GetObjectPropertyInfos(obj.GetType()))
                 {
                     props[propertyInfo.PropertyName] = new ObjectProperty(
-                        propertyInfo.PropertyNameSource, 
+                        propertyInfo.PropertyNameSource,
                         propertyInfo.PropertyInfo.GetValue(obj, null));
                 }
             }
@@ -49,12 +51,24 @@ namespace Mixpanel.Core
             return props;
         }
 
+#if !NET35
         private static readonly ConcurrentDictionary<Type, List<ObjectPropertyInfo>>
             PropertyInfosCache = new ConcurrentDictionary<Type, List<ObjectPropertyInfo>>();
+#endif
 
         private List<ObjectPropertyInfo> GetObjectPropertyInfos(Type type)
         {
-            return PropertyInfosCache.GetOrAdd(type, t =>
+            var getObjectPropertyInfosFn = GetObjectPropertyInfosFn();
+#if NET35
+            return getObjectPropertyInfosFn(type);
+#else
+            return PropertyInfosCache.GetOrAdd(type, getObjectPropertyInfosFn);
+#endif
+        }
+
+        private static Func<Type, List<ObjectPropertyInfo>> GetObjectPropertyInfosFn()
+        {
+            return t =>
             {
                 bool isDataContract = t.GetCustomAttribute<DataContractAttribute>() != null;
                 var infos = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -76,7 +90,7 @@ namespace Mixpanel.Core
                     var mixpanelNameAttr = info.GetCustomAttribute<MixpanelNameAttribute>();
                     if (mixpanelNameAttr != null)
                     {
-                        var isMixpanelNameEmpty = string.IsNullOrWhiteSpace(mixpanelNameAttr.Name);
+                        var isMixpanelNameEmpty = mixpanelNameAttr.Name.IsNullOrWhiteSpace();
                         res.Add(new ObjectPropertyInfo(
                             isMixpanelNameEmpty ? info.Name : mixpanelNameAttr.Name,
                             isMixpanelNameEmpty ? PropertyNameSource.Default : PropertyNameSource.MixpanelName,
@@ -86,7 +100,7 @@ namespace Mixpanel.Core
 
                     if (dataMemberAttr != null)
                     {
-                        var isDataMemberNameEmpty = string.IsNullOrWhiteSpace(dataMemberAttr.Name);
+                        var isDataMemberNameEmpty = dataMemberAttr.Name.IsNullOrWhiteSpace();
                         res.Add(new ObjectPropertyInfo(
                             isDataMemberNameEmpty ? info.Name : dataMemberAttr.Name,
                             isDataMemberNameEmpty ? PropertyNameSource.Default : PropertyNameSource.DataMember,
@@ -97,7 +111,7 @@ namespace Mixpanel.Core
                     res.Add(new ObjectPropertyInfo(info.Name, PropertyNameSource.Default, info));
                 }
                 return res;
-            });
+            };
         }
     }
 }

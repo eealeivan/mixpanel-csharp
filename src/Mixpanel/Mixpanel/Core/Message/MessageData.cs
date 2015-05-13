@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mixpanel.Exceptions;
+using Mixpanel.Misc;
 
 namespace Mixpanel.Core.Message
 {
@@ -113,7 +114,7 @@ namespace Mixpanel.Core.Message
         public void RemoveProperty(string propertyName,
             PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
-            if(string.IsNullOrWhiteSpace(propertyName)) return;
+            if (propertyName.IsNullOrWhiteSpace()) return;
 
             if (!SpecialProps.Remove(propertyName))
             {

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+#if !(NET40 || NET35)
 using System.Threading.Tasks;
+#endif
+
 
 namespace Mixpanel
 {

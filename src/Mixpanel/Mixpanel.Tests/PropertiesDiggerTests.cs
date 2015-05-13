@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+#if !NET35
 using System.Dynamic;
+#endif
+
 using System.Runtime.Serialization;
 using Mixpanel.Core;
 using NUnit.Framework;
@@ -95,6 +98,7 @@ namespace Mixpanel.Tests
             Assert.That(outDic["property3"].Value, Is.EqualTo(_now));
         }
 
+#if !NET35
         [Test]
         public void Get_ExpandoObject_Parsed()
         {
@@ -132,6 +136,8 @@ namespace Mixpanel.Tests
             Assert.That(outDic["Property3"].PropertyNameSource, Is.EqualTo(PropertyNameSource.Default));
             Assert.That(outDic["Property3"].Value, Is.EqualTo(_now));
         }
+#endif
+
 
         internal class Test1
         {

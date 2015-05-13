@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using Mixpanel.Misc;
 
 namespace Mixpanel.Core
 {
@@ -14,7 +15,7 @@ namespace Mixpanel.Core
 
         public string Format(string propName, PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
-            Debug.Assert(!string.IsNullOrWhiteSpace(propName));
+            Debug.Assert(!propName.IsNullOrWhiteSpace());
 
             var propertyNameFormat = _config != null
                 ? _config.MixpanelPropertyNameFormat
