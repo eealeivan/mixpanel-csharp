@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 #if !(NET40 || NET35)
 using System.Threading.Tasks;
 #endif
@@ -9,12 +9,8 @@ using Mixpanel.Misc;
 
 namespace Mixpanel
 {
-    public sealed class MixpanelClient : IMixpanelClient
+    public sealed partial class MixpanelClient : IMixpanelClient
     {
-        internal const string UrlFormat = "http://api.mixpanel.com/{0}";
-        internal const string EndpointTrack = "track";
-        internal const string EndpointEngage = "engage";
-
         private readonly string _token;
         private readonly MixpanelConfig _config;
 
@@ -22,7 +18,7 @@ namespace Mixpanel
         /// Func for getting/setting current utc date. Simplifies testing.
         /// </summary>
         internal Func<DateTime> UtcNow { get; set; }
-
+        
         /// <summary>
         /// Creates an instance of <see cref="MixpanelClient"/>.
         /// </summary>
@@ -40,13 +36,12 @@ namespace Mixpanel
         public MixpanelClient(string token, MixpanelConfig config = null, object superProperties = null)
         {
             if (token.IsNullOrWhiteSpace())
+            {
                 throw new ArgumentNullException("token");
-
+            }
             _token = token;
             _config = config;
-
             SetSuperProperties(superProperties);
-
             UtcNow = () => DateTime.UtcNow;
         }
 
@@ -78,8 +73,10 @@ namespace Mixpanel
         /// </param>
         public bool Track(string @event, object distinctId, object properties)
         {
-            return SendMessage(
-                CreateTrackMessageObject(@event, distinctId, properties), EndpointTrack, "Track");
+            return SendMessageInternal(
+                () => CreateTrackMessageObject(@event, distinctId, properties),
+                EndpointTrack,
+                MessageKind.Track);
         }
 
 #if !(NET40 || NET35)
@@ -109,10 +106,47 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> TrackAsync(string @event, object distinctId, object properties)
         {
-            return await SendMessageAsync(
-                CreateTrackMessageObject(@event, distinctId, properties), EndpointTrack, "Track");
+            return await SendMessageInternalAsync(
+                () => CreateTrackMessageObject(@event, distinctId, properties),
+                EndpointTrack,
+                MessageKind.Track);
         }
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'Track' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned. 
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="event">Name of the event.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetTrackMessage(string @event, object properties)
+        {
+            return GetTrackMessage(@event, null, properties);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'Track' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="event">Name of the event.</param>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetTrackMessage(string @event, object distinctId, object properties)
+        {
+            return GetMessage(
+                MessageKind.Track,
+                () => CreateTrackMessageObject(@event, distinctId, properties));
+        }
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -172,7 +206,10 @@ namespace Mixpanel
         /// <param name="alias">Alias for original user profile identifier.</param>
         public bool Alias(object distinctId, object alias)
         {
-            return SendMessage(CreateAliasMessageObject(distinctId, alias), EndpointTrack, "Alias");
+            return SendMessageInternal(
+                () => CreateAliasMessageObject(distinctId, alias),
+                EndpointTrack,
+                MessageKind.Alias);
         }
 
 #if !(NET40 || NET35)
@@ -185,9 +222,27 @@ namespace Mixpanel
         /// <param name="alias">Alias for original user profile identifier.</param>
         public async Task<bool> AliasAsync(object distinctId, object alias)
         {
-            return await SendMessageAsync(CreateAliasMessageObject(distinctId, alias), EndpointTrack, "Alias");
+            return await SendMessageInternalAsync(
+                () => CreateAliasMessageObject(distinctId, alias),
+                EndpointTrack,
+                MessageKind.Alias);
         }
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'Alias'. 
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Original unique user profile identifier to create alias for.</param>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        public MixpanelMessage GetAliasMessage(object distinctId, object alias)
+        {
+            return GetMessage(
+                MessageKind.Alias,
+                () => CreateAliasMessageObject(distinctId, alias));
+        }
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -244,7 +299,10 @@ namespace Mixpanel
         /// </param>
         public bool PeopleSet(object distinctId, object properties)
         {
-            return SendMessage(CreatePeopleSetMessageObject(distinctId, properties), EndpointEngage, "PeopleSet");
+            return SendMessageInternal(
+                () => CreatePeopleSetMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleSet);
         }
 
 #if !(NET40 || NET35)
@@ -274,10 +332,45 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> PeopleSetAsync(object distinctId, object properties)
         {
-            return await SendMessageAsync(
-                CreatePeopleSetMessageObject(distinctId, properties), EndpointEngage, "PeopleSet");
+            return await SendMessageInternalAsync(
+                () => CreatePeopleSetMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleSet);
         }
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleSet' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleSetMessage(object properties)
+        {
+            return GetPeopleSetMessage(null, properties);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleSet' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleSetMessage(object distinctId, object properties)
+        {
+            return GetMessage(
+                MessageKind.PeopleSet,
+                () => CreatePeopleSetMessageObject(distinctId, properties));
+        }
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -347,8 +440,10 @@ namespace Mixpanel
         /// </param>
         public bool PeopleSetOnce(object distinctId, object properties)
         {
-            return SendMessage(
-                CreatePeopleSetOnceMessageObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
+            return SendMessageInternal(
+                () => CreatePeopleSetOnceMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleSetOnce);
         }
 
 #if !(NET40 || NET35)
@@ -378,10 +473,46 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> PeopleSetOnceAsync(object distinctId, object properties)
         {
-            return await SendMessageAsync(
-                CreatePeopleSetOnceMessageObject(distinctId, properties), EndpointEngage, "PeopleSetOnce");
+            return await SendMessageInternalAsync(
+                () => CreatePeopleSetOnceMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleSetOnce);
         }
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleSetOnce' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleSetOnceMessage(object properties)
+        {
+            return GetPeopleSetOnceMessage(null, properties);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleSetOnce' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleSetOnceMessage(object distinctId, object properties)
+        {
+            return GetMessage(
+                MessageKind.PeopleSetOnce,
+                () => CreatePeopleSetOnceMessageObject(distinctId, properties));
+        }
+
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -455,8 +586,10 @@ namespace Mixpanel
         /// </param>
         public bool PeopleAdd(object distinctId, object properties)
         {
-            return SendMessage(
-                CreatePeopleAddMessageObject(distinctId, properties), EndpointEngage, "PeopleAdd");
+            return SendMessageInternal(
+                () => CreatePeopleAddMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleAdd);
         }
 
 #if !(NET40 || NET35)
@@ -490,10 +623,45 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> PeopleAddAsync(object distinctId, object properties)
         {
-            return await SendMessageAsync(
-                CreatePeopleAddMessageObject(distinctId, properties), EndpointEngage, "PeopleAdd");
+            return await SendMessageInternalAsync(
+                () => CreatePeopleAddMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleAdd);
         }
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleAdd' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleAddMessage(object properties)
+        {
+            return GetPeopleAddMessage(null, properties);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleAdd' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties"> 
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleAddMessage(object distinctId, object properties)
+        {
+            return GetMessage(
+                MessageKind.PeopleAdd,
+                () => CreatePeopleAddMessageObject(distinctId, properties));
+        }
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -569,8 +737,10 @@ namespace Mixpanel
         /// </param>
         public bool PeopleAppend(object distinctId, object properties)
         {
-            return SendMessage(
-                CreatePeopleAppendMessageObject(distinctId, properties), EndpointEngage, "PeopleAppend");
+            return SendMessageInternal(
+                () => CreatePeopleAppendMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleAppend);
         }
 
 #if !(NET40 || NET35)
@@ -602,10 +772,45 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> PeopleAppendAsync(object distinctId, object properties)
         {
-            return await SendMessageAsync(
-                CreatePeopleAppendMessageObject(distinctId, properties), EndpointEngage, "PeopleAppend");
+            return await SendMessageInternalAsync(
+                () => CreatePeopleAppendMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleAppend);
         }
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleAppend' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleAppendMessage(object properties)
+        {
+            return GetPeopleAppendMessage(null, properties);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleAppend' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleAppendMessage(object distinctId, object properties)
+        {
+            return GetMessage(
+                MessageKind.PeopleAppend,
+                () => CreatePeopleAppendMessageObject(distinctId, properties));
+        }
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -678,8 +883,10 @@ namespace Mixpanel
         /// </param>
         public bool PeopleUnion(object distinctId, object properties)
         {
-            return SendMessage(
-                CreatePeopleUnionMessageObject(distinctId, properties), EndpointEngage, "PeopleUnion");
+            return SendMessageInternal(
+                () => CreatePeopleUnionMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleUnion);
         }
 
 #if !(NET40 || NET35)
@@ -711,10 +918,47 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> PeopleUnionAsync(object distinctId, object properties)
         {
-            return await SendMessageAsync(
-                CreatePeopleUnionMessageObject(distinctId, properties), EndpointEngage, "PeopleUnion");
+            return await SendMessageInternalAsync(
+                () => CreatePeopleUnionMessageObject(distinctId, properties),
+                EndpointEngage,
+                MessageKind.PeopleUnion);
         }
 #endif
+        
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleUnion' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        ///  Object containg keys and values that will be parsed and sent to Mixpanel. All non collection 
+        ///  properties except '$distinct_id' will be ignored. Check documentation  on project page 
+        ///  https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleUnionMessage(object properties)
+        {
+            return GetPeopleUnionMessage(null, properties);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleUnion' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        ///  Object containg keys and values that will be parsed and sent to Mixpanel. All non collection 
+        ///  properties except '$distinct_id' will be ignored. Check documentation  on project page 
+        ///  https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        public MixpanelMessage GetPeopleUnionMessage(object distinctId, object properties)
+        {
+            return GetMessage(
+                MessageKind.PeopleUnion,
+                () => CreatePeopleUnionMessageObject(distinctId, properties));
+        }
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -782,8 +1026,10 @@ namespace Mixpanel
         /// <param name="propertyNames">List of property names to remove.</param>
         public bool PeopleUnset(object distinctId, IEnumerable<string> propertyNames)
         {
-            return SendMessage(
-                CreatePeopleUnsetMessageObject(distinctId, propertyNames), EndpointEngage, "PeopleUnset");
+            return SendMessageInternal(
+                () => CreatePeopleUnsetMessageObject(distinctId, propertyNames),
+                EndpointEngage,
+                MessageKind.PeopleUnset);
         }
 
 #if !(NET40 || NET35)
@@ -807,10 +1053,40 @@ namespace Mixpanel
         /// <param name="propertyNames">List of property names to remove.</param>
         public async Task<bool> PeopleUnsetAsync(object distinctId, IEnumerable<string> propertyNames)
         {
-            return await SendMessageAsync(
-                CreatePeopleUnsetMessageObject(distinctId, propertyNames), EndpointEngage, "PeopleUnset");
+            return await SendMessageInternalAsync(
+                () => CreatePeopleUnsetMessageObject(distinctId, propertyNames),
+                EndpointEngage,
+                MessageKind.PeopleUnset);
         }
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleUnset' that contains parsed data from 
+        /// <paramref name="propertyNames"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        public MixpanelMessage GetPeopleUnsetMessage(IEnumerable<string> propertyNames)
+        {
+            return GetPeopleUnsetMessage(null, propertyNames);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleUnset' that contains parsed data from 
+        /// <paramref name="propertyNames"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">User unique identifier. Will be converted to string.</param>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        public MixpanelMessage GetPeopleUnsetMessage(object distinctId, IEnumerable<string> propertyNames)
+        {
+            return GetMessage(
+                MessageKind.PeopleUnset,
+                () => CreatePeopleUnsetMessageObject(distinctId, propertyNames));
+        }
+
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -837,7 +1113,8 @@ namespace Mixpanel
             return TestMessage(() => CreatePeopleUnsetMessageObject(distinctId, propertyNames));
         }
 
-        private IDictionary<string, object> CreatePeopleUnsetMessageObject(object distinctId, IEnumerable<string> propertyNames)
+        private IDictionary<string, object> CreatePeopleUnsetMessageObject(object distinctId,
+            IEnumerable<string> propertyNames)
         {
             return GetMessageObject(
                 new PeopleUnsetMessageBuilder(_config),
@@ -860,7 +1137,10 @@ namespace Mixpanel
         /// <param name="distinctId">Unique user profile identifier.</param>
         public bool PeopleDelete(object distinctId)
         {
-            return SendMessage(CreatePeopleDeleteObject(distinctId), EndpointEngage, "PeopleDelete");
+            return SendMessageInternal(
+                () => CreatePeopleDeleteObject(distinctId),
+                EndpointEngage,
+                MessageKind.PeopleDelete);
         }
 
 #if !(NET40 || NET35)
@@ -872,10 +1152,26 @@ namespace Mixpanel
         /// <param name="distinctId">Unique user profile identifier.</param>
         public async Task<bool> PeopleDeleteAsync(object distinctId)
         {
-            return await SendMessageAsync(
-                CreatePeopleDeleteObject(distinctId), EndpointEngage, "PeopleDelete");
+            return await SendMessageInternalAsync(
+                () => CreatePeopleDeleteObject(distinctId),
+                EndpointEngage,
+                MessageKind.PeopleDelete);
         }
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleDelete'. 
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        public MixpanelMessage GetPeopleDeleteMessage(object distinctId)
+        {
+            return GetMessage(
+                MessageKind.PeopleDelete,
+                () => CreatePeopleDeleteObject(distinctId));
+        }
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -920,9 +1216,10 @@ namespace Mixpanel
         /// <param name="time">The date transaction was done.</param>
         public bool PeopleTrackCharge(object distinctId, decimal amount, DateTime time)
         {
-            return SendMessage(
-                CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
-                EndpointEngage, "PeopleTrackCharge");
+            return SendMessageInternal(
+                () => CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
+                EndpointEngage,
+                MessageKind.PeopleTrackCharge);
         }
 
 #if !(NET40 || NET35)
@@ -946,11 +1243,41 @@ namespace Mixpanel
         /// <param name="time">The date transaction was done.</param>
         public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount, DateTime time)
         {
-            return await SendMessageAsync(
-                CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
-                EndpointEngage, "PeopleTrackCharge");
+            return await SendMessageInternalAsync(
+                () => CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
+                EndpointEngage,
+                MessageKind.PeopleTrackCharge);
         }
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="amount">Amount of the transaction.</param>
+        public MixpanelMessage GetPeopleTrackChargeMessage(object distinctId, decimal amount)
+        {
+            return GetPeopleTrackChargeMessage(distinctId, amount, UtcNow());
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        public MixpanelMessage GetPeopleTrackChargeMessage(object distinctId, decimal amount, DateTime time)
+        {
+            return GetMessage(
+                MessageKind.PeopleTrackCharge,
+                () => CreatePeopleTrackChargeMessageObject(distinctId, amount, time));
+        }
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -993,6 +1320,78 @@ namespace Mixpanel
         }
 
         #endregion
+
+        #region Send
+
+        public bool Send(IEnumerable<MixpanelMessage> messages)
+        {
+            var batchMessage = new BatchMessageWrapper(messages);
+
+            if (batchMessage.TrackMessages != null)
+            {
+                if (batchMessage.TrackMessages
+                    .Any(msg => !SendMessageInternal(() => msg, EndpointTrack, MessageKind.Batch)))
+                {
+                    return false;
+                }
+            }
+
+            if (batchMessage.EngageMessages != null)
+            {
+                if (batchMessage.EngageMessages
+                    .Any(msg => !SendMessageInternal(() => msg, EndpointEngage, MessageKind.Batch)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool Send(params MixpanelMessage[] messages)
+        {
+            return Send(messages as IEnumerable<MixpanelMessage>);
+        }
+
+#if !(NET40 || NET35)
+        public async Task<bool> SendAsync(IEnumerable<MixpanelMessage> messages)
+        {
+            var batchMessage = new BatchMessageWrapper(messages);
+
+            if (batchMessage.TrackMessages != null)
+            {
+                foreach (var batchTrackMessage in batchMessage.TrackMessages)
+                {
+                    List<IDictionary<string, object>> message = batchTrackMessage;
+                    if (!(await SendMessageInternalAsync(() => message, EndpointTrack, MessageKind.Batch)))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if (batchMessage.EngageMessages != null)
+            {
+                foreach (var batchEngageMessage in batchMessage.EngageMessages)
+                {
+                    List<IDictionary<string, object>> message = batchEngageMessage;
+                    if (!(await SendMessageInternalAsync(() => message, EndpointEngage, MessageKind.Batch)))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public async Task<bool> SendAsync(params MixpanelMessage[] messages)
+        {
+            return await SendAsync(messages as IEnumerable<MixpanelMessage>);
+        } 
+#endif
+
+        #endregion Send
 
         #region Super properties
 
@@ -1043,82 +1442,26 @@ namespace Mixpanel
 
         private IDictionary<string, object> CreateExtraPropertiesForDistinctId(object distinctId)
         {
-            return new Dictionary<string, object> { { MixpanelProperty.DistinctId, distinctId } };
+            return new Dictionary<string, object> {{MixpanelProperty.DistinctId, distinctId}};
         }
 
-        private string ToJson(object obj)
+        private MixpanelMessage GetMessage(
+            MessageKind messageKind, Func<IDictionary<string, object>> getMessageDataFn)
         {
-            return ConfigHelper.GetSerializeJsonFn(_config)(obj);
-        }
-
-        private string ToBase64(string json)
-        {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
-        }
-
-        private string GetFormData(IDictionary<string, object> obj)
-        {
-            return "data=" + ToBase64(ToJson(obj));
-        }
-
-        private string GenerateUrl(string endpoint)
-        {
-            return string.Format(UrlFormat, endpoint);
-        }
-
-        private bool SendMessage(IDictionary<string, object> obj, string endpoint, string messageType)
-        {
-            string formData;
             try
             {
-                formData = GetFormData(obj);
+                return new MixpanelMessage
+                {
+                    Kind = messageKind,
+                    Data = getMessageDataFn()
+                };
             }
             catch (Exception e)
             {
-                LogError(string.Format("Error creating '{0}' object.", messageType), e);
-                return false;
-            }
-
-            string url = GenerateUrl(endpoint);
-            try
-            {
-                var httpPostFn = ConfigHelper.GetHttpPostFn(_config);
-                return httpPostFn(url, formData);
-            }
-            catch (Exception e)
-            {
-                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, formData), e);
-                return false;
+                LogError(string.Format("Error creating '{0}' message.", messageKind), e);
+                return null;
             }
         }
-
-#if !(NET40 || NET35)
-        private async Task<bool> SendMessageAsync(IDictionary<string, object> obj, string endpoint, string messageType)
-        {
-            string formData;
-            try
-            {
-                formData = GetFormData(obj);
-            }
-            catch (Exception e)
-            {
-                LogError(string.Format("Error creating '{0}' object.", messageType), e);
-                return false;
-            }
-
-            string url = GenerateUrl(endpoint);
-            try
-            {
-                var httpPostFn = ConfigHelper.GetAsyncHttpPostFn(_config);
-                return await httpPostFn(url, formData);
-            }
-            catch (Exception e)
-            {
-                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, formData), e);
-                return false;
-            }
-        }
-#endif
 
         private MixpanelMessageTest TestMessage(Func<IDictionary<string, object>> getMessageDataFn)
         {

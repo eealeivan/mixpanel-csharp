@@ -57,6 +57,34 @@ namespace Mixpanel
         /// </param>
         Task<bool> TrackAsync(string @event, object distinctId, object properties);
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'Track' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned. 
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="event">Name of the event.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetTrackMessage(string @event, object properties);
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'Track' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="event">Name of the event.</param>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetTrackMessage(string @event, object distinctId, object properties);
+
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'Track' message. If some error occurs during the process of 
@@ -108,7 +136,16 @@ namespace Mixpanel
         Task<bool> AliasAsync(object distinctId, object alias);
 #endif
 
-
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'Alias'. 
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Original unique user profile identifier to create alias for.</param>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        MixpanelMessage GetAliasMessage(object distinctId, object alias);
+        
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'Alias' message. If some error occurs during the process of 
@@ -171,6 +208,30 @@ namespace Mixpanel
         Task<bool> PeopleSetAsync(object distinctId, object properties);
 #endif
 
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleSet' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleSetMessage(object properties);
+        
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleSet' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleSetMessage(object distinctId, object properties);
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -249,6 +310,30 @@ namespace Mixpanel
         Task<bool> PeopleSetOnceAsync(object distinctId, object properties);
 #endif
 
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleSetOnce' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleSetOnceMessage(object properties);
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleSetOnce' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleSetOnceMessage(object distinctId, object properties);
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -335,6 +420,30 @@ namespace Mixpanel
         Task<bool> PeopleAddAsync(object distinctId, object properties);
 #endif
 
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleAdd' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleAddMessage(object properties);
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleAdd' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties"> 
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleAddMessage(object distinctId, object properties);
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -419,6 +528,30 @@ namespace Mixpanel
         Task<bool> PeopleAppendAsync(object distinctId, object properties);
 #endif
 
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleAppend' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleAppendMessage(object properties);
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleAppend' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        /// Object containg keys and values that will be parsed. Check documentation
+        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleAppendMessage(object distinctId, object properties);
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -501,6 +634,32 @@ namespace Mixpanel
         Task<bool> PeopleUnionAsync(object distinctId, object properties);
 #endif
 
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleUnion' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="properties">
+        ///  Object containg keys and values that will be parsed and sent to Mixpanel. All non collection 
+        ///  properties except '$distinct_id' will be ignored. Check documentation  on project page 
+        ///  https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleUnionMessage(object properties);
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleUnion' that contains parsed data from 
+        /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="properties">
+        ///  Object containg keys and values that will be parsed and sent to Mixpanel. All non collection 
+        ///  properties except '$distinct_id' will be ignored. Check documentation  on project page 
+        ///  https://github.com/eealeivan/mixpanel-csharp for supported object containers.
+        /// </param>
+        MixpanelMessage GetPeopleUnionMessage(object distinctId, object properties);
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -569,6 +728,24 @@ namespace Mixpanel
         Task<bool> PeopleUnsetAsync(object distinctId, IEnumerable<string> propertyNames);
 #endif
 
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleUnset' that contains parsed data from 
+        /// <paramref name="propertyNames"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        MixpanelMessage GetPeopleUnsetMessage(IEnumerable<string> propertyNames);
+        
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleUnset' that contains parsed data from 
+        /// <paramref name="propertyNames"/> parameter. If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">User unique identifier. Will be converted to string.</param>
+        /// <param name="propertyNames">List of property names to remove.</param>
+        MixpanelMessage GetPeopleUnsetMessage(object distinctId, IEnumerable<string> propertyNames);
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -610,6 +787,15 @@ namespace Mixpanel
         /// <param name="distinctId">Unique user profile identifier.</param>
         Task<bool> PeopleDeleteAsync(object distinctId);
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleDelete'. 
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        MixpanelMessage GetPeopleDeleteMessage(object distinctId);
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -661,6 +847,27 @@ namespace Mixpanel
 #endif
 
         /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="amount">Amount of the transaction.</param>
+        MixpanelMessage GetPeopleTrackChargeMessage(object distinctId, decimal amount);        
+        
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="distinctId">Unique user profile identifier.</param>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        MixpanelMessage GetPeopleTrackChargeMessage(object distinctId, decimal amount, DateTime time);
+
+        /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleTrackCharge' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
@@ -697,5 +904,18 @@ namespace Mixpanel
         void SetSuperProperties(object superProperties);
 
         #endregion Super properties
+
+        #region Send
+
+        bool Send(params MixpanelMessage[] messages);
+
+#if !(NET40 || NET35)
+        Task<bool> SendAsync(params MixpanelMessage[] messages);
+#endif
+
+        #endregion Send
+
+        Task<bool> SendAsync(IEnumerable<MixpanelMessage> messages);
+        bool Send(IEnumerable<MixpanelMessage> messages);
     }
 }

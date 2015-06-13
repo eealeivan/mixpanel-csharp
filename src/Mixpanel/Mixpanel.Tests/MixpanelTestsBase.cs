@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Mixpanel.Tests
 {
@@ -39,7 +41,32 @@ namespace Mixpanel.Tests
         protected static readonly object InvalidPropertyValue2 = new object();
         protected static readonly string[] StringPropertyArray = {"Prop1", "Prop2"};
         protected static readonly decimal[] DecimalPropertyArray = {5.5m, 6.6m};
+        protected static readonly Dictionary<string, object> DictionaryWithStringProperty =
+            new Dictionary<string, object>
+            {
+                {StringPropertyName, StringPropertyValue}
+            };
 
         #endregion Data
+
+        protected List<int> GetSplits(int number, int batchSize)
+        {
+            if (number <= 0)
+            {
+                return new List<int>(0);
+            }
+
+            var list = new List<int> {batchSize};
+            while (true)
+            {
+                if (list.Sum() >= number)
+                {
+                    break;
+                }
+                list.Add(batchSize);
+            }
+            list[list.Count - 1] = batchSize - (list.Sum() - number);
+            return list;
+        }
     }
 }
