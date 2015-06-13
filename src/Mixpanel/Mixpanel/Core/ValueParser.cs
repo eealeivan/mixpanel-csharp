@@ -60,7 +60,7 @@ namespace Mixpanel.Core
 
         public bool IsEnumerable(object value)
         {
-            return value is IEnumerable;
+            return !(value is string) && value is IEnumerable;
         }
 
         private ParsedValue Valid(object value)
