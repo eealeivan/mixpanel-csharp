@@ -908,14 +908,13 @@ namespace Mixpanel
         #region Send
 
         bool Send(params MixpanelMessage[] messages);
+        bool Send(IEnumerable<MixpanelMessage> messages);
 
 #if !(NET40 || NET35)
         Task<bool> SendAsync(params MixpanelMessage[] messages);
+        Task<bool> SendAsync(IEnumerable<MixpanelMessage> messages);
 #endif
 
         #endregion Send
-
-        Task<bool> SendAsync(IEnumerable<MixpanelMessage> messages);
-        bool Send(IEnumerable<MixpanelMessage> messages);
     }
 }
