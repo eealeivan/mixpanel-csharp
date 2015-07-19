@@ -40,7 +40,7 @@
     <Compile Include="Core\Message\AliasMessageBuilder.cs" />
     <Compile Include="Core\Message\MessageBuilderBase.cs" />
     <Compile Include="Core\Message\MessageData.cs" />
-    <Compile Include="Core\Message\MessagePropetyRules.cs" />
+    <Compile Include="Core\Message\MessagePropetiesRules.cs" />
     <Compile Include="Core\Message\PeopleAddMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleAppendMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleDeleteMessageBuilder.cs" />
@@ -50,6 +50,7 @@
     <Compile Include="Core\Message\PeopleTrackChargeMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleUnionMessageBuilder.cs" />
     <Compile Include="Core\Message\PeopleUnsetMessageBuilder.cs" />
+    <Compile Include="Core\Message\SuperPropertiesRules.cs" />
     <Compile Include="Core\Message\TrackMessageBuilder.cs" />
     <Compile Include="Core\Message\TrackMessageBuilderBase.cs" />
     <Compile Include="Core\ObjectProperty.cs" />

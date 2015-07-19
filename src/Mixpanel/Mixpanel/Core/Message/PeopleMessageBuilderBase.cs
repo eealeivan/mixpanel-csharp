@@ -4,21 +4,33 @@ namespace Mixpanel.Core.Message
 {
     internal abstract class PeopleMessageBuilderBase : MessageBuilderBase
     {
-        protected PeopleMessageBuilderBase(MixpanelConfig config = null)
-            : base(config)
-        {
-        }
+        private static readonly IDictionary<string, string> DistinctIdPropsBindingsInternal =
+            new Dictionary<string, string>(3)
+            {
+                {MixpanelProperty.PeopleDistinctId, MixpanelProperty.PeopleDistinctId},
+                {MixpanelProperty.TrackDistinctId, MixpanelProperty.PeopleDistinctId},
+                {"distinctid", MixpanelProperty.PeopleDistinctId}
+            };
 
         protected static readonly IDictionary<string, string> CoreSpecialPropsBindings =
             new Dictionary<string, string>
             {
                 {MixpanelProperty.PeopleToken, MixpanelProperty.PeopleToken},
-                {MixpanelProperty.TrackToken, MixpanelProperty.PeopleToken},
-
-                {MixpanelProperty.PeopleDistinctId, MixpanelProperty.PeopleDistinctId},
-                {MixpanelProperty.TrackDistinctId, MixpanelProperty.PeopleDistinctId},
-                {"distinctid", MixpanelProperty.PeopleDistinctId}
+                {MixpanelProperty.TrackToken, MixpanelProperty.PeopleToken}
             };
+
+        static PeopleMessageBuilderBase()
+        {
+            foreach (var binding in DistinctIdPropsBindingsInternal)
+            {
+                CoreSpecialPropsBindings.Add(binding.Key, binding.Value);
+            }
+        }
+
+        public override IDictionary<string, string> DistinctIdPropsBindings
+        {
+            get { return DistinctIdPropsBindingsInternal; }
+        }
 
         /// <summary>
         /// Creates core people message object that can be used as base for

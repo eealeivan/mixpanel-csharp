@@ -7,11 +7,6 @@ namespace Mixpanel.Core.Message
     /// </summary>
     internal sealed class PeopleDeleteMessageBuilder : PeopleMessageBuilderBase
     {
-        public PeopleDeleteMessageBuilder(MixpanelConfig config = null)
-            : base(config)
-        {
-        }
-
         public override IDictionary<string, string> SpecialPropsBindings
         {
             get { return CoreSpecialPropsBindings; }

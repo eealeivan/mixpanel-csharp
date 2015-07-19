@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using Mixpanel.Misc;
 #if !NET35
 using System.Collections.Concurrent;
@@ -13,17 +14,20 @@ namespace Mixpanel.Core
 {
     internal sealed class PropertiesDigger
     {
-        public IDictionary<string, ObjectProperty> Get(object obj)
+        public IList<ObjectProperty> Get(object obj)
         {
-            var props = new Dictionary<string, ObjectProperty>();
-            if (obj == null) return props;
+            var props = new List<ObjectProperty>();
+            if (obj == null)
+            {
+                return props;
+            }
 
             if (obj is IDictionary<string, object>)
             {
                 var dic = obj as IDictionary<string, object>;
-                foreach (KeyValuePair<string, object> pair in dic)
+                foreach (KeyValuePair<string, object> entry in dic)
                 {
-                    props[pair.Key] = new ObjectProperty(PropertyNameSource.Default, pair.Value);
+                    props.Add(new ObjectProperty(entry.Key, PropertyNameSource.Default, entry.Value));
                 }
             }
             else if (obj is IDictionary)
@@ -32,17 +36,21 @@ namespace Mixpanel.Core
                 foreach (DictionaryEntry entry in dic)
                 {
                     var keyS = entry.Key as string;
-                    if (keyS == null) continue;
-                    props[keyS] = new ObjectProperty(PropertyNameSource.Default, entry.Value);
+                    if (keyS == null)
+                    {
+                        continue;
+                    }
+                    props.Add(new ObjectProperty(keyS, PropertyNameSource.Default, entry.Value));
                 }
             }
             else
             {
                 foreach (var propertyInfo in GetObjectPropertyInfos(obj.GetType()))
                 {
-                    props[propertyInfo.PropertyName] = new ObjectProperty(
-                        propertyInfo.PropertyNameSource,
-                        propertyInfo.PropertyInfo.GetValue(obj, null));
+                    props.Add( 
+                        new ObjectProperty(
+                            propertyInfo.PropertyName, propertyInfo.PropertyNameSource,
+                            propertyInfo.PropertyInfo.GetValue(obj, null)));
                 }
             }
 

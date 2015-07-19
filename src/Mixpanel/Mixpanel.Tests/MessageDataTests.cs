@@ -10,91 +10,109 @@ namespace Mixpanel.Tests
     [TestFixture]
     public class MessageDataTests : MixpanelTestsBase
     {
-        private MessageData _md;
-
-        [SetUp]
-        public void SetUp()
-        {
-            _md = new MessageData(new Dictionary<string, string>
+        private static readonly IDictionary<string, string> SpecialPropsBindings =
+            new Dictionary<string, string>
             {
                 {MixpanelProperty.Token, MixpanelProperty.Token},
                 {MixpanelProperty.DistinctId, MixpanelProperty.DistinctId},
                 {"distinctid", MixpanelProperty.DistinctId},
                 {MixpanelProperty.Event, MixpanelProperty.Event}
-            });
+            };
+        
+        private static readonly IDictionary<string, string> DistinctIdPropsBindings =
+            new Dictionary<string, string>
+            {
+                {MixpanelProperty.DistinctId, MixpanelProperty.DistinctId},
+                {"distinctid", MixpanelProperty.DistinctId}
+            };
+
+        private MessageData GetMessageDataObject(
+            MessagePropetiesRules messagePropetiesRules = MessagePropetiesRules.None, 
+            SuperPropertiesRules superPropertiesRules = SuperPropertiesRules.All)
+        {
+            return new MessageData(
+                SpecialPropsBindings, 
+                DistinctIdPropsBindings, 
+                messagePropetiesRules,
+                superPropertiesRules);
         }
 
         [Test]
         public void SetProperty_Works()
         {
-            _md.ParseAndSetProperties(new
+            var md = GetMessageDataObject();
+            md.ParseAndSetProperties(new
             {
                 Event, 
                 DistinctId,
                 StringProperty = StringPropertyValue
             });
-            _md.SetProperty(MixpanelProperty.Token, Token);
-            _md.SetProperty(DecimalPropertyName, DecimalPropertyValue);
+            md.SetProperty(MixpanelProperty.Token, Token);
+            md.SetProperty(DecimalPropertyName, DecimalPropertyValue);
 
-            Assert.That(_md.SpecialProps.Count, Is.EqualTo(3));
-            Assert.That(_md.SpecialProps[MixpanelProperty.Event], Is.EqualTo(Event));
-            Assert.That(_md.SpecialProps[MixpanelProperty.DistinctId], Is.EqualTo(DistinctId));
-            Assert.That(_md.SpecialProps[MixpanelProperty.Token], Is.EqualTo(Token));
+            Assert.That(md.SpecialProps.Count, Is.EqualTo(3));
+            Assert.That(md.SpecialProps[MixpanelProperty.Event], Is.EqualTo(Event));
+            Assert.That(md.SpecialProps[MixpanelProperty.DistinctId], Is.EqualTo(DistinctId));
+            Assert.That(md.SpecialProps[MixpanelProperty.Token], Is.EqualTo(Token));
 
-            Assert.That(_md.Props.Count, Is.EqualTo(2));
-            Assert.That(_md.Props[StringPropertyName], Is.EqualTo(StringPropertyValue));
-            Assert.That(_md.Props[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
+            Assert.That(md.Props.Count, Is.EqualTo(2));
+            Assert.That(md.Props[StringPropertyName], Is.EqualTo(StringPropertyValue));
+            Assert.That(md.Props[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
         }
 
         [Test]
         public void SetProperty_ManyTimes_Overwritten()
         {
-            _md.ParseAndSetProperties(new
+            var md = GetMessageDataObject();
+            md.ParseAndSetProperties(new
             {
                 Event,
                 StringProperty = StringPropertyValue
             });
-            _md.SetProperty(MixpanelProperty.Event, Event + "2");
-            _md.SetProperty(StringPropertyName, StringPropertyValue + "2");
+            md.SetProperty(MixpanelProperty.Event, Event + "2");
+            md.SetProperty(StringPropertyName, StringPropertyValue + "2");
 
-            Assert.That(_md.SpecialProps.Count, Is.EqualTo(1));
-            Assert.That(_md.SpecialProps[MixpanelProperty.Event], Is.EqualTo(Event + "2"));
+            Assert.That(md.SpecialProps.Count, Is.EqualTo(1));
+            Assert.That(md.SpecialProps[MixpanelProperty.Event], Is.EqualTo(Event + "2"));
 
-            Assert.That(_md.Props.Count, Is.EqualTo(1));
-            Assert.That(_md.Props[StringPropertyName], Is.EqualTo(StringPropertyValue + "2"));
+            Assert.That(md.Props.Count, Is.EqualTo(1));
+            Assert.That(md.Props[StringPropertyName], Is.EqualTo(StringPropertyValue + "2"));
         }
 
         [Test]
         public void GetSpecialProp_Works()
         {
-            _md.SetProperty(MixpanelProperty.Event, Event);
-            _md.SetProperty(MixpanelProperty.DistinctId, DistinctIdInt);
+            var md = GetMessageDataObject();
+            md.SetProperty(MixpanelProperty.Event, Event);
+            md.SetProperty(MixpanelProperty.DistinctId, DistinctIdInt);
 
-            Assert.That(_md.GetSpecialProp(MixpanelProperty.Event), Is.EqualTo(Event));
-            Assert.That(_md.GetSpecialProp(MixpanelProperty.DistinctId), Is.EqualTo(DistinctIdInt));
+            Assert.That(md.GetSpecialProp(MixpanelProperty.Event), Is.EqualTo(Event));
+            Assert.That(md.GetSpecialProp(MixpanelProperty.DistinctId), Is.EqualTo(DistinctIdInt));
             Assert.That(
-                _md.GetSpecialProp(MixpanelProperty.DistinctId, x => x.ToString()),
+                md.GetSpecialProp(MixpanelProperty.DistinctId, x => x.ToString()),
                 Is.EqualTo(DistinctId));
         }
         
         [Test]
         public void GetSpecialRequiredProp_Works()
         {
-            _md.SetProperty(MixpanelProperty.Event, Event);
-            _md.SetProperty(MixpanelProperty.DistinctId, DistinctIdInt);
+            var md = GetMessageDataObject();
+            md.SetProperty(MixpanelProperty.Event, Event);
+            md.SetProperty(MixpanelProperty.DistinctId, DistinctIdInt);
 
-            Assert.That(_md.GetSpecialRequiredProp(MixpanelProperty.Event), Is.EqualTo(Event));
-            Assert.That(_md.GetSpecialRequiredProp(MixpanelProperty.DistinctId), Is.EqualTo(DistinctIdInt));
+            Assert.That(md.GetSpecialRequiredProp(MixpanelProperty.Event), Is.EqualTo(Event));
+            Assert.That(md.GetSpecialRequiredProp(MixpanelProperty.DistinctId), Is.EqualTo(DistinctIdInt));
             Assert.That(
-                _md.GetSpecialRequiredProp(MixpanelProperty.DistinctId, convertFn: x => x.ToString()),
+                md.GetSpecialRequiredProp(MixpanelProperty.DistinctId, convertFn: x => x.ToString()),
                 Is.EqualTo(DistinctId));
         }
 
         [Test]
         public void GetSpecialRequiredProp_RequiredPropertyNotSet_ThrowsException()
         {
+            var md = GetMessageDataObject();
             Assert.That(
-             () => { _md.GetSpecialRequiredProp(MixpanelProperty.Token); },
+             () => { md.GetSpecialRequiredProp(MixpanelProperty.Token); },
              Throws
                  .TypeOf<MixpanelObjectStructureException>()
                  .And.Message.EqualTo("'token' property is not set."));
@@ -103,9 +121,10 @@ namespace Mixpanel.Tests
         [Test]
         public void GetSpecialRequiredProp_RequiredPropertyIsNull_ThrowsException()
         {
-            _md.SetProperty(MixpanelProperty.Token, null);
+            var md = GetMessageDataObject();
+            md.SetProperty(MixpanelProperty.Token, null);
             Assert.That(
-            () => { _md.GetSpecialRequiredProp(MixpanelProperty.Token); },
+            () => { md.GetSpecialRequiredProp(MixpanelProperty.Token); },
             Throws
                 .TypeOf<MixpanelRequiredPropertyNullOrEmptyException>()
                 .And.Message.EqualTo("'token' property can't be null."));
@@ -114,11 +133,12 @@ namespace Mixpanel.Tests
         [Test]
         public void GetSpecialRequiredProp_RequiredPropertyValidationFails_ThrowsException()
         {
-            _md.SetProperty(MixpanelProperty.Token, Token);
+            var md = GetMessageDataObject();
+            md.SetProperty(MixpanelProperty.Token, Token);
             Assert.That(
                 () =>
                 {
-                    _md.GetSpecialRequiredProp(MixpanelProperty.Token,
+                    md.GetSpecialRequiredProp(MixpanelProperty.Token,
                         x =>
                         {
                             if (!x.ToString().Equals(Token + "2"))
@@ -135,38 +155,40 @@ namespace Mixpanel.Tests
         [Test]
         public void RemoveProperty_Works()
         {
-            _md.SetProperty(MixpanelProperty.Event, Event, PropertyNameSource.MixpanelName);
-            _md.SetProperty(MixpanelProperty.DistinctId, DistinctId);
-            _md.SetProperty(DecimalPropertyName, DecimalPropertyValue, PropertyNameSource.DataMember);
-            _md.SetProperty(DoublePropertyName, DoublePropertyValue);
+            var md = GetMessageDataObject();
+            md.SetProperty(MixpanelProperty.Event, Event, PropertyNameSource.MixpanelName);
+            md.SetProperty(MixpanelProperty.DistinctId, DistinctId);
+            md.SetProperty(DecimalPropertyName, DecimalPropertyValue, PropertyNameSource.DataMember);
+            md.SetProperty(DoublePropertyName, DoublePropertyValue);
 
-            Assert.That(_md.SpecialProps.Count, Is.EqualTo(2));
-            Assert.That(_md.Props.Count, Is.EqualTo(2));
+            Assert.That(md.SpecialProps.Count, Is.EqualTo(2));
+            Assert.That(md.Props.Count, Is.EqualTo(2));
 
-            _md.RemoveProperty(MixpanelProperty.Event);
-            _md.RemoveProperty(MixpanelProperty.DistinctId);
-            _md.RemoveProperty(DecimalPropertyName);
-            _md.RemoveProperty(DoublePropertyName);
+            md.RemoveProperty(MixpanelProperty.Event);
+            md.RemoveProperty(MixpanelProperty.DistinctId);
+            md.RemoveProperty(DecimalPropertyName);
+            md.RemoveProperty(DoublePropertyName);
 
-            Assert.That(_md.SpecialProps.Count, Is.EqualTo(0));
-            Assert.That(_md.Props.Count, Is.EqualTo(0));
+            Assert.That(md.SpecialProps.Count, Is.EqualTo(0));
+            Assert.That(md.Props.Count, Is.EqualTo(0));
         }
 
         [Test]
         public void ClearAllProperties_Works()
         {
-            _md.SetProperty(MixpanelProperty.Event, Event, PropertyNameSource.MixpanelName);
-            _md.SetProperty(MixpanelProperty.DistinctId, DistinctId);
-            _md.SetProperty(DecimalPropertyName, DecimalPropertyValue, PropertyNameSource.DataMember);
-            _md.SetProperty(DoublePropertyName, DoublePropertyValue);
+            var md = GetMessageDataObject();
+            md.SetProperty(MixpanelProperty.Event, Event, PropertyNameSource.MixpanelName);
+            md.SetProperty(MixpanelProperty.DistinctId, DistinctId);
+            md.SetProperty(DecimalPropertyName, DecimalPropertyValue, PropertyNameSource.DataMember);
+            md.SetProperty(DoublePropertyName, DoublePropertyValue);
 
-            Assert.That(_md.SpecialProps.Count, Is.EqualTo(2));
-            Assert.That(_md.Props.Count, Is.EqualTo(2));
+            Assert.That(md.SpecialProps.Count, Is.EqualTo(2));
+            Assert.That(md.Props.Count, Is.EqualTo(2));
 
-            _md.ClearAllProperties();
+            md.ClearAllProperties();
 
-            Assert.That(_md.SpecialProps.Count, Is.EqualTo(0));
-            Assert.That(_md.Props.Count, Is.EqualTo(0));
+            Assert.That(md.SpecialProps.Count, Is.EqualTo(0));
+            Assert.That(md.Props.Count, Is.EqualTo(0));
         }
     }
 }

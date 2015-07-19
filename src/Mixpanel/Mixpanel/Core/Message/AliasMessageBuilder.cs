@@ -17,12 +17,7 @@ namespace Mixpanel.Core.Message
                 SpecialPropsBindingsInternal.Add(binding.Key, binding.Value);
             }
         }
-
-        public AliasMessageBuilder(MixpanelConfig config = null)
-            : base(config)
-        {
-        }
-
+        
         public override IDictionary<string, string> SpecialPropsBindings
         {
             get { return SpecialPropsBindingsInternal; }

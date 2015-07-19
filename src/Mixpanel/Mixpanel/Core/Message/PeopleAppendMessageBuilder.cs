@@ -4,11 +4,6 @@ namespace Mixpanel.Core.Message
 {
     internal sealed class PeopleAppendMessageBuilder : PeopleMessageBuilderBase
     {
-        public PeopleAppendMessageBuilder(MixpanelConfig config = null)
-            : base(config)
-        {
-        }
-
         public override IDictionary<string, string> SpecialPropsBindings
         {
             get { return CoreSpecialPropsBindings; }

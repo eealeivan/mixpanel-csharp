@@ -11,6 +11,7 @@ namespace Mixpanel.Tests
         protected const string Event = "TestEvent";
         protected const string Token = "1234";
         protected const string DistinctId = "456";
+        protected const string SuperDistinctId = "789";
         protected const int DistinctIdInt = 456;
         protected const string Ip = "111.111.111.111";
         protected static readonly DateTime Time = new DateTime(2013, 11, 30, 0, 0, 0, DateTimeKind.Utc);
@@ -28,11 +29,21 @@ namespace Mixpanel.Tests
         protected const string Alias = "999";
 
         protected const string StringPropertyName = "StringProperty";
-        protected const string StringPropertyValue = "Tatooine";
+        protected const string StringPropertyValue = "Tatooine";        
+        protected const string StringPropertyName2 = "StringProperty2";
+        protected const string StringPropertyValue2 = "Tatooine 2";  
+        protected const string StringSuperPropertyName = "StringSuperProperty";
+        protected const string StringSuperPropertyValue = "Super Tatooine";
         protected const string DecimalPropertyName = "DecimalProperty";
-        protected const decimal DecimalPropertyValue = 2.5m; 
+        protected const decimal DecimalPropertyValue = 2.5m;         
+        protected const string DecimalPropertyName2 = "DecimalProperty2";
+        protected const decimal DecimalPropertyValue2 = 4.6m; 
+        protected const string DecimalSuperPropertyName = "DecimalSuperProperty";
+        protected const decimal DecimalSuperPropertyValue = 10.67m; 
         protected const string IntPropertyName = "IntProperty";
-        protected const int IntPropertyValue = 3; 
+        protected const int IntPropertyValue = 3;
+        protected const string DateTimePropertyName = "DateTimeProperty";
+        protected static readonly DateTime DateTimePropertyValue = new DateTime(2015, 07, 19, 22, 30, 50, DateTimeKind.Utc);
         protected const string DoublePropertyName = "DoubleProperty";
         protected const double DoublePropertyValue = 4.5d;
         protected const string InvalidPropertyName = "InvalidProperty";

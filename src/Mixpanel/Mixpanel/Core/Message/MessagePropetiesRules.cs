@@ -1,6 +1,6 @@
 ﻿namespace Mixpanel.Core.Message
 {
-    internal enum MessagePropetyRules
+    internal enum MessagePropetiesRules
     {
         None,
         NumericsOnly,

@@ -13,20 +13,33 @@ namespace Mixpanel.Core.Message
     /// </summary>
     internal abstract class MessageBuilderBase
     {
-        protected readonly MixpanelConfig Config;
-        protected readonly ValueParser ValueParser;
-        protected readonly PropertyNameFormatter PropertyNameFormatter;
+        /// <summary>
+        /// Dictionary which keys are used to find special properties.
+        /// Example: { "$first_name", "$first_name" }, { "firstname", "$first_name" }, that means both
+        /// "$first_name" and "firstname" will be interpreted as "$first_name" special property.
+        /// Also contains bindings for "distinct_id" property. If you need only "distinct_id" bindings
+        /// then use <see cref="DistinctIdPropsBindings"/>.
+        /// </summary>
+        public abstract IDictionary<string, string> SpecialPropsBindings { get; }
 
-        protected MessageBuilderBase(MixpanelConfig config = null)
-        {
-            Config = config;
-            ValueParser = new ValueParser();
-            PropertyNameFormatter = new PropertyNameFormatter(config);
-        }
-
-        public abstract IDictionary<string, string> SpecialPropsBindings { get; } 
+        /// <summary>
+        /// Dictionary which keys are used to find "distinct_id" special properties.
+        /// Needed when parsing super properties because in some cases only "distinct_id" should be taken
+        /// and all other properties ignored.
+        /// </summary>
+        public abstract IDictionary<string, string> DistinctIdPropsBindings { get; } 
 
         public abstract IDictionary<string, object> GetMessageObject(MessageData messageData);
+        
+        public virtual SuperPropertiesRules SuperPropertiesRules
+        {
+            get { return SuperPropertiesRules.DistinctIdOnly; }
+        }
+
+        public virtual MessagePropetiesRules MessagePropetiesRules
+        {
+            get { return MessagePropetiesRules.None; }
+        }
 
         protected void SetSpecialRequiredProperty(
             IDictionary<string, object> obj, MessageData messageData, string propName,

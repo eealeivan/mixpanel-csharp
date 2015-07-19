@@ -4,21 +4,32 @@ namespace Mixpanel.Core.Message
 {
     internal abstract class TrackMessageBuilderBase : MessageBuilderBase
     {
-        protected TrackMessageBuilderBase(MixpanelConfig config = null)
-            : base(config)
-        {
-        }
+        private static readonly Dictionary<string, string> DistinctIdPropsBindingsInternal =
+            new Dictionary<string, string>(2)
+            {
+                {MixpanelProperty.TrackDistinctId, MixpanelProperty.TrackDistinctId},
+                {"distinctid", MixpanelProperty.TrackDistinctId}
+            };
 
         protected static readonly Dictionary<string, string> CoreSpecialPropsBindings =
             new Dictionary<string, string>
             {
                 {MixpanelProperty.TrackEvent, MixpanelProperty.TrackEvent},
-
-                {MixpanelProperty.TrackToken, MixpanelProperty.TrackToken},
-
-                {MixpanelProperty.TrackDistinctId, MixpanelProperty.TrackDistinctId},
-                {"distinctid", MixpanelProperty.TrackDistinctId}
+                {MixpanelProperty.TrackToken, MixpanelProperty.TrackToken}
             };
+
+        static TrackMessageBuilderBase()
+        {
+            foreach (var binding in DistinctIdPropsBindingsInternal)
+            {
+                CoreSpecialPropsBindings.Add(binding.Key, binding.Value);
+            }
+        }
+
+        public override IDictionary<string, string> DistinctIdPropsBindings
+        {
+            get { return DistinctIdPropsBindingsInternal; }
+        }
 
         protected IDictionary<string, object> GetCoreMessageObject(MessageData messageData)
         {

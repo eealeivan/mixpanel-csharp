@@ -8,13 +8,15 @@ namespace Mixpanel.Core.Message
     internal sealed class MessageData
     {
         private readonly IDictionary<string, string> _specialPropsBindings;
-        private readonly MessagePropetyRules _messagePropetyRules;
+        private readonly IDictionary<string, string> _distinctIdPropsBindings;
+        private readonly MessagePropetiesRules _messagePropetiesRules;
+        private readonly SuperPropertiesRules _superPropertiesRules;
         private readonly ValueParser _valueParser;
         private readonly PropertyNameFormatter _nameFormatter;
         private readonly PropertiesDigger _propertiesDigger;
 
         /// <summary>
-        /// Contais prsed mixpanel special properties like 'token', 'distinct_id' and etc.
+        /// Contais parsed Mixpanel special properties like 'token', 'distinct_id' etc.
         /// </summary>
         public IDictionary<string, object> SpecialProps { get; private set; }
 
@@ -23,17 +25,17 @@ namespace Mixpanel.Core.Message
         /// </summary>
         public IDictionary<string, object> Props { get; private set; }
 
-        public MessageData(IDictionary<string, string> specialPropsBindings, MixpanelConfig config = null) 
-            : this(specialPropsBindings, MessagePropetyRules.None, config)
-        {
-        }
-
         public MessageData(
-            IDictionary<string, string> specialPropsBindings, 
-            MessagePropetyRules messagePropetyRules, MixpanelConfig config = null)
+            IDictionary<string, string> specialPropsBindings,
+            IDictionary<string, string> distinctIdPropsBindings,
+            MessagePropetiesRules messagePropetiesRules,
+            SuperPropertiesRules superPropertiesRules,
+            MixpanelConfig config = null)
         {
             _specialPropsBindings = specialPropsBindings ?? new Dictionary<string, string>();
-            _messagePropetyRules = messagePropetyRules;
+            _distinctIdPropsBindings = distinctIdPropsBindings ?? new Dictionary<string, string>();
+            _messagePropetiesRules = messagePropetiesRules;
+            _superPropertiesRules = superPropertiesRules;
             _valueParser = new ValueParser();
             _nameFormatter = new PropertyNameFormatter(config);
             _propertiesDigger = new PropertiesDigger();
@@ -44,31 +46,73 @@ namespace Mixpanel.Core.Message
 
         public void ParseAndSetProperties(object props)
         {
-            if(props == null) return;
-
-            foreach (var pair in _propertiesDigger.Get(props))
+            if (props == null)
             {
-                SetProperty(pair.Key, pair.Value.Value, pair.Value.PropertyNameSource);
+                return;
+            }
+
+            foreach (var property in _propertiesDigger.Get(props))
+            {
+                SetProperty(property.PropertyName, property.Value, property.PropertyNameSource);
             }
         }
 
         public void ParseAndSetPropertiesIfNotNull(object props)
         {
-            if (props == null) return;
-
-            foreach (var pair in _propertiesDigger.Get(props))
+            if (props == null)
             {
-                SetPropertyIfNotNull(pair.Key, pair.Value.Value, pair.Value.PropertyNameSource);
+                return;
+            }
+
+            foreach (var property in _propertiesDigger.Get(props))
+            {
+                SetPropertyIfNotNull(property.PropertyName, property.Value, property.PropertyNameSource);
             }
         }
 
-        public bool SetProperty(string propertyName, object value, 
+        public void ParseAndSetSuperProperties(object superProperties)
+        {
+            if (superProperties == null)
+            {
+                return;
+            }
+
+            foreach (var property in _propertiesDigger.Get(superProperties))
+            {
+                switch (_superPropertiesRules)
+                {
+                    case SuperPropertiesRules.All:
+                        SetProperty(property.PropertyName, property.Value, property.PropertyNameSource);
+                        break;
+                    case SuperPropertiesRules.DistinctIdOnly:
+                        string distinctIdBindingProp;
+                        bool isDistinctId = _distinctIdPropsBindings.TryGetValue(
+                            property.PropertyName.ToLower(), out distinctIdBindingProp);
+
+                        if (isDistinctId)
+                        {
+                            SetProperty(property.PropertyName, property.Value, property.PropertyNameSource);
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        public bool SetProperty(string propertyName, object value,
             PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
-            if (string.IsNullOrEmpty(propertyName)) return false;
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                return false;
+            }
 
             var parsedProperty = _valueParser.Parse(value);
-            if (!parsedProperty.IsValid) return false;
+            if (!parsedProperty.IsValid)
+            {
+                return false;
+            }
 
             string bindingProp;
             if (_specialPropsBindings.TryGetValue(propertyName.ToLower(), out bindingProp))
@@ -77,17 +121,17 @@ namespace Mixpanel.Core.Message
             }
             else
             {
-                switch (_messagePropetyRules)
+                switch (_messagePropetiesRules)
                 {
-                    case MessagePropetyRules.None:
+                    case MessagePropetiesRules.None:
                         break;
-                    case MessagePropetyRules.NumericsOnly:
+                    case MessagePropetiesRules.NumericsOnly:
                         if (!_valueParser.IsNumeric(parsedProperty.Value))
                         {
                             return false;
                         }
                         break;
-                    case MessagePropetyRules.ListsOnly:
+                    case MessagePropetiesRules.ListsOnly:
                         if (!_valueParser.IsEnumerable(parsedProperty.Value))
                         {
                             return false;
@@ -106,7 +150,10 @@ namespace Mixpanel.Core.Message
         public bool SetPropertyIfNotNull(string propertyName, object value,
             PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
-            if(value == null) return false;
+            if (value == null)
+            {
+                return false;
+            }
 
             return SetProperty(propertyName, value, propertyNameSource);
         }
@@ -114,7 +161,10 @@ namespace Mixpanel.Core.Message
         public void RemoveProperty(string propertyName,
             PropertyNameSource propertyNameSource = PropertyNameSource.Default)
         {
-            if (propertyName.IsNullOrWhiteSpace()) return;
+            if (propertyName.IsNullOrWhiteSpace())
+            {
+                return;
+            }
 
             if (!SpecialProps.Remove(propertyName))
             {
@@ -139,7 +189,7 @@ namespace Mixpanel.Core.Message
         /// will be thrown before.
         /// </param>
         /// <param name="convertFn">Custom value convert function.</param>
-        public object GetSpecialRequiredProp(string propName, 
+        public object GetSpecialRequiredProp(string propName,
             Action<object> validateFn = null, Func<object, object> convertFn = null)
         {
             object val;

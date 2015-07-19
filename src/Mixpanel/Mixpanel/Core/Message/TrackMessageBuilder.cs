@@ -19,15 +19,15 @@ namespace Mixpanel.Core.Message
                 SpecialPropsBindingsInternal.Add(binding.Key, binding.Value);
             }
         }
-
-        public TrackMessageBuilder(MixpanelConfig config = null)
-            : base(config)
-        {
-        }
-
+        
         public override IDictionary<string, string> SpecialPropsBindings
         {
             get { return SpecialPropsBindingsInternal; }
+        }
+
+        public override SuperPropertiesRules SuperPropertiesRules
+        {
+            get { return SuperPropertiesRules.All; }
         }
 
         public override IDictionary<string, object> GetMessageObject(MessageData messageData)

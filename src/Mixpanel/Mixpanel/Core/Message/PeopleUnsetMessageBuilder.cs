@@ -18,11 +18,6 @@ namespace Mixpanel.Core.Message
             }
         }
 
-        public PeopleUnsetMessageBuilder(MixpanelConfig config = null)
-            : base(config)
-        {
-        }
-
         public override IDictionary<string, string> SpecialPropsBindings
         {
             get { return SpecialPropsBindingsInternal; }

@@ -80,6 +80,24 @@ namespace Mixpanel.Tests
             _client.Track(Event, GetTrackObject(includeDistinctId: true));
             CheckTrack();
         }
+        
+        [Test]
+        public void Track_AnonymousObjectAndSuperProps_CorrectDataSent()
+        {
+            // All super properties should be included in message
+            _client.SetSuperProperties(GetSuperPropertiesDictionary());
+            _client.Track(Event, DistinctId, GetTrackObject());
+            CheckTrack(CheckOptions.SuperPropsSet);
+        }
+        
+        [Test]
+        public void Track_AnonymousObjectAndSuperPropsWithDistinctId_CorrectDataSent()
+        {
+            // All super properties should be included in message
+            _client.SetSuperProperties(GetSuperPropertiesDictionary(includeDistinctId: true));
+            _client.Track(Event, DistinctId, GetTrackObject());
+            CheckTrack(CheckOptions.SuperPropsSet | CheckOptions.SuperPropsDistinctIdSet);
+        }
 
         [Test]
         public void Track_Dictionary_CorrectDataSent()
@@ -93,6 +111,24 @@ namespace Mixpanel.Tests
         {
             _client.Track(Event, GetTrackDictionary(includeDistinctId: true));
             CheckTrack();
+        }
+
+        [Test]
+        public void Track_DictionaryAndSuperProps_CorrectDataSent()
+        {
+            // All super properties should be included in message
+            _client.SetSuperProperties(GetSuperPropertiesDictionary());
+            _client.Track(Event, DistinctId, GetTrackDictionary());
+            CheckTrack(CheckOptions.SuperPropsSet);
+        }
+        
+        [Test]
+        public void Track_DictionaryAndSuperPropsWithDistinctId_CorrectDataSent()
+        {
+            // All super properties should be included in message
+            _client.SetSuperProperties(GetSuperPropertiesDictionary(includeDistinctId: true));
+            _client.Track(Event, DistinctId, GetTrackDictionary());
+            CheckTrack(CheckOptions.SuperPropsSet | CheckOptions.SuperPropsDistinctIdSet);
         }
 
 #if !(NET35 || NET40)
@@ -123,6 +159,14 @@ namespace Mixpanel.Tests
         {
             await _client.TrackAsync(Event, GetTrackDictionary(includeDistinctId: true));
             CheckTrack();
+        } 
+        
+        [Test]
+        public async void TrackAsync_DictionaryAndSuperProps_CorrectDataSent()
+        {
+            _client.SetSuperProperties(GetSuperPropertiesDictionary());
+            await _client.TrackAsync(Event, DistinctId, GetTrackDictionary());
+            CheckTrack(CheckOptions.SuperPropsSet);
         }
 #endif
 
@@ -155,6 +199,14 @@ namespace Mixpanel.Tests
         }
 
         [Test]
+        public void GetTrackMessage_DictionaryAndSuperProps_CorrectMessageReturned()
+        {
+            _client.SetSuperProperties(GetSuperPropertiesDictionary());
+            MixpanelMessage msg = _client.GetTrackMessage(Event, DistinctId, GetTrackDictionary());
+            CheckTrackMessage(msg, CheckOptions.SuperPropsSet);
+        }
+
+        [Test]
         public void TrackTest_AnonymousObject_CorrectValuesReturned()
         {
             var msg = _client.TrackTest(Event, DistinctId, GetTrackObject());
@@ -180,6 +232,14 @@ namespace Mixpanel.Tests
         {
             var msg = _client.TrackTest(Event, GetTrackDictionary(includeDistinctId: true));
             CheckTrackDictionary(msg.Data);
+        }
+
+        [Test]
+        public void TrackTest_DictionaryAndSuperProps_CorrectValuesReturned()
+        {
+            _client.SetSuperProperties(GetSuperPropertiesDictionary());
+            var msg = _client.TrackTest(Event, DistinctId, GetTrackDictionary());
+            CheckTrackDictionary(msg.Data, CheckOptions.SuperPropsSet);
         }
 
         private object GetTrackObject(bool includeDistinctId = false)
@@ -219,47 +279,60 @@ namespace Mixpanel.Tests
             return dic;
         }
 
-        private void CheckTrack()
+        private void CheckTrack(CheckOptions checkOptions = CheckOptions.None)
         {
             Assert.That(_httpPostEntries.Single().Endpoint, Is.EqualTo(TrackUrl));
 
             JObject msg = ParseMessageData(_httpPostEntries.Single().Data);
-            CheckTrackJsonMessage(msg);
+            CheckTrackJsonMessage(msg, checkOptions);
         }
 
-        private void CheckTrackJsonMessage(JObject msg)
+        private void CheckTrackJsonMessage(JObject msg, CheckOptions checkOptions = CheckOptions.None)
         {
             Assert.That(msg.Count, Is.EqualTo(2));
             Assert.That(msg[MixpanelProperty.TrackEvent].Value<string>(), Is.EqualTo(Event));
             var props = (JObject)msg[MixpanelProperty.TrackProperties];
-            Assert.That(props.Count, Is.EqualTo(6));
+
+            Assert.That(props.Count, Is.EqualTo(GetPropsCount(checkOptions, normalCount: 6, superPropsCount: 8)));
             Assert.That(props[MixpanelProperty.TrackToken].Value<string>(), Is.EqualTo(Token));
-            Assert.That(props[MixpanelProperty.TrackDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            Assert.That(props[MixpanelProperty.TrackDistinctId].Value<string>(), Is.EqualTo(GetDistinctId(checkOptions)));
             Assert.That(props[MixpanelProperty.TrackIp].Value<string>(), Is.EqualTo(Ip));
             Assert.That(props[MixpanelProperty.TrackTime].Value<long>(), Is.EqualTo(TimeUnix));
             Assert.That(props[StringPropertyName].Value<string>(), Is.EqualTo(StringPropertyValue));
             Assert.That(props[DecimalPropertyName].Value<decimal>(), Is.EqualTo(DecimalPropertyValue));
+            
+            if (checkOptions.HasFlag(CheckOptions.SuperPropsSet))
+            {
+                Assert.That(props[DecimalSuperPropertyName].Value<decimal>(), Is.EqualTo(DecimalSuperPropertyValue));
+                Assert.That(props[StringSuperPropertyName].Value<string>(), Is.EqualTo(StringSuperPropertyValue));
+            }
         }
 
-        private static void CheckTrackDictionary(IDictionary<string, object> dic)
+        private void CheckTrackDictionary(IDictionary<string, object> dic, CheckOptions checkOptions = CheckOptions.None)
         {
             Assert.That(dic.Count, Is.EqualTo(2));
             Assert.That(dic[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
             Assert.That(dic[MixpanelProperty.TrackProperties], Is.TypeOf<Dictionary<string, object>>());
             var props = (Dictionary<string, object>)dic[MixpanelProperty.TrackProperties];
-            Assert.That(props.Count, Is.EqualTo(6));
+            Assert.That(props.Count, Is.EqualTo(GetPropsCount(checkOptions, normalCount: 6, superPropsCount: 8)));
             Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
-            Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
+            Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(GetDistinctId(checkOptions)));
             Assert.That(props[MixpanelProperty.TrackIp], Is.EqualTo(Ip));
             Assert.That(props[MixpanelProperty.TrackTime], Is.EqualTo(TimeUnix));
             Assert.That(props[StringPropertyName], Is.EqualTo(StringPropertyValue));
             Assert.That(props[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
+
+            if (checkOptions.HasFlag(CheckOptions.SuperPropsSet))
+            {
+                Assert.That(props[DecimalSuperPropertyName], Is.EqualTo(DecimalSuperPropertyValue));
+                Assert.That(props[StringSuperPropertyName], Is.EqualTo(StringSuperPropertyValue));
+            }
         }
 
-        private static void CheckTrackMessage(MixpanelMessage msg)
+        private void CheckTrackMessage(MixpanelMessage msg, CheckOptions checkOptions = CheckOptions.None)
         {
             Assert.That(msg.Kind, Is.EqualTo(MessageKind.Track));
-            CheckTrackDictionary(msg.Data);
+            CheckTrackDictionary(msg.Data, checkOptions);
         }
 
         #endregion Track
@@ -271,6 +344,23 @@ namespace Mixpanel.Tests
         {
             _client.Alias(DistinctId, Alias);
             CheckAlias();
+        } 
+        
+        [Test]
+        public void Alias_ValidValuesAndSuperProps_CorrectDataSent()
+        {
+            _client.SetSuperProperties(GetSuperPropertiesDictionary()); // Should be ignored
+            _client.Alias(DistinctId, Alias);
+            CheckAlias();
+        }
+        
+        [Test]
+        public void Alias_ValidValuesAndSuperPropsWithDistinctId_CorrectDataSent()
+        {
+            // Only DistinctId should be used
+            _client.SetSuperProperties(GetSuperPropertiesDictionary(includeDistinctId: true));
+            _client.Alias(DistinctId, Alias);
+            CheckAlias(CheckOptions.SuperPropsDistinctIdSet);
         }
 
 #if !(NET40 || NET35)
@@ -297,7 +387,7 @@ namespace Mixpanel.Tests
             CheckAliasDictionary(msg.Data);
         }
 
-        private void CheckAlias()
+        private void CheckAlias(CheckOptions checkOptions = CheckOptions.None)
         {
             Assert.That(_httpPostEntries.Single().Endpoint, Is.EqualTo(TrackUrl));
 
@@ -307,7 +397,9 @@ namespace Mixpanel.Tests
             var props = (JObject)msg[MixpanelProperty.TrackProperties];
             Assert.That(props.Count, Is.EqualTo(3));
             Assert.That(props[MixpanelProperty.TrackToken].Value<string>(), Is.EqualTo(Token));
-            Assert.That(props[MixpanelProperty.TrackDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            Assert.That(
+                props[MixpanelProperty.TrackDistinctId].Value<string>(), 
+                Is.EqualTo(GetDistinctId(checkOptions)));
             Assert.That(props[MixpanelProperty.TrackAlias].Value<string>(), Is.EqualTo(Alias));
         }
 
@@ -339,6 +431,23 @@ namespace Mixpanel.Tests
         {
             _client.PeopleSet(GetPeopleSetDictionary(includeDistinctId: true));
             CheckPeopleSet();
+        }
+
+        [Test]
+        public void PeopleSet_DictionaryAndSuperProps_CorrectDataSent()
+        {
+            _client.SetSuperProperties(GetSuperPropertiesDictionary()); // Should be ignored
+            _client.PeopleSet(DistinctId, GetPeopleSetDictionary());
+            CheckPeopleSet();
+        }  
+        
+        [Test]
+        public void PeopleSet_DictionaryAndSuperPropsWithDistinctId_CorrectDataSent()
+        {
+            // Only DistinctId should be used
+            _client.SetSuperProperties(GetSuperPropertiesDictionary(includeDistinctId: true)); 
+            _client.PeopleSet(DistinctId, GetPeopleSetDictionary());
+            CheckPeopleSet(CheckOptions.SuperPropsDistinctIdSet);
         }
 
 #if !(NET40 || NET35)
@@ -409,19 +518,21 @@ namespace Mixpanel.Tests
             return dic;
         }
 
-        private void CheckPeopleSet()
+        private void CheckPeopleSet(CheckOptions checkOptions = CheckOptions.None)
         {
             Assert.That(_httpPostEntries.Single().Endpoint, Is.EqualTo(EngageUrl));
 
             var msg = ParseMessageData(_httpPostEntries.Single().Data);
-            CheckPeopleSetJsonMessage(msg);
+            CheckPeopleSetJsonMessage(msg, checkOptions);
         }
 
-        private void CheckPeopleSetJsonMessage(JObject msg)
+        private void CheckPeopleSetJsonMessage(JObject msg, CheckOptions checkOptions = CheckOptions.None)
         {
             Assert.That(msg.Count, Is.EqualTo(6));
             Assert.That(msg[MixpanelProperty.PeopleToken].Value<string>(), Is.EqualTo(Token));
-            Assert.That(msg[MixpanelProperty.PeopleDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            Assert.That(
+                msg[MixpanelProperty.PeopleDistinctId].Value<string>(), 
+                Is.EqualTo(GetDistinctId(checkOptions)));
             Assert.That(msg[MixpanelProperty.PeopleIp].Value<string>(), Is.EqualTo(Ip));
             Assert.That(msg[MixpanelProperty.PeopleTime].Value<long>(), Is.EqualTo(TimeUnix));
             Assert.That(msg[MixpanelProperty.PeopleIgnoreTime].Value<bool>(), Is.EqualTo(IgnoreTime));
@@ -1344,83 +1455,43 @@ namespace Mixpanel.Tests
         #endregion Send
 
         #region SuperProperties
-
-        [Test]
-        public void SuperProperties_ValidValues_AddedToMessage()
-        {
-            _client.SetSuperProperties(new Dictionary<string, object>
-            {
-                {MixpanelProperty.DistinctId, DistinctId},
-                {DoublePropertyName, DoublePropertyValue},
-                {StringPropertyName, StringPropertyValue}
-            });
-
-            var msg = _client.TrackTest(Event, new Dictionary<string, object>
-            {
-                {DecimalPropertyName, DecimalPropertyValue}
-            });
-
-            Assert.That(msg.Data.Count, Is.EqualTo(2));
-            Assert.That(msg.Data[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
-            Assert.That(msg.Data[MixpanelProperty.TrackProperties], Is.TypeOf<Dictionary<string, object>>());
-            var props = (Dictionary<string, object>)msg.Data[MixpanelProperty.TrackProperties];
-            Assert.That(props.Count, Is.EqualTo(5));
-            Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
-            Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
-            Assert.That(props[DoublePropertyName], Is.EqualTo(DoublePropertyValue));
-            Assert.That(props[StringPropertyName], Is.EqualTo(StringPropertyValue));
-            Assert.That(props[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
-        }
-
+        
         [Test]
         public void SuperProperties_InvalidValues_Ignored()
         {
-            _client.SetSuperProperties(new Dictionary<string, object>
-            {
-                {MixpanelProperty.DistinctId, DistinctId},
-                {InvalidPropertyName, InvalidPropertyValue},
-                {InvalidPropertyName2, InvalidPropertyValue2}
-            });
+            var superProps = GetSuperPropertiesDictionary(includeDistinctId: true);
+            superProps.Add(InvalidPropertyName, InvalidPropertyValue);
+            superProps.Add(InvalidPropertyName2, InvalidPropertyValue2);
 
-            var msg = _client.TrackTest(Event, new Dictionary<string, object>
-            {
-                {DecimalPropertyName, DecimalPropertyValue}
-            });
+            _client.SetSuperProperties(superProps);
 
-            Assert.That(msg.Data.Count, Is.EqualTo(2));
-            Assert.That(msg.Data[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
-            Assert.That(msg.Data[MixpanelProperty.TrackProperties], Is.TypeOf<Dictionary<string, object>>());
-            var props = (Dictionary<string, object>)msg.Data[MixpanelProperty.TrackProperties];
-            Assert.That(props.Count, Is.EqualTo(3));
-            Assert.That(props[MixpanelProperty.TrackToken], Is.EqualTo(Token));
-            Assert.That(props[MixpanelProperty.TrackDistinctId], Is.EqualTo(DistinctId));
-            Assert.That(props[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
+            _client.Track(Event, GetTrackDictionary());
+            CheckTrack(CheckOptions.SuperPropsSet | CheckOptions.SuperPropsDistinctIdSet);
         }
 
         [Test]
         public void SuperProperties_FromClientConstructor_AddedToMessage()
         {
-            var client = new MixpanelClient(Token, null, new Dictionary<string, object>
-            {
-                {MixpanelProperty.DistinctId, DistinctId},
-                {DoublePropertyName, DoublePropertyValue},
-                {StringPropertyName, StringPropertyValue}
-            });
+            var client = new MixpanelClient(Token, null, GetSuperPropertiesDictionary(includeDistinctId: true));
 
-            var msg = client.PeopleSetTest(new Dictionary<string, object>
-            {
-                {DecimalPropertyName, DecimalPropertyValue}
-            });
+            MixpanelMessage msg = client.GetTrackMessage(Event, GetTrackDictionary());
+            CheckTrackMessage(msg, CheckOptions.SuperPropsSet | CheckOptions.SuperPropsDistinctIdSet);
+        }
 
-            Assert.That(msg.Data.Count, Is.EqualTo(3));
-            Assert.That(msg.Data[MixpanelProperty.PeopleToken], Is.EqualTo(Token));
-            Assert.That(msg.Data[MixpanelProperty.PeopleDistinctId], Is.EqualTo(DistinctId));
-            Assert.That(msg.Data[MixpanelProperty.PeopleSet], Is.TypeOf<Dictionary<string, object>>());
-            var set = (Dictionary<string, object>)msg.Data[MixpanelProperty.PeopleSet];
-            Assert.That(set.Count, Is.EqualTo(3));
-            Assert.That(set[DoublePropertyName], Is.EqualTo(DoublePropertyValue));
-            Assert.That(set[StringPropertyName], Is.EqualTo(StringPropertyValue));
-            Assert.That(set[DecimalPropertyName], Is.EqualTo(DecimalPropertyValue));
+        private IDictionary<string, object> GetSuperPropertiesDictionary(bool includeDistinctId = false)
+        {
+            var dic = new Dictionary<string, object>
+            {
+                {DecimalSuperPropertyName, DecimalSuperPropertyValue},
+                {StringSuperPropertyName, StringSuperPropertyValue}
+            };
+
+            if (includeDistinctId)
+            {
+                dic.Add(MixpanelProperty.DistinctId, SuperDistinctId);
+            }
+
+            return dic;
         }
 
         #endregion SuperProperties
@@ -1473,6 +1544,32 @@ namespace Mixpanel.Tests
             {
                 dic.Add(MixpanelProperty.DistinctId, DistinctId);
             }
+        }
+
+        private int GetPropsCount(CheckOptions checkOptions, int normalCount, int superPropsCount)
+        {
+            if (checkOptions.HasFlag(CheckOptions.SuperPropsSet))
+            {
+                return 8;
+            }
+            return 6;
+        }
+
+        private string GetDistinctId(CheckOptions checkOptions)
+        {
+            if (checkOptions.HasFlag(CheckOptions.SuperPropsDistinctIdSet))
+            {
+                return SuperDistinctId;
+            }
+            return DistinctId;
+        }
+
+        [Flags]
+        private enum CheckOptions
+        {
+            None = 0x0,
+            SuperPropsSet = 0x1,
+            SuperPropsDistinctIdSet = 0x2,
         }
     }
 }

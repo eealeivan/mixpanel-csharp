@@ -185,7 +185,7 @@ namespace Mixpanel
             string @event, object distinctId, object properties)
         {
             return GetMessageObject(
-                new TrackMessageBuilder(_config), properties,
+                new TrackMessageBuilder(), properties,
                 new Dictionary<string, object>
                 {
                     {MixpanelProperty.Event, @event},
@@ -261,7 +261,7 @@ namespace Mixpanel
             object distinctId, object alias)
         {
             return GetMessageObject(
-                new AliasMessageBuilder(_config), null,
+                new AliasMessageBuilder(), null,
                 new Dictionary<string, object>
                 {
                     {MixpanelProperty.DistinctId, distinctId},
@@ -406,7 +406,7 @@ namespace Mixpanel
         private IDictionary<string, object> CreatePeopleSetMessageObject(object distinctId, object properties)
         {
             return GetMessageObject(
-                new PeopleSetMessageBuilder(_config),
+                new PeopleSetMessageBuilder(),
                 properties, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
@@ -548,7 +548,7 @@ namespace Mixpanel
         private IDictionary<string, object> CreatePeopleSetOnceMessageObject(object distinctId, object properties)
         {
             return GetMessageObject(
-                new PeopleSetOnceMessageBuilder(_config),
+                new PeopleSetOnceMessageBuilder(),
                 properties, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
@@ -700,9 +700,8 @@ namespace Mixpanel
             object distinctId, object properties)
         {
             return GetMessageObject(
-                new PeopleAddMessageBuilder(_config),
-                properties, CreateExtraPropertiesForDistinctId(distinctId),
-                MessagePropetyRules.NumericsOnly);
+                new PeopleAddMessageBuilder(),
+                properties, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
         #endregion PeopleAdd
@@ -847,7 +846,7 @@ namespace Mixpanel
             object distinctId, object properties)
         {
             return GetMessageObject(
-                new PeopleAppendMessageBuilder(_config),
+                new PeopleAppendMessageBuilder(),
                 properties, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
@@ -997,9 +996,8 @@ namespace Mixpanel
             object distinctId, object properties)
         {
             return GetMessageObject(
-                new PeopleUnionMessageBuilder(_config),
-                properties, CreateExtraPropertiesForDistinctId(distinctId),
-                MessagePropetyRules.ListsOnly);
+                new PeopleUnionMessageBuilder(),
+                properties, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
         #endregion PeopleUnion
@@ -1117,7 +1115,7 @@ namespace Mixpanel
             IEnumerable<string> propertyNames)
         {
             return GetMessageObject(
-                new PeopleUnsetMessageBuilder(_config),
+                new PeopleUnsetMessageBuilder(),
                 null, new Dictionary<string, object>
                 {
                     {MixpanelProperty.DistinctId, distinctId},
@@ -1188,7 +1186,7 @@ namespace Mixpanel
         private IDictionary<string, object> CreatePeopleDeleteObject(object distinctId)
         {
             return GetMessageObject(
-                new PeopleDeleteMessageBuilder(_config),
+                new PeopleDeleteMessageBuilder(),
                 null, CreateExtraPropertiesForDistinctId(distinctId));
         }
 
@@ -1424,20 +1422,21 @@ namespace Mixpanel
         /// Object created by calling method. Usually contains properties that are passed to calling method
         /// as arguments.
         /// </param>
-        /// <param name="propetyRules">
-        /// Additional rules that will be appended to user defined properties.
-        /// </param>
         private IDictionary<string, object> GetMessageObject(
-            MessageBuilderBase builder, object userProperties, object extraProperties,
-            MessagePropetyRules propetyRules = MessagePropetyRules.None)
+            MessageBuilderBase builder, object userProperties, object extraProperties)
         {
-            var od = new MessageData(builder.SpecialPropsBindings, propetyRules, _config);
-            od.ParseAndSetProperties(userProperties);
-            od.SetProperty(MixpanelProperty.Token, _token);
-            od.ParseAndSetPropertiesIfNotNull(extraProperties);
-            od.ParseAndSetProperties(_superProperties);
+            var md = new MessageData(
+                builder.SpecialPropsBindings, 
+                builder.DistinctIdPropsBindings,
+                builder.MessagePropetiesRules, 
+                builder.SuperPropertiesRules, 
+                _config);
+            md.SetProperty(MixpanelProperty.Token, _token);
+            md.ParseAndSetProperties(userProperties);
+            md.ParseAndSetPropertiesIfNotNull(extraProperties);
+            md.ParseAndSetSuperProperties(_superProperties);
 
-            return builder.GetMessageObject(od);
+            return builder.GetMessageObject(md);
         }
 
         private IDictionary<string, object> CreateExtraPropertiesForDistinctId(object distinctId)

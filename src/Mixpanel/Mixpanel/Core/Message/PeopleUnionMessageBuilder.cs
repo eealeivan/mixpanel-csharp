@@ -4,14 +4,14 @@ namespace Mixpanel.Core.Message
 {
     internal sealed class PeopleUnionMessageBuilder : PeopleMessageBuilderBase
     {
-        public PeopleUnionMessageBuilder(MixpanelConfig config = null)
-            : base(config)
-        {
-        }
-
         public override IDictionary<string, string> SpecialPropsBindings
         {
             get { return CoreSpecialPropsBindings; }
+        }
+
+        public override MessagePropetiesRules MessagePropetiesRules
+        {
+            get { return MessagePropetiesRules.ListsOnly; }
         }
 
         public override IDictionary<string, object> GetMessageObject(MessageData messageData)
