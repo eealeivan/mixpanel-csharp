@@ -10,8 +10,5 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Mixpanel .NET integration library that supports the complete Mixpanel API. The main idea of the library is to hide API details allowing you to concentrate on data that you want to analyze. It's also well documented, configurable and testable. Check the example usage on the project site.</description>
         <tags>Mixpanel, analytics, data, tracking</tags>
-    </metadata>
-    <files>
-        <file src="..\src\Mixpanel\Mixpanel\bin\Release\Mixpanel.dll" target="lib\Mixpanel.dll" />
-    </files>
+    </metadata>   
 </package>
