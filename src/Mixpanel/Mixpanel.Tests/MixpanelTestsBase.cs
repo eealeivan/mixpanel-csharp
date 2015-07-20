@@ -80,4 +80,24 @@ namespace Mixpanel.Tests
             return list;
         }
     }
+
+#if NET35
+
+    public static class Net35Helpers
+    {
+        public static bool HasFlag(this Enum value, Enum flag)
+        {
+            if (value.GetType() != flag.GetType())
+            {
+                throw new ArgumentException();
+            }
+
+            ulong valueL = Convert.ToUInt64(value);
+            ulong flagL = Convert.ToUInt64(flag);
+
+            return (valueL & flagL) == flagL;
+        }
+    }
+
+#endif
 }
