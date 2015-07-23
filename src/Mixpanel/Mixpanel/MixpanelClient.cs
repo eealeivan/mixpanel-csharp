@@ -18,7 +18,7 @@ namespace Mixpanel
         /// Func for getting/setting current utc date. Simplifies testing.
         /// </summary>
         internal Func<DateTime> UtcNow { get; set; }
-        
+
         /// <summary>
         /// Creates an instance of <see cref="MixpanelClient"/>.
         /// </summary>
@@ -923,7 +923,7 @@ namespace Mixpanel
                 MessageKind.PeopleUnion);
         }
 #endif
-        
+
         /// <summary>
         /// Returns a <see cref="MixpanelMessage"/> for 'PeopleUnion' that contains parsed data from 
         /// <paramref name="properties"/> parameter. If message can't be created, then null is returned.
@@ -1386,8 +1386,40 @@ namespace Mixpanel
         public async Task<bool> SendAsync(params MixpanelMessage[] messages)
         {
             return await SendAsync(messages as IEnumerable<MixpanelMessage>);
-        } 
+        }
 #endif
+
+        public IEnumerable<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages)
+        {
+            var batchMessageWrapper = new BatchMessageWrapper(messages);
+
+            // Concatenate both 'TrackMessages' and 'EngageMessages' in one list
+            var batchMessages =
+                (batchMessageWrapper.TrackMessages ?? new List<List<IDictionary<string, object>>>(0))
+                .Concat(((batchMessageWrapper.EngageMessages ?? new List<List<IDictionary<string, object>>>(0))));
+
+            foreach (var batchMessage in batchMessages)
+            {
+                var testMessage = new MixpanelBatchMessageTest { Data = batchMessage };
+
+                try
+                {
+                    testMessage.Json = ToJson(testMessage);
+                    testMessage.Base64 = ToBase64(testMessage.Json);
+                }
+                catch (Exception e)
+                {
+                    testMessage.Exception = e;
+                }
+
+                yield return testMessage;
+            }
+        }
+
+        public IEnumerable<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages)
+        {
+            return SendTest(messages as IEnumerable<MixpanelMessage>);
+        }
 
         #endregion Send
 
@@ -1426,10 +1458,10 @@ namespace Mixpanel
             MessageBuilderBase builder, object userProperties, object extraProperties)
         {
             var md = new MessageData(
-                builder.SpecialPropsBindings, 
+                builder.SpecialPropsBindings,
                 builder.DistinctIdPropsBindings,
-                builder.MessagePropetiesRules, 
-                builder.SuperPropertiesRules, 
+                builder.MessagePropetiesRules,
+                builder.SuperPropertiesRules,
                 _config);
             md.SetProperty(MixpanelProperty.Token, _token);
             md.ParseAndSetProperties(userProperties);
@@ -1441,7 +1473,7 @@ namespace Mixpanel
 
         private IDictionary<string, object> CreateExtraPropertiesForDistinctId(object distinctId)
         {
-            return new Dictionary<string, object> {{MixpanelProperty.DistinctId, distinctId}};
+            return new Dictionary<string, object> { { MixpanelProperty.DistinctId, distinctId } };
         }
 
         private MixpanelMessage GetMessage(
@@ -1464,39 +1496,21 @@ namespace Mixpanel
 
         private MixpanelMessageTest TestMessage(Func<IDictionary<string, object>> getMessageDataFn)
         {
-            var res = new MixpanelMessageTest();
+            var testMessage = new MixpanelMessageTest();
 
             try
             {
-                res.Data = getMessageDataFn();
+                testMessage.Data = getMessageDataFn();
+                testMessage.Json = ToJson(testMessage.Data);
+                testMessage.Base64 = ToBase64(testMessage.Json);
             }
             catch (Exception e)
             {
-                res.Exception = e;
-                return res;
+                testMessage.Exception = e;
+                return testMessage;
             }
 
-            try
-            {
-                res.Json = ToJson(res.Data);
-            }
-            catch (Exception e)
-            {
-                res.Exception = e;
-                return res;
-            }
-
-            try
-            {
-                res.Base64 = ToBase64(res.Json);
-            }
-            catch (Exception e)
-            {
-                res.Exception = e;
-                return res;
-            }
-
-            return res;
+            return testMessage;
         }
 
         private void LogError(string msg, Exception exception)

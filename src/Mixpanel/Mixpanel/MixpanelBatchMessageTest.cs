@@ -4,14 +4,15 @@ using System.Collections.Generic;
 namespace Mixpanel
 {
     /// <summary>
-    /// Can be used to check all steps of creating a Mixapnel message.
+    /// Can be used to check all steps of creating a batch mixapnel messages for
+    /// MixpanelClient 'Send' and 'SendAsync' methods.
     /// </summary>
-    public class MixpanelMessageTest
+    public class MixpanelBatchMessageTest
     {
         /// <summary>
         /// Message data that was constructed from user input.
         /// </summary>
-        public IDictionary<string, object> Data { get; set; }
+        public IList<IDictionary<string, object>> Data { get; set; }
 
         /// <summary>
         /// <see cref="Data"/> serialized to JSON.

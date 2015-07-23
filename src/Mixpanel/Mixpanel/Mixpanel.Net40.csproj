@@ -39,7 +39,7 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Message\AliasMessageBuilder.cs" />
+        <Compile Include="Core\Message\AliasMessageBuilder.cs" />
     <Compile Include="Core\Message\MessageBuilderBase.cs" />
     <Compile Include="Core\Message\MessageData.cs" />
     <Compile Include="Core\Message\MessagePropetiesRules.cs" />
@@ -74,6 +74,7 @@
     <Compile Include="Misc\StringHelper.cs" />
     <Compile Include="Misc\ThreadSafeCache.cs" />
     <Compile Include="BatchMessageWrapper.cs" />
+    <Compile Include="MixpanelBatchMessageTest.cs" />
     <Compile Include="MixpanelClient.cs" />
     <Compile Include="MixpanelClient.Http.cs" />
     <Compile Include="MixpanelConfig.cs" />

@@ -74,6 +74,7 @@
     <Compile Include="Misc\StringHelper.cs" />
     <Compile Include="Misc\ThreadSafeCache.cs" />
     <Compile Include="BatchMessageWrapper.cs" />
+    <Compile Include="MixpanelBatchMessageTest.cs" />
     <Compile Include="MixpanelClient.cs" />
     <Compile Include="MixpanelClient.Http.cs" />
     <Compile Include="MixpanelConfig.cs" />

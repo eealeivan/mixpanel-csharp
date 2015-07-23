@@ -915,6 +915,9 @@ namespace Mixpanel
         Task<bool> SendAsync(IEnumerable<MixpanelMessage> messages);
 #endif
 
+        IEnumerable<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages);
+        IEnumerable<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages);
+
         #endregion Send
     }
 }
