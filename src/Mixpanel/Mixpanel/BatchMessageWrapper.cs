@@ -6,8 +6,8 @@ namespace Mixpanel
 {
     internal sealed class BatchMessageWrapper
     {
-        public List<List<IDictionary<string, object>>> TrackMessages { get; set; }
-        public List<List<IDictionary<string, object>>> EngageMessages { get; set; }
+        public List<List<MixpanelMessage>> TrackMessages { get; private set; }
+        public List<List<MixpanelMessage>> EngageMessages { get; private set; }
 
         internal const int MaxBatchSize = 50;
 
@@ -44,7 +44,7 @@ namespace Mixpanel
 
             if (TrackMessages == null)
             {
-                TrackMessages = new List<List<IDictionary<string, object>>>();
+                TrackMessages = new List<List<MixpanelMessage>>();
             }
 
             AddBatchMessage(TrackMessages, message);
@@ -56,13 +56,13 @@ namespace Mixpanel
 
             if (EngageMessages == null)
             {
-                EngageMessages = new List<List<IDictionary<string, object>>>();
+                EngageMessages = new List<List<MixpanelMessage>>();
             }
 
             AddBatchMessage(EngageMessages, message);
         }
 
-        private void AddBatchMessage(List<List<IDictionary<string, object>>> list, MixpanelMessage message)
+        private void AddBatchMessage(List<List<MixpanelMessage>> list, MixpanelMessage message)
         {
             Debug.Assert(list != null);
             Debug.Assert(message != null);
@@ -71,12 +71,12 @@ namespace Mixpanel
             bool newInnerListNeeded = lastInnerList == null || lastInnerList.Count >= MaxBatchSize;
             if (newInnerListNeeded)
             {
-                var newInnerList = new List<IDictionary<string, object>> { message.Data };
+                var newInnerList = new List<MixpanelMessage> { message };
                 list.Add(newInnerList);
             }
             else
             {
-                lastInnerList.Add(message.Data);
+                lastInnerList.Add(message);
             }
         }
     }

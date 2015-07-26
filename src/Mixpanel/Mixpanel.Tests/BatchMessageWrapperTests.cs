@@ -43,10 +43,10 @@ namespace Mixpanel.Tests
             Assert.That(trackMessages.Count, Is.EqualTo(2));
 
             var trackMessage = trackMessages[0];
-            Assert.That(trackMessage[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
+            Assert.That(trackMessage.Data[MixpanelProperty.TrackEvent], Is.EqualTo(Event));
 
             var aliasMessage = trackMessages[1];
-            Assert.That(aliasMessage[MixpanelProperty.TrackEvent], Is.EqualTo(MixpanelProperty.TrackCreateAlias));
+            Assert.That(aliasMessage.Data[MixpanelProperty.TrackEvent], Is.EqualTo(MixpanelProperty.TrackCreateAlias));
 
             // Check engage
             Assert.That(batchMessage.EngageMessages.Count, Is.EqualTo(1));

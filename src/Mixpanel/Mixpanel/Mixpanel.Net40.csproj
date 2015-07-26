@@ -39,7 +39,7 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
-        <Compile Include="Core\Message\AliasMessageBuilder.cs" />
+    <Compile Include="Core\Message\AliasMessageBuilder.cs" />
     <Compile Include="Core\Message\MessageBuilderBase.cs" />
     <Compile Include="Core\Message\MessageData.cs" />
     <Compile Include="Core\Message\MessagePropetiesRules.cs" />
@@ -84,6 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MixpanelProperty.cs" />
     <Compile Include="MixpanelPropertyNameFormat.cs" />
+    <Compile Include="SendResult.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

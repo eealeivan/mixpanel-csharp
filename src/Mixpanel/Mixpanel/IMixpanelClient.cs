@@ -907,12 +907,12 @@ namespace Mixpanel
 
         #region Send
 
-        bool Send(params MixpanelMessage[] messages);
-        bool Send(IEnumerable<MixpanelMessage> messages);
+        SendResult Send(params MixpanelMessage[] messages);
+        SendResult Send(IEnumerable<MixpanelMessage> messages);
 
 #if !(NET40 || NET35)
-        Task<bool> SendAsync(params MixpanelMessage[] messages);
-        Task<bool> SendAsync(IEnumerable<MixpanelMessage> messages);
+        Task<SendResult> SendAsync(params MixpanelMessage[] messages);
+        Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages);
 #endif
 
         IEnumerable<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 #if !(NET40 || NET35)
 using System.Threading.Tasks;
@@ -34,12 +35,18 @@ namespace Mixpanel
         /// on project page https://github.com/eealeivan/mixpanel-csharp for valid property types.
         /// </param>
         public MixpanelClient(string token, MixpanelConfig config = null, object superProperties = null)
+            :this(config, superProperties)
         {
-            if (token.IsNullOrWhiteSpace())
-            {
-                throw new ArgumentNullException("token");
-            }
             _token = token;
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="MixpanelClient"/>. This constructor is isually used
+        /// when you want to call only 'Send' and 'SendAsync' methods, because in this case
+        /// token is already specified in each <see cref="MixpanelMessage"/>.
+        /// </summary>
+        public MixpanelClient(MixpanelConfig config = null, object superProperties = null)
+        {
             _config = config;
             SetSuperProperties(superProperties);
             UtcNow = () => DateTime.UtcNow;
@@ -1321,69 +1328,77 @@ namespace Mixpanel
 
         #region Send
 
-        public bool Send(IEnumerable<MixpanelMessage> messages)
+        public SendResult Send(IEnumerable<MixpanelMessage> messages)
         {
+            var result = new SendResult { Success = true };
             var batchMessage = new BatchMessageWrapper(messages);
 
-            if (batchMessage.TrackMessages != null)
+            List<List<MixpanelMessage>> batchTrackMessages = batchMessage.TrackMessages;
+            if (batchTrackMessages != null)
             {
-                if (batchMessage.TrackMessages
-                    .Any(msg => !SendMessageInternal(() => msg, EndpointTrack, MessageKind.Batch)))
+                foreach (var trackMessages in batchTrackMessages)
                 {
-                    return false;
+                    var msgs = trackMessages;
+                    bool success = SendMessageInternal(
+                        () => GetBatchMessageData(msgs), EndpointTrack, MessageKind.Batch);
+                    UpdateResult(success, msgs, result);
                 }
             }
 
-            if (batchMessage.EngageMessages != null)
+            List<List<MixpanelMessage>> batchEngageMessages = batchMessage.EngageMessages;
+            if (batchEngageMessages != null)
             {
-                if (batchMessage.EngageMessages
-                    .Any(msg => !SendMessageInternal(() => msg, EndpointEngage, MessageKind.Batch)))
+                foreach (var engageMessages in batchEngageMessages)
                 {
-                    return false;
+                    var msgs = engageMessages;
+                    bool success = SendMessageInternal(
+                        () => GetBatchMessageData(msgs), EndpointEngage, MessageKind.Batch);
+                    UpdateResult(success, msgs, result);
                 }
             }
 
-            return true;
+            return result;
         }
 
-        public bool Send(params MixpanelMessage[] messages)
+        public SendResult Send(params MixpanelMessage[] messages)
         {
             return Send(messages as IEnumerable<MixpanelMessage>);
         }
 
 #if !(NET40 || NET35)
-        public async Task<bool> SendAsync(IEnumerable<MixpanelMessage> messages)
+        public async Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages)
         {
+            var result = new SendResult { Success = true };
             var batchMessage = new BatchMessageWrapper(messages);
 
-            if (batchMessage.TrackMessages != null)
+            List<List<MixpanelMessage>> batchTrackMessages = batchMessage.TrackMessages;
+            if (batchTrackMessages != null)
             {
-                foreach (var batchTrackMessage in batchMessage.TrackMessages)
+                foreach (var trackMessages in batchTrackMessages)
                 {
-                    List<IDictionary<string, object>> message = batchTrackMessage;
-                    if (!(await SendMessageInternalAsync(() => message, EndpointTrack, MessageKind.Batch)))
-                    {
-                        return false;
-                    }
+                    var msgs = trackMessages;
+                    bool success = await SendMessageInternalAsync(
+                        () => GetBatchMessageData(msgs), EndpointTrack, MessageKind.Batch);
+                    UpdateResult(success, msgs, result);
                 }
             }
 
-            if (batchMessage.EngageMessages != null)
+            List<List<MixpanelMessage>> batchEngageMessages = batchMessage.EngageMessages;
+            if (batchEngageMessages != null)
             {
-                foreach (var batchEngageMessage in batchMessage.EngageMessages)
+                foreach (var engageMessages in batchEngageMessages)
                 {
-                    List<IDictionary<string, object>> message = batchEngageMessage;
-                    if (!(await SendMessageInternalAsync(() => message, EndpointEngage, MessageKind.Batch)))
-                    {
-                        return false;
-                    }
+                    var msgs = engageMessages;
+                    bool success = await SendMessageInternalAsync(
+                        () => GetBatchMessageData(msgs), EndpointEngage, MessageKind.Batch);
+                    UpdateResult(success, msgs, result);
                 }
             }
 
-            return true;
+            return result;
         }
 
-        public async Task<bool> SendAsync(params MixpanelMessage[] messages)
+        public async Task<SendResult> SendAsync(params MixpanelMessage[] messages)
         {
             return await SendAsync(messages as IEnumerable<MixpanelMessage>);
         }
@@ -1395,12 +1410,12 @@ namespace Mixpanel
 
             // Concatenate both 'TrackMessages' and 'EngageMessages' in one list
             var batchMessages =
-                (batchMessageWrapper.TrackMessages ?? new List<List<IDictionary<string, object>>>(0))
-                .Concat(((batchMessageWrapper.EngageMessages ?? new List<List<IDictionary<string, object>>>(0))));
+                (batchMessageWrapper.TrackMessages ?? new List<List<MixpanelMessage>>(0))
+                .Concat(((batchMessageWrapper.EngageMessages ?? new List<List<MixpanelMessage>>(0))));
 
             foreach (var batchMessage in batchMessages)
             {
-                var testMessage = new MixpanelBatchMessageTest { Data = batchMessage };
+                var testMessage = new MixpanelBatchMessageTest { Data = GetBatchMessageData(batchMessage) };
 
                 try
                 {
@@ -1419,6 +1434,38 @@ namespace Mixpanel
         public IEnumerable<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages)
         {
             return SendTest(messages as IEnumerable<MixpanelMessage>);
+        }
+
+        private IList<IDictionary<string, object>> GetBatchMessageData(IList<MixpanelMessage> messages)
+        {
+            Debug.Assert(messages != null);
+
+            return messages
+                .Select(msg => msg.Data)
+                .ToList();
+        }
+
+        private void UpdateResult(bool success, List<MixpanelMessage> mixpanelMessages, SendResult result)
+        {
+            result.Success &= success;
+            if (success)
+            {
+                if (result.SentBatches == null)
+                {
+                    result.SentBatches = new List<IList<MixpanelMessage>>();
+                }
+
+                result.SentBatches.Add(mixpanelMessages);
+            }
+            else
+            {
+                if (result.FailedBatches == null)
+                {
+                    result.FailedBatches = new List<IList<MixpanelMessage>>();
+                }
+
+                result.FailedBatches.Add(mixpanelMessages);
+            }
         }
 
         #endregion Send

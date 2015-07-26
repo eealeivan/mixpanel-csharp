@@ -1353,9 +1353,9 @@ namespace Mixpanel.Tests
         public void Send_DifferentVariantsAsEnumerable_CorrectDataSent(
             int trackMessagesCount, int engageMessagesCount)
         {
-            bool res = _client.Send(GetSendMessages(trackMessagesCount, engageMessagesCount));
+            SendResult res = _client.Send(GetSendMessages(trackMessagesCount, engageMessagesCount));
 
-            Assert.That(res, Is.EqualTo(true));
+            Assert.That(res.Success, Is.EqualTo(true));
             CheckSend(trackMessagesCount, engageMessagesCount);
         }
 
@@ -1363,9 +1363,9 @@ namespace Mixpanel.Tests
         public void Send_AsParams_CorrectDataSent()
         {
             var messages = GetSendMessages(2, 2);
-            bool res = _client.Send(messages[0], messages[1], messages[2], messages[3]);
+            SendResult res = _client.Send(messages[0], messages[1], messages[2], messages[3]);
 
-            Assert.That(res, Is.EqualTo(true));
+            Assert.That(res.Success, Is.EqualTo(true));
             CheckSend(2, 2);
         }
 
@@ -1383,9 +1383,9 @@ namespace Mixpanel.Tests
         public async void SendAsync_DifferentVariantsAsEnumerable_CorrectDataSent(
             int trackMessagesCount, int engageMessagesCount)
         {
-            bool res = await _client.SendAsync(GetSendMessages(trackMessagesCount, engageMessagesCount));
+            SendResult res = await _client.SendAsync(GetSendMessages(trackMessagesCount, engageMessagesCount));
 
-            Assert.That(res, Is.EqualTo(true));
+            Assert.That(res.Success, Is.EqualTo(true));
             CheckSend(trackMessagesCount, engageMessagesCount);
         }
 
@@ -1393,9 +1393,9 @@ namespace Mixpanel.Tests
         public async void SendAsync_AsParams_CorrectDataSent()
         {
             var messages = GetSendMessages(2, 2);
-            bool res = await _client.SendAsync(messages[0], messages[1], messages[2], messages[3]);
+            SendResult res = await _client.SendAsync(messages[0], messages[1], messages[2], messages[3]);
 
-            Assert.That(res, Is.EqualTo(true));
+            Assert.That(res.Success, Is.EqualTo(true));
             CheckSend(2, 2);
         }
 #endif
