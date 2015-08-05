@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 
 namespace Mixpanel
 {
@@ -14,13 +14,13 @@ namespace Mixpanel
         public bool Success { get; internal set; }
 
         /// <summary>
-        /// List of successfully sent message batches.
+        /// A collection of successfully sent message batches.
         /// </summary>
-        public IList<IList<MixpanelMessage>> SentBatches { get; internal set; }
+        public ReadOnlyCollection<ReadOnlyCollection<MixpanelMessage>> SentBatches { get; internal set; }
 
         /// <summary>
-        /// List of failed message batches.
+        /// A collection of failed message batches.
         /// </summary>
-        public IList<IList<MixpanelMessage>> FailedBatches { get; internal set; }
+        public ReadOnlyCollection<ReadOnlyCollection<MixpanelMessage>> FailedBatches { get; internal set; }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 #if !(NET40 || NET35)
 using System.Threading.Tasks;
 #endif
 using Mixpanel.Core.Message;
-using Mixpanel.Misc;
 
 namespace Mixpanel
 {
@@ -35,7 +35,7 @@ namespace Mixpanel
         /// on project page https://github.com/eealeivan/mixpanel-csharp for valid property types.
         /// </param>
         public MixpanelClient(string token, MixpanelConfig config = null, object superProperties = null)
-            :this(config, superProperties)
+            : this(config, superProperties)
         {
             _token = token;
         }
@@ -1330,7 +1330,7 @@ namespace Mixpanel
 
         public SendResult Send(IEnumerable<MixpanelMessage> messages)
         {
-            var result = new SendResult { Success = true };
+            var resultInternal = new SendResultInernal();
             var batchMessage = new BatchMessageWrapper(messages);
 
             List<List<MixpanelMessage>> batchTrackMessages = batchMessage.TrackMessages;
@@ -1341,7 +1341,7 @@ namespace Mixpanel
                     var msgs = trackMessages;
                     bool success = SendMessageInternal(
                         () => GetBatchMessageData(msgs), EndpointTrack, MessageKind.Batch);
-                    UpdateResult(success, msgs, result);
+                    resultInternal.Update(success, msgs);
                 }
             }
 
@@ -1353,11 +1353,11 @@ namespace Mixpanel
                     var msgs = engageMessages;
                     bool success = SendMessageInternal(
                         () => GetBatchMessageData(msgs), EndpointEngage, MessageKind.Batch);
-                    UpdateResult(success, msgs, result);
+                    resultInternal.Update(success, msgs);
                 }
             }
 
-            return result;
+            return resultInternal.ToRealSendResult();
         }
 
         public SendResult Send(params MixpanelMessage[] messages)
@@ -1368,7 +1368,7 @@ namespace Mixpanel
 #if !(NET40 || NET35)
         public async Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages)
         {
-            var result = new SendResult { Success = true };
+            var resultInternal = new SendResultInernal();
             var batchMessage = new BatchMessageWrapper(messages);
 
             List<List<MixpanelMessage>> batchTrackMessages = batchMessage.TrackMessages;
@@ -1379,7 +1379,7 @@ namespace Mixpanel
                     var msgs = trackMessages;
                     bool success = await SendMessageInternalAsync(
                         () => GetBatchMessageData(msgs), EndpointTrack, MessageKind.Batch);
-                    UpdateResult(success, msgs, result);
+                    resultInternal.Update(success, msgs);
                 }
             }
 
@@ -1391,11 +1391,11 @@ namespace Mixpanel
                     var msgs = engageMessages;
                     bool success = await SendMessageInternalAsync(
                         () => GetBatchMessageData(msgs), EndpointEngage, MessageKind.Batch);
-                    UpdateResult(success, msgs, result);
+                    resultInternal.Update(success, msgs);
                 }
             }
 
-            return result;
+            return resultInternal.ToRealSendResult();
         }
 
         public async Task<SendResult> SendAsync(params MixpanelMessage[] messages)
@@ -1404,14 +1404,17 @@ namespace Mixpanel
         }
 #endif
 
-        public IEnumerable<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages)
+        public ReadOnlyCollection<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages)
         {
             var batchMessageWrapper = new BatchMessageWrapper(messages);
 
             // Concatenate both 'TrackMessages' and 'EngageMessages' in one list
             var batchMessages =
                 (batchMessageWrapper.TrackMessages ?? new List<List<MixpanelMessage>>(0))
-                .Concat(((batchMessageWrapper.EngageMessages ?? new List<List<MixpanelMessage>>(0))));
+                .Concat(((batchMessageWrapper.EngageMessages ?? new List<List<MixpanelMessage>>(0))))
+                .ToList();
+
+            var testMessages = new List<MixpanelBatchMessageTest>(batchMessages.Count);
 
             foreach (var batchMessage in batchMessages)
             {
@@ -1419,7 +1422,7 @@ namespace Mixpanel
 
                 try
                 {
-                    testMessage.Json = ToJson(testMessage);
+                    testMessage.Json = ToJson(testMessage.Data);
                     testMessage.Base64 = ToBase64(testMessage.Json);
                 }
                 catch (Exception e)
@@ -1427,8 +1430,10 @@ namespace Mixpanel
                     testMessage.Exception = e;
                 }
 
-                yield return testMessage;
+                testMessages.Add(testMessage);
             }
+
+            return testMessages.AsReadOnly();
         }
 
         public IEnumerable<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages)
@@ -1445,26 +1450,56 @@ namespace Mixpanel
                 .ToList();
         }
 
-        private void UpdateResult(bool success, List<MixpanelMessage> mixpanelMessages, SendResult result)
+        private class SendResultInernal
         {
-            result.Success &= success;
-            if (success)
-            {
-                if (result.SentBatches == null)
-                {
-                    result.SentBatches = new List<IList<MixpanelMessage>>();
-                }
+            private bool _success;
+            private List<List<MixpanelMessage>> _sentBatches;
+            private List<List<MixpanelMessage>> _failedBatches;
 
-                result.SentBatches.Add(mixpanelMessages);
+            public SendResultInernal()
+            {
+                _success = true;
             }
-            else
+
+            public void Update(bool success, List<MixpanelMessage> mixpanelMessages)
             {
-                if (result.FailedBatches == null)
+                _success &= success;
+
+                if (success)
                 {
-                    result.FailedBatches = new List<IList<MixpanelMessage>>();
+                    if (_sentBatches == null)
+                    {
+                        _sentBatches = new List<List<MixpanelMessage>>();
+                    }
+
+                    _sentBatches.Add(mixpanelMessages);
+                }
+                else
+                {
+                    if (_failedBatches == null)
+                    {
+                        _failedBatches = new List<List<MixpanelMessage>>();
+                    }
+
+                    _failedBatches.Add(mixpanelMessages);
+                }
+            }
+
+            public SendResult ToRealSendResult()
+            {
+                var result = new SendResult { Success = _success };
+
+                if (_sentBatches != null)
+                {
+                    result.SentBatches = _sentBatches.Select(x => x.AsReadOnly()).ToList().AsReadOnly();
+                }
+                
+                if (_failedBatches != null)
+                {
+                    result.FailedBatches = _failedBatches.Select(x => x.AsReadOnly()).ToList().AsReadOnly();
                 }
 
-                result.FailedBatches.Add(mixpanelMessages);
+                return result;
             }
         }
 

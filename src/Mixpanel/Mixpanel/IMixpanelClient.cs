@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 #if !(NET40 || NET35)
 using System.Threading.Tasks;
 #endif
@@ -915,7 +916,7 @@ namespace Mixpanel
         Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages);
 #endif
 
-        IEnumerable<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages);
+        ReadOnlyCollection<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages);
         IEnumerable<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages);
 
         #endregion Send
