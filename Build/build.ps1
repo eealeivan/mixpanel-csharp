@@ -1,7 +1,8 @@
 properties { 
-  $majorVersion = "2.0"
-  $majorWithReleaseVersion = "2.0.0"
-  #$version = GetVersion $majorWithReleaseVersion
+  #Given a version number MAJOR.MINOR.PATCH, increment the:
+  #MAJOR version when you make incompatible API changes,
+  #MINOR version when you add functionality in a backwards-compatible manner, and
+  #PATCH version when you make backwards-compatible bug fixes.
   $version = "2.0.0"
   $packageId = "mixpanel-csharp"
   $signAssemblies = $false
@@ -16,15 +17,15 @@ properties {
   $releaseDir = "$baseDir\Release"
   $workingDir = "$baseDir\$workingName"
   $builds = @(  
-    @{Name = "Mixpanel"; Constants=""; FinalDir="Net45"; NuGetDir = "net45"; Framework="net-4.5.1"; Sign=$false},
-    @{Name = "Mixpanel.Net40"; Constants="NET40"; FinalDir="Net40"; NuGetDir = "net40"; Framework="net-4.0"; Sign=$false},
-    @{Name = "Mixpanel.Net35"; Constants="NET35"; FinalDir="Net35"; NuGetDir = "net35"; Framework="net-2.0"; Sign=$false}  
+    @{Name = "Mixpanel"; TestsName = "Mixpanel.Tests"; Constants=""; FinalDir="Net45"; NuGetDir = "net45"; Framework="net-4.5.1"; Sign=$false},
+    @{Name = "Mixpanel.Net40"; TestsName = "Mixpanel.Tests.Net40"; Constants="NET40"; FinalDir="Net40"; NuGetDir = "net40"; Framework="net-4.0"; Sign=$false},
+    @{Name = "Mixpanel.Net35"; TestsName = "Mixpanel.Tests.Net35"; Constants="NET35"; FinalDir="Net35"; NuGetDir = "net35"; Framework="net-2.0"; Sign=$false}  
   )
 }
 
 framework '4.5.1x86'
 
-task default -depends Package
+task default -depends Test
 
 # Ensure a clean working directory
 task Clean {
@@ -43,7 +44,11 @@ task Clean {
 }
 
 # Build each solution
-task Build -depends Clean { 
+task Build -depends Clean {
+  Write-Host -ForegroundColor Green "Updating assembly version"
+  Write-Host
+  Update-AssemblyInfoFiles $sourceDir $version
+  
   foreach ($build in $builds)
   {
     $name = $build.Name
@@ -115,6 +120,31 @@ task Package -depends Build {
   move -Path .\*.nupkg -Destination $workingDir\NuGet
 }
 
+# Run tests on deployed files
+task Test -depends Package {
+  foreach ($build in $builds)
+  {
+    NUnitTests $build
+  }
+}
+
+function NUnitTests($build)
+{
+  $name = $build.TestsName
+  $finalDir = $build.FinalDir
+  $framework = $build.Framework
+
+  Write-Host -ForegroundColor Green "Copying test assembly $name to deployed directory"
+  Write-Host
+  robocopy ".\src\Mixpanel\Mixpanel.Tests\bin\Release\$finalDir" $workingDir\Deployed\Bin\$finalDir /MIR /NP /XO | Out-Default
+
+  Copy-Item -Path ".\src\Mixpanel\Mixpanel.Tests\bin\Release\$finalDir\Mixpanel.Tests.dll" -Destination $workingDir\Deployed\Bin\$finalDir\
+
+  Write-Host -ForegroundColor Green "Running NUnit tests " $name
+  Write-Host
+  exec { .\Tools\NUnit\nunit-console.exe "$workingDir\Deployed\Bin\$finalDir\Mixpanel.Tests.dll" /framework=$framework /xml:$workingDir\$name.xml | Out-Default } "Error running $name tests"
+}
+
 function GetConstants($constants, $includeSigned)
 {
   $signed = switch($includeSigned) { $true { ";SIGNED" } default { "" } }
@@ -145,5 +175,25 @@ function Edit-XmlNodes {
                 $node.Value = $value
             }
         }
+    }
+}
+
+function Update-AssemblyInfoFiles ([string] $sourceDir, [string] $version)
+{
+    $assemblyVersionPattern = 'AssemblyVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
+    $fileVersionPattern = 'AssemblyFileVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
+    $assemblyVersion = 'AssemblyVersion("' + $version + '.0")';
+    $fileVersion = 'AssemblyFileVersion("' + $version + '.0")';
+    
+    Get-ChildItem -Path $sourceDir -r -filter AssemblyInfo.cs | ForEach-Object {
+        
+        $filename = $_.Directory.ToString() + '\' + $_.Name
+        Write-Host $filename
+        $filename + ' -> ' + $version
+    
+        (Get-Content $filename) | ForEach-Object {
+            % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
+            % {$_ -replace $fileVersionPattern, $fileVersion }
+        } | Set-Content $filename
     }
 }
