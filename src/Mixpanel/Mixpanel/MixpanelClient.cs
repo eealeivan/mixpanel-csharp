@@ -1436,7 +1436,7 @@ namespace Mixpanel
             return testMessages.AsReadOnly();
         }
 
-        public IEnumerable<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages)
+        public ReadOnlyCollection<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages)
         {
             return SendTest(messages as IEnumerable<MixpanelMessage>);
         }

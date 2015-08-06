@@ -917,7 +917,7 @@ namespace Mixpanel
 #endif
 
         ReadOnlyCollection<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages);
-        IEnumerable<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages);
+        ReadOnlyCollection<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages);
 
         #endregion Send
     }
