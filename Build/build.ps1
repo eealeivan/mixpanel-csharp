@@ -194,6 +194,6 @@ function Update-AssemblyInfoFiles ([string] $sourceDir, [string] $version)
         (Get-Content $filename) | ForEach-Object {
             % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
             % {$_ -replace $fileVersionPattern, $fileVersion }
-        } | Set-Content $filename
+        } | Set-Content $filename -Encoding UTF8
     }
 }
