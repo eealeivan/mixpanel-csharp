@@ -8,7 +8,8 @@ namespace Mixpanel
     /// <summary>
     /// Provides properties for configuring custom behaviour of the library. You can use config by setting 
     /// values on MixpanelConfig.Global, or by passing an instance to <see cref="MixpanelClient"/>
-    /// constructor (in this case MixpanelConfig.Global will be ignored). 
+    /// constructor (in this case configuration property will be first checked from passed instance, 
+    /// and if it's not set, then from MixpanelConfig.Global). 
     /// </summary>
     public class MixpanelConfig
     {
@@ -20,14 +21,14 @@ namespace Mixpanel
 
         /// <summary>
         /// Gets or sets user defined function that will make HTTP POST requests to mixpanel endpoints.
-        /// Takes 2 string parameters: url and form data. Returns true if call was successful, and false otherwise.
+        /// Takes 2 string parameters: url and content. Returns true if call was successful, and false otherwise.
         /// </summary>
         public Func<string, string, bool> HttpPostFn { get; set; }
 
 #if !(NET40 || NET35)
         /// <summary>
         /// Gets or sets user defined function that will make async HTTP POST requests to mixpanel endpoints.
-        /// Takes 2 string parameters: url and form data. Returns true if call was successful, and false otherwise.
+        /// Takes 2 string parameters: url and content. Returns true if call was successful, and false otherwise.
         /// </summary>
         public Func<string, string, Task<bool>> AsyncHttpPostFn { get; set; }
 #endif

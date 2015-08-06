@@ -2,6 +2,10 @@
 
 namespace Mixpanel
 {
+    /// <summary>
+    /// If specified, then value of <see cref="Name"/> will be used as a property name,
+    /// instead of target property name.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class MixpanelNameAttribute : Attribute
     {

@@ -8,20 +8,32 @@ namespace Mixpanel.Exceptions
     /// </summary>
     public class MixpanelRequiredPropertyNullOrEmptyException : Exception
     {
+        /// <summary>
+        /// Creates an instance of <see cref="MixpanelRequiredPropertyNullOrEmptyException"/>.
+        /// </summary>
         public MixpanelRequiredPropertyNullOrEmptyException()
         {
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="MixpanelRequiredPropertyNullOrEmptyException"/>.
+        /// </summary>
         public MixpanelRequiredPropertyNullOrEmptyException(string message)
             : base(message)
         {
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="MixpanelRequiredPropertyNullOrEmptyException"/>.
+        /// </summary>
         public MixpanelRequiredPropertyNullOrEmptyException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="MixpanelRequiredPropertyNullOrEmptyException"/>.
+        /// </summary>
         protected MixpanelRequiredPropertyNullOrEmptyException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

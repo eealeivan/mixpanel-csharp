@@ -9,20 +9,32 @@ namespace Mixpanel.Exceptions
     /// </summary>
     public class MixpanelObjectStructureException : Exception
     {
+        /// <summary>
+        /// Creates an instance of <see cref="MixpanelObjectStructureException"/>.
+        /// </summary>
         public MixpanelObjectStructureException()
         {
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="MixpanelObjectStructureException"/>.
+        /// </summary>
         public MixpanelObjectStructureException(string message)
             : base(message)
         {
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="MixpanelObjectStructureException"/>.
+        /// </summary>
         public MixpanelObjectStructureException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="MixpanelObjectStructureException"/>.
+        /// </summary>
         protected MixpanelObjectStructureException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

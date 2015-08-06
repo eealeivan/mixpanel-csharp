@@ -1,5 +1,9 @@
 ﻿namespace Mixpanel
 {
+    /// <summary>
+    /// Type of name formatting that will be applied when generating property names.
+    /// Works only for classes (not dictionaries).
+    /// </summary>
     public enum MixpanelPropertyNameFormat
     {
         /// <summary>

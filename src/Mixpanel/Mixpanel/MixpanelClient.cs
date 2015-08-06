@@ -10,6 +10,9 @@ using Mixpanel.Core.Message;
 
 namespace Mixpanel
 {
+    /// <summary>
+    /// Provides methods to work with Mixpanel.
+    /// </summary>
     public sealed partial class MixpanelClient : IMixpanelClient
     {
         private readonly string _token;
@@ -1328,6 +1331,15 @@ namespace Mixpanel
 
         #region Send
 
+        /// <summary>
+        /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.
+        /// If <paramref name="messages"/> contains both track (Track and Alias) and engage (People*)
+        /// messages then they will be devided in 2 batches and will be sent separately. 
+        /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
+        /// and will be sent separately.
+        /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
+        /// </summary>
+        /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         public SendResult Send(IEnumerable<MixpanelMessage> messages)
         {
             var resultInternal = new SendResultInernal();
@@ -1360,12 +1372,30 @@ namespace Mixpanel
             return resultInternal.ToRealSendResult();
         }
 
+        /// <summary>
+        /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.
+        /// If <paramref name="messages"/> contains both track (Track and Alias) and engage (People*)
+        /// messages then they will be devided in 2 batches and will be sent separately. 
+        /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
+        /// and will be sent separately.
+        /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
+        /// </summary>
+        /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         public SendResult Send(params MixpanelMessage[] messages)
         {
             return Send(messages as IEnumerable<MixpanelMessage>);
         }
 
 #if !(NET40 || NET35)
+        /// <summary>
+        /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.
+        /// If <paramref name="messages"/> contains both track (Track and Alias) and engage (People*)
+        /// messages then they will be devided in 2 batches and will be sent separately. 
+        /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
+        /// and will be sent separately.
+        /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
+        /// </summary>
+        /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         public async Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages)
         {
             var resultInternal = new SendResultInernal();
@@ -1398,12 +1428,29 @@ namespace Mixpanel
             return resultInternal.ToRealSendResult();
         }
 
+        /// <summary>
+        /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.
+        /// If <paramref name="messages"/> contains both track (Track and Alias) and engage (People*)
+        /// messages then they will be devided in 2 batches and will be sent separately. 
+        /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
+        /// and will be sent separately.
+        /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
+        /// </summary>
+        /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         public async Task<SendResult> SendAsync(params MixpanelMessage[] messages)
         {
             return await SendAsync(messages as IEnumerable<MixpanelMessage>);
         }
 #endif
 
+        /// <summary>
+        /// Returns a collection of <see cref="MixpanelBatchMessageTest"/>. Each item represents a
+        /// batch that contains all steps (message data, JSON, base64) of building a batch message. 
+        /// If some error occurs during the process of creating a batch it can be found in 
+        /// <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The messages will NOT be sent to Mixpanel.
+        /// </summary>
+        /// <param name="messages">List of <see cref="MixpanelMessage"/> to test.</param>
         public ReadOnlyCollection<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages)
         {
             var batchMessageWrapper = new BatchMessageWrapper(messages);
@@ -1436,6 +1483,14 @@ namespace Mixpanel
             return testMessages.AsReadOnly();
         }
 
+        /// <summary>
+        /// Returns a collection of <see cref="MixpanelBatchMessageTest"/>. Each item represents a
+        /// batch that contains all steps (message data, JSON, base64) of building a batch message. 
+        /// If some error occurs during the process of creating a batch it can be found in 
+        /// <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The messages will NOT be sent to Mixpanel.
+        /// </summary>
+        /// <param name="messages">List of <see cref="MixpanelMessage"/> to test.</param>
         public ReadOnlyCollection<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages)
         {
             return SendTest(messages as IEnumerable<MixpanelMessage>);
