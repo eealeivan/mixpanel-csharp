@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Mixpanel.Misc
 {
-    public static class StringHelper
+    internal static class StringHelper
     {
         public static bool IsNullOrWhiteSpace(this String value)
         {
