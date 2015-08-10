@@ -3,8 +3,10 @@
 
 ##Features
 - Supports full [Mixpanel HTTP Tracking API](https://mixpanel.com/help/reference/http)
-- Send tracking messages synchronously or asynchronously, pack them into batches, save messages to send them later
-- Pass message data in form that you prefer: `IDictionary<string, object>`, dynamic type, anonymous type or _normal_ class
+- [Send tracking messages](https://github.com/eealeivan/mixpanel-csharp/wiki/Sending-messages) synchronously or asynchronously, pack them into batches, save messages to send them later
+- Pass [message data](https://github.com/eealeivan/mixpanel-csharp/wiki/Message-data) in form that you prefer: `IDictionary<string, object>`, dynamic type, anonymous type or _normal_ class
+- Great [configurability](https://github.com/eealeivan/mixpanel-csharp/wiki/Configuration). For example you can provide your own JSON serializer or function that will make HTTP requests
+- No dependencies
 - Runs on many platforms: NET35, NET40, NET45 (WinRT and Portable comming soon)
 - Good [documentation](https://github.com/eealeivan/mixpanel-csharp/wiki)
 
