@@ -5,8 +5,9 @@
 - Supports full [Mixpanel HTTP Tracking API](https://mixpanel.com/help/reference/http)
 - [Send tracking messages](https://github.com/eealeivan/mixpanel-csharp/wiki/Sending-messages) synchronously or asynchronously, pack them into batches, save messages to send them later
 - Pass [message data](https://github.com/eealeivan/mixpanel-csharp/wiki/Message-data) in form that you prefer: `IDictionary<string, object>`, dynamic type, anonymous type or _normal_ class
+- Add properties globally to all messages with super properties. Usable for properties such as `distinct_id`
 - Great [configurability](https://github.com/eealeivan/mixpanel-csharp/wiki/Configuration). For example you can provide your own JSON serializer or function that will make HTTP requests
-- No dependencies
+- No dependencies. Keeps your project clean
 - Runs on many platforms: NET35, NET40, NET45 (WinRT and Portable comming soon)
 - Good [documentation](https://github.com/eealeivan/mixpanel-csharp/wiki)
 
@@ -36,4 +37,4 @@ This will send the following JSON to `http://api.mixpanel.com/track/`:
 Copyright © 2015 Aleksandr Ivanov
 
 ##Licence
-```mixpanel-csharp``` is licensed under [MIT](http://www.opensource.org/licenses/mit-license.php). Refer to license.txt for more information.
+```mixpanel-csharp``` is licensed under [MIT](http://www.opensource.org/licenses/mit-license.php). Refer to LICENSE for more information.
