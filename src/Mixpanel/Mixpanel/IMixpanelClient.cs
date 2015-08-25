@@ -121,7 +121,15 @@ namespace Mixpanel
         #region Alias
 
         /// <summary>
-        /// Creates an alias to existing distinct id. 
+        /// Creates an alias to 'Distinct ID' that is provided with super properties. 
+        /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        bool Alias(object alias);
+
+        /// <summary>
+        /// Creates an alias to given <paramref name="distinctId"/>. 
         /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -131,7 +139,15 @@ namespace Mixpanel
 
 #if !(NET40 || NET35)
         /// <summary>
-        /// Creates an alias to existing distinct id. 
+        /// Creates an alias to 'Distinct ID' that is provided with super properties. 
+        /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        Task<bool> AliasAsync(object alias);
+
+        /// <summary>
+        /// Creates an alias to given <paramref name="distinctId"/>. 
         /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -149,6 +165,16 @@ namespace Mixpanel
         /// <param name="distinctId">Original unique user profile identifier to create alias for.</param>
         /// <param name="alias">Alias for original user profile identifier.</param>
         MixpanelMessage GetAliasMessage(object distinctId, object alias);
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'Alias'. 
+        /// 'Distinct ID' must ne set with super properties.
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        MixpanelMessage GetAliasMessage(object alias);
         
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -159,6 +185,15 @@ namespace Mixpanel
         /// <param name="distinctId">Original unique user profile identifier to create alias for.</param>
         /// <param name="alias">Alias for original user profile identifier.</param>
         MixpanelMessageTest AliasTest(object distinctId, object alias);
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'Alias' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The message will NOT be sent to Mixpanel.
+        /// </summary>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        MixpanelMessageTest AliasTest(object alias);
 
         #endregion Alias
 
@@ -776,6 +811,14 @@ namespace Mixpanel
 
         /// <summary>
         /// Permanently delete the profile from Mixpanel, along with all of its properties.
+        /// 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        bool PeopleDelete();
+
+        /// <summary>
+        /// Permanently delete the profile from Mixpanel, along with all of its properties.
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -785,12 +828,29 @@ namespace Mixpanel
 #if !(NET40 || NET35)
         /// <summary>
         /// Permanently delete the profile from Mixpanel, along with all of its properties.
+        /// 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        Task<bool> PeopleDeleteAsync();
+
+        /// <summary>
+        /// Permanently delete the profile from Mixpanel, along with all of its properties.
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
         /// <param name="distinctId">Unique user profile identifier.</param>
         Task<bool> PeopleDeleteAsync(object distinctId);
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleDelete'. 
+        /// 'Distinct ID' will be taken from super properties.
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        MixpanelMessage GetPeopleDeleteMessage();
 
         /// <summary>
         /// Returns a <see cref="MixpanelMessage"/> for 'PeopleDelete'. 
@@ -807,6 +867,14 @@ namespace Mixpanel
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
         /// The message will NOT be sent to Mixpanel.
         /// </summary>
+        MixpanelMessageTest PeopleDeleteTest();
+        
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleDelete' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The message will NOT be sent to Mixpanel.
+        /// </summary>
         /// <param name="distinctId">Unique user profile identifier.</param>
         MixpanelMessageTest PeopleDeleteTest(object distinctId);
 
@@ -815,6 +883,14 @@ namespace Mixpanel
         #region PeopleTrackCharge
 
         /// <summary>
+        /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        bool PeopleTrackCharge(decimal amount);
+        
+        /// <summary>
         /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -822,6 +898,15 @@ namespace Mixpanel
         /// <param name="amount">Amount of the transaction.</param>
         bool PeopleTrackCharge(object distinctId, decimal amount);
 
+        /// <summary>
+        /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        bool PeopleTrackCharge(decimal amount, DateTime time);   
+        
         /// <summary>
         /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
         /// Returns true if call was successful, and false otherwise.
@@ -833,6 +918,14 @@ namespace Mixpanel
 
 #if !(NET40 || NET35)
         /// <summary>
+        /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        Task<bool> PeopleTrackChargeAsync(decimal amount);
+        
+        /// <summary>
         /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -840,6 +933,15 @@ namespace Mixpanel
         /// <param name="amount">Amount of the transaction.</param>
         Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount);
 
+        /// <summary>
+        /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        Task<bool> PeopleTrackChargeAsync(decimal amount, DateTime time);
+        
         /// <summary>
         /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
         /// Returns true if call was successful, and false otherwise.
@@ -852,6 +954,16 @@ namespace Mixpanel
 
         /// <summary>
         /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
+        /// 'Distinct ID' will be taken from super properties.
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        MixpanelMessage GetPeopleTrackChargeMessage(decimal amount);    
+        
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
         /// If message can't be created, then null is returned.
         /// No data will be sent to Mixpanel.
         /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
@@ -859,6 +971,17 @@ namespace Mixpanel
         /// <param name="distinctId">Unique user profile identifier.</param>
         /// <param name="amount">Amount of the transaction.</param>
         MixpanelMessage GetPeopleTrackChargeMessage(object distinctId, decimal amount);        
+        
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
+        /// 'Distinct ID' will be taken from super properties.
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        MixpanelMessage GetPeopleTrackChargeMessage(decimal amount, DateTime time); 
         
         /// <summary>
         /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
@@ -877,10 +1000,29 @@ namespace Mixpanel
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
         /// The message will NOT be sent to Mixpanel.
         /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        MixpanelMessageTest PeopleTrackChargeTest(decimal amount);
+        
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleTrackCharge' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The message will NOT be sent to Mixpanel.
+        /// </summary>
         /// <param name="distinctId">Unique user profile identifier.</param>
         /// <param name="amount">Amount of the transaction.</param>
         MixpanelMessageTest PeopleTrackChargeTest(object distinctId, decimal amount);
 
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleTrackCharge' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The message will NOT be sent to Mixpanel.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        MixpanelMessageTest PeopleTrackChargeTest(decimal amount, DateTime time);
+        
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleTrackCharge' message. If some error occurs during the process of 
@@ -914,8 +1056,8 @@ namespace Mixpanel
         /// <summary>
         /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.
         /// If <paramref name="messages"/> contains both track (Track and Alias) and engage (People*)
-        /// messages then they will be devided in 2 batches and will be sent separately. 
-        /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
+        /// messages then they will be divided in 2 batches and will be sent separately. 
+        /// If amount of messages of one type exceeds 50,  then messages will be divided in batches
         /// and will be sent separately.
         /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
         /// </summary>
@@ -925,8 +1067,8 @@ namespace Mixpanel
         /// <summary>
         /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.
         /// If <paramref name="messages"/> contains both track (Track and Alias) and engage (People*)
-        /// messages then they will be devided in 2 batches and will be sent separately. 
-        /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
+        /// messages then they will be divided in 2 batches and will be sent separately. 
+        /// If amount of messages of one type exceeds 50,  then messages will be divided in batches
         /// and will be sent separately.
         /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
         /// </summary>
@@ -938,8 +1080,8 @@ namespace Mixpanel
         /// <summary>
         /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.
         /// If <paramref name="messages"/> contains both track (Track and Alias) and engage (People*)
-        /// messages then they will be devided in 2 batches and will be sent separately. 
-        /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
+        /// messages then they will be divided in 2 batches and will be sent separately. 
+        /// If amount of messages of one type exceeds 50,  then messages will be divided in batches
         /// and will be sent separately.
         /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
         /// </summary>
@@ -949,8 +1091,8 @@ namespace Mixpanel
         /// <summary>
         /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.
         /// If <paramref name="messages"/> contains both track (Track and Alias) and engage (People*)
-        /// messages then they will be devided in 2 batches and will be sent separately. 
-        /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
+        /// messages then they will be divided in 2 batches and will be sent separately. 
+        /// If amount of messages of one type exceeds 50,  then messages will be divided in batches
         /// and will be sent separately.
         /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
         /// </summary>

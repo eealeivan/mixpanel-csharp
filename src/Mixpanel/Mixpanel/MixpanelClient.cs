@@ -208,7 +208,18 @@ namespace Mixpanel
         #region Alias
 
         /// <summary>
-        /// Creates an alias to existing distinct id. 
+        /// Creates an alias to 'Distinct ID' that is provided with super properties. 
+        /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        public bool Alias(object alias)
+        {
+            return Alias(null, alias);
+        }
+
+        /// <summary>
+        /// Creates an alias to given <paramref name="distinctId"/>. 
         /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -224,7 +235,18 @@ namespace Mixpanel
 
 #if !(NET40 || NET35)
         /// <summary>
-        /// Creates an alias to existing distinct id. 
+        /// Creates an alias to 'Distinct ID' that is provided with super properties. 
+        /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        public async Task<bool> AliasAsync(object alias)
+        {
+            return await AliasAsync(null, alias);
+        }
+        
+        /// <summary>
+        /// Creates an alias to given <paramref name="distinctId"/>. 
         /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -255,6 +277,21 @@ namespace Mixpanel
         }
 
         /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'Alias'. 
+        /// 'Distinct ID' must ne set with super properties.
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        public MixpanelMessage GetAliasMessage(object alias)
+        {
+            return GetMessage(
+                MessageKind.Alias,
+                () => CreateAliasMessageObject(null, alias));
+        }
+
+        /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'Alias' message. If some error occurs during the process of 
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
@@ -265,6 +302,18 @@ namespace Mixpanel
         public MixpanelMessageTest AliasTest(object distinctId, object alias)
         {
             return TestMessage(() => CreateAliasMessageObject(distinctId, alias));
+        }
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'Alias' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The message will NOT be sent to Mixpanel.
+        /// </summary>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        public MixpanelMessageTest AliasTest(object alias)
+        {
+            return TestMessage(() => CreateAliasMessageObject(null, alias));
         }
 
         private IDictionary<string, object> CreateAliasMessageObject(
@@ -1139,6 +1188,17 @@ namespace Mixpanel
 
         /// <summary>
         /// Permanently delete the profile from Mixpanel, along with all of its properties.
+        /// 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        public bool PeopleDelete()
+        {
+            return PeopleDelete(null);
+        }
+
+        /// <summary>
+        /// Permanently delete the profile from Mixpanel, along with all of its properties.
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -1152,6 +1212,17 @@ namespace Mixpanel
         }
 
 #if !(NET40 || NET35)
+        /// <summary>
+        /// Permanently delete the profile from Mixpanel, along with all of its properties.
+        /// 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        public async Task<bool> PeopleDeleteAsync()
+        {
+            return await PeopleDeleteAsync(null);
+        }
+
         /// <summary>
         /// Permanently delete the profile from Mixpanel, along with all of its properties.
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint. 
@@ -1169,6 +1240,18 @@ namespace Mixpanel
 
         /// <summary>
         /// Returns a <see cref="MixpanelMessage"/> for 'PeopleDelete'. 
+        /// 'Distinct ID' will be taken from super properties.
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        public MixpanelMessage GetPeopleDeleteMessage()
+        {
+            return GetPeopleDeleteMessage(null);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleDelete'. 
         /// If message can't be created, then null is returned.
         /// No data will be sent to Mixpanel.
         /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
@@ -1179,6 +1262,17 @@ namespace Mixpanel
             return GetMessage(
                 MessageKind.PeopleDelete,
                 () => CreatePeopleDeleteObject(distinctId));
+        }
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleDelete' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The message will NOT be sent to Mixpanel.
+        /// </summary>
+        public MixpanelMessageTest PeopleDeleteTest()
+        {
+            return PeopleDeleteTest(null);
         }
 
         /// <summary>
@@ -1205,6 +1299,17 @@ namespace Mixpanel
         #region PeopleTrackCharge
 
         /// <summary>
+        /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        public bool PeopleTrackCharge(decimal amount)
+        {
+            return PeopleTrackCharge(null, amount);
+        }
+
+        /// <summary>
         /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -1213,6 +1318,18 @@ namespace Mixpanel
         public bool PeopleTrackCharge(object distinctId, decimal amount)
         {
             return PeopleTrackCharge(distinctId, amount, UtcNow());
+        }
+
+        /// <summary>
+        /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        public bool PeopleTrackCharge(decimal amount, DateTime time)
+        {
+            return PeopleTrackCharge(null, amount, time);
         }
 
         /// <summary>
@@ -1232,6 +1349,17 @@ namespace Mixpanel
 
 #if !(NET40 || NET35)
         /// <summary>
+        /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        public async Task<bool> PeopleTrackChargeAsync(decimal amount)
+        {
+            return await PeopleTrackChargeAsync(null, amount);
+        }
+
+        /// <summary>
         /// Adds new transaction to profile. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -1240,6 +1368,18 @@ namespace Mixpanel
         public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount)
         {
             return await PeopleTrackChargeAsync(distinctId, amount, UtcNow());
+        }
+
+        /// <summary>
+        /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
+        /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        public async Task<bool> PeopleTrackChargeAsync(decimal amount, DateTime time)
+        {
+            return await PeopleTrackChargeAsync(null, amount, time);
         }
 
         /// <summary>
@@ -1256,7 +1396,21 @@ namespace Mixpanel
                 EndpointEngage,
                 MessageKind.PeopleTrackCharge);
         }
+
 #endif
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
+        /// 'Distinct ID' will be taken from super properties.
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        public MixpanelMessage GetPeopleTrackChargeMessage(decimal amount)
+        {
+            return GetPeopleTrackChargeMessage(null, amount);
+        }
 
         /// <summary>
         /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
@@ -1269,6 +1423,20 @@ namespace Mixpanel
         public MixpanelMessage GetPeopleTrackChargeMessage(object distinctId, decimal amount)
         {
             return GetPeopleTrackChargeMessage(distinctId, amount, UtcNow());
+        }
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'PeopleTrackCharge'. 
+        /// 'Distinct ID' will be taken from super properties.
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="IMixpanelClient.Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        public MixpanelMessage GetPeopleTrackChargeMessage(decimal amount, DateTime time)
+        {
+            return GetPeopleTrackChargeMessage(null, amount, time);
         }
 
         /// <summary>
@@ -1293,11 +1461,36 @@ namespace Mixpanel
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
         /// The message will NOT be sent to Mixpanel.
         /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        public MixpanelMessageTest PeopleTrackChargeTest(decimal amount)
+        {
+            return PeopleTrackChargeTest(null, amount);
+        }
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleTrackCharge' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The message will NOT be sent to Mixpanel.
+        /// </summary>
         /// <param name="distinctId">Unique user profile identifier.</param>
         /// <param name="amount">Amount of the transaction.</param>
         public MixpanelMessageTest PeopleTrackChargeTest(object distinctId, decimal amount)
         {
             return PeopleTrackChargeTest(distinctId, amount, UtcNow());
+        }
+
+        /// <summary>
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'PeopleTrackCharge' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The message will NOT be sent to Mixpanel.
+        /// </summary>
+        /// <param name="amount">Amount of the transaction.</param>
+        /// <param name="time">The date transaction was done.</param>
+        public MixpanelMessageTest PeopleTrackChargeTest(decimal amount, DateTime time)
+        {
+            return PeopleTrackChargeTest(null, amount, time);
         }
 
         /// <summary>
@@ -1601,9 +1794,9 @@ namespace Mixpanel
                 builder.SuperPropertiesRules,
                 _config);
             md.SetProperty(MixpanelProperty.Token, _token);
+            md.ParseAndSetSuperProperties(_superProperties);
             md.ParseAndSetProperties(userProperties);
             md.ParseAndSetPropertiesIfNotNull(extraProperties);
-            md.ParseAndSetSuperProperties(_superProperties);
 
             return builder.GetMessageObject(md);
         }
