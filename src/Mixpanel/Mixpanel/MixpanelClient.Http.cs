@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Mixpanel.Exceptions;
 #if !(NET40 || NET35)
 using System.Threading.Tasks;
 #endif
@@ -29,6 +30,14 @@ namespace Mixpanel
 
         private string GetFormData(Func<object> messageDataFn, MessageKind messageKind)
         {
+#if (PORTABLE || PORTABLE40)
+            if (!ConfigHelper.SerializeJsonFnSet(_config))
+            {
+                throw new MixpanelConfigurationException(
+                    "There is no default JSON serializer in portable builds. Please use configuration to set it.");
+            }
+#endif
+
             object messageData;
             try
             {
@@ -71,6 +80,14 @@ namespace Mixpanel
                 return false;
             }
 
+#if (PORTABLE || PORTABLE40)
+            if (!ConfigHelper.HttpPostFnSet(_config))
+            {
+                throw new MixpanelConfigurationException(
+                    "There is no default HTTP POST method in portable builds. Please use configuration to set it.");
+            }
+#endif
+
             string url = GenerateUrl(endpoint);
             try
             {
@@ -93,6 +110,15 @@ namespace Mixpanel
             {
                 return false;
             }
+
+#if (PORTABLE || PORTABLE40)
+            if (!ConfigHelper.AsyncHttpPostFnSet(_config))
+            {
+                throw new MixpanelConfigurationException(
+                    "There is no default async HTTP POST method in portable builds. Please use configuration to set it.");
+            }
+#endif
+
 
             string url = GenerateUrl(endpoint);
             try

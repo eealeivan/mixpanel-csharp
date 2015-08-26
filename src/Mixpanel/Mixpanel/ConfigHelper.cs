@@ -53,5 +53,32 @@ namespace Mixpanel
 
             return null;
         }
+
+
+#if (PORTABLE || PORTABLE40)
+        public static bool SerializeJsonFnSet(MixpanelConfig config)
+        {
+            return
+                MixpanelConfig.Global.SerializeJsonFn != null ||
+                (config != null && config.SerializeJsonFn != null);
+
+        }
+
+        public static bool HttpPostFnSet(MixpanelConfig config)
+        {
+            return
+                MixpanelConfig.Global.HttpPostFn != null ||
+                (config != null && config.HttpPostFn != null);
+
+        }
+
+        public static bool AsyncHttpPostFnSet(MixpanelConfig config)
+        {
+            return
+                MixpanelConfig.Global.AsyncHttpPostFn != null ||
+                (config != null && config.AsyncHttpPostFn != null);
+
+        }
+#endif
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace Mixpanel.Exceptions
 {
@@ -11,14 +10,14 @@ namespace Mixpanel.Exceptions
         /// <summary>
         /// Creates an instance of <see cref="MixpanelRequiredPropertyNullOrEmptyException"/>.
         /// </summary>
-        public MixpanelRequiredPropertyNullOrEmptyException()
+        internal MixpanelRequiredPropertyNullOrEmptyException()
         {
         }
 
         /// <summary>
         /// Creates an instance of <see cref="MixpanelRequiredPropertyNullOrEmptyException"/>.
         /// </summary>
-        public MixpanelRequiredPropertyNullOrEmptyException(string message)
+        internal MixpanelRequiredPropertyNullOrEmptyException(string message)
             : base(message)
         {
         }
@@ -26,16 +25,8 @@ namespace Mixpanel.Exceptions
         /// <summary>
         /// Creates an instance of <see cref="MixpanelRequiredPropertyNullOrEmptyException"/>.
         /// </summary>
-        public MixpanelRequiredPropertyNullOrEmptyException(string message, Exception innerException)
+        internal MixpanelRequiredPropertyNullOrEmptyException(string message, Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// Creates an instance of <see cref="MixpanelRequiredPropertyNullOrEmptyException"/>.
-        /// </summary>
-        protected MixpanelRequiredPropertyNullOrEmptyException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

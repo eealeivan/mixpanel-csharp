@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 using Mixpanel.Misc;
-#if !NET35
+#if !(NET35 || PORTABLE || PORTABLE40)
 using System.Collections.Concurrent;
 #endif
 using System.Collections.Generic;
@@ -47,7 +47,7 @@ namespace Mixpanel.Core
             {
                 foreach (var propertyInfo in GetObjectPropertyInfos(obj.GetType()))
                 {
-                    props.Add( 
+                    props.Add(
                         new ObjectProperty(
                             propertyInfo.PropertyName, propertyInfo.PropertyNameSource,
                             propertyInfo.PropertyInfo.GetValue(obj, null)));
@@ -57,9 +57,12 @@ namespace Mixpanel.Core
             return props;
         }
 
-#if NET35
+#if NET35 
         private static readonly ThreadSafeCache<Type, List<ObjectPropertyInfo>> 
             PropertyInfosCache = new ThreadSafeCache<Type, List<ObjectPropertyInfo>>();
+#elif (PORTABLE || PORTABLE40)
+        private static readonly PortableThreadSafeFakeCache<Type, List<ObjectPropertyInfo>>
+            PropertyInfosCache = new PortableThreadSafeFakeCache<Type, List<ObjectPropertyInfo>>();
 #else
         private static readonly ConcurrentDictionary<Type, List<ObjectPropertyInfo>>
             PropertyInfosCache = new ConcurrentDictionary<Type, List<ObjectPropertyInfo>>();
@@ -69,8 +72,13 @@ namespace Mixpanel.Core
         {
             return PropertyInfosCache.GetOrAdd(type, t =>
             {
+#if (PORTABLE || PORTABLE40)
+                bool isDataContract = t.GetTypeInfo().GetCustomAttribute<DataContractAttribute>() != null;
+                var infos = t.GetRuntimeProperties().Where(x => x.CanRead).ToArray();
+#else
                 bool isDataContract = t.GetCustomAttribute<DataContractAttribute>() != null;
                 var infos = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+#endif
                 var res = new List<ObjectPropertyInfo>(infos.Length);
 
                 foreach (var info in infos)

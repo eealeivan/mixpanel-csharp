@@ -19,7 +19,8 @@ properties {
   $builds = @(  
     @{Name = "Mixpanel"; TestsName = "Mixpanel.Tests"; Constants=""; FinalDir="Net45"; NuGetDir = "net45"; Framework="net-4.5.1"; Sign=$false},
     @{Name = "Mixpanel.Net40"; TestsName = "Mixpanel.Tests.Net40"; Constants="NET40"; FinalDir="Net40"; NuGetDir = "net40"; Framework="net-4.0"; Sign=$false},
-    @{Name = "Mixpanel.Net35"; TestsName = "Mixpanel.Tests.Net35"; Constants="NET35"; FinalDir="Net35"; NuGetDir = "net35"; Framework="net-2.0"; Sign=$false}  
+    @{Name = "Mixpanel.Net35"; TestsName = "Mixpanel.Tests.Net35"; Constants="NET35"; FinalDir="Net35"; NuGetDir = "net35"; Framework="net-2.0"; Sign=$false},  
+    @{Name = "Mixpanel.Portable"; TestsName = "Mixpanel.Tests.Portable"; Constants="PORTABLE"; FinalDir="Portable"; NuGetDir = "portable-net45+netcore45+wpa81+wp8"; Framework="net-4.5"; Sign=$false}  
   )
 }
 

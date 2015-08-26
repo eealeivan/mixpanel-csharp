@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Mixpanel.Exceptions;
 using Newtonsoft.Json;
 #if !NET35
 using System.Threading.Tasks;
@@ -45,24 +46,31 @@ namespace Mixpanel.Tests
         public void SetUp()
         {
             _httpPostEntries = new List<HttpPostEntry>();
-            _client = new MixpanelClient(Token,
-                new MixpanelConfig
-                {
-                    HttpPostFn = (endpoint, data) =>
-                    {
-                        _httpPostEntries.Add(new HttpPostEntry(endpoint, data));
-                        return true;
-                    },
-#if !(NET40 || NET35)
-                    AsyncHttpPostFn = (endpoint, data) =>
-                    {
-                        _httpPostEntries.Add(new HttpPostEntry(endpoint, data));
-                        return Task.Run(() => true);
-                    }
-#endif
-                });
+            _client = new MixpanelClient(Token, GetConfig());
             _client.UtcNow = () => DateTime.UtcNow;
             _client.SetSuperProperties(new object());
+        }
+
+        private MixpanelConfig GetConfig()
+        {
+            return new MixpanelConfig
+            {
+                HttpPostFn = (endpoint, data) =>
+                {
+                    _httpPostEntries.Add(new HttpPostEntry(endpoint, data));
+                    return true;
+                },
+#if !(NET40 || NET35)
+                AsyncHttpPostFn = (endpoint, data) =>
+                {
+                    _httpPostEntries.Add(new HttpPostEntry(endpoint, data));
+                    return Task.Run(() => true);
+                },
+#endif
+#if (PORTABLE || PORTABLE40)
+                SerializeJsonFn = obj => JsonConvert.SerializeObject(obj)
+#endif
+            };
         }
 
         #region Track
@@ -1700,7 +1708,7 @@ namespace Mixpanel.Tests
         [Test]
         public void SuperProperties_FromClientConstructor_AddedToMessage()
         {
-            var client = new MixpanelClient(Token, null, GetSuperPropertiesDictionary(includeDistinctId: true));
+            var client = new MixpanelClient(Token, GetConfig(), GetSuperPropertiesDictionary(includeDistinctId: true));
 
             MixpanelMessage msg = client.GetTrackMessage(Event, GetTrackDictionary());
             CheckTrackMessage(msg, CheckOptions.SuperPropsSet | CheckOptions.SuperPropsDistinctIdSet);
@@ -1723,6 +1731,50 @@ namespace Mixpanel.Tests
         }
 
         #endregion SuperProperties
+
+        #region Portable
+
+#if (PORTABLE || PORTABLE40)
+
+        [Test]
+        public void Track_JsonSerializerFnNotSet_ThrowsException()
+        {
+            var config = GetConfig();
+            config.SerializeJsonFn = null;
+            var mc = new MixpanelClient(Token, config);
+
+            Assert.That(
+                () => { mc.Track(Event, DistinctId, GetTrackDictionary()); },
+                Throws.TypeOf<MixpanelConfigurationException>());
+        }
+        
+        [Test]
+        public void Track_HttpPostFnNotSet_ThrowsException()
+        {
+            var config = GetConfig();
+            config.HttpPostFn = null;
+            var mc = new MixpanelClient(Token, config);
+
+            Assert.That(
+                () => { mc.Track(Event, DistinctId, GetTrackDictionary()); },
+                Throws.TypeOf<MixpanelConfigurationException>());
+        }
+        
+        [Test]
+        public void Track_AsyncHttpPostFnNotSet_ThrowsException()
+        {
+            var config = GetConfig();
+            config.AsyncHttpPostFn = null;
+            var mc = new MixpanelClient(Token, config);
+
+            var aggregate = Assert.Throws<AggregateException>(
+                () => mc.TrackAsync(Event, DistinctId, GetTrackDictionary()).Wait());
+            Assert.That(aggregate.InnerExceptions.Single(), Is.InstanceOf<MixpanelConfigurationException>());
+        }
+#endif
+
+
+        #endregion Portable
 
         private JObject ParseMessageData(string data)
         {

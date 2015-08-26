@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace Mixpanel.Exceptions
 {
@@ -12,14 +11,14 @@ namespace Mixpanel.Exceptions
         /// <summary>
         /// Creates an instance of <see cref="MixpanelObjectStructureException"/>.
         /// </summary>
-        public MixpanelObjectStructureException()
+        internal MixpanelObjectStructureException()
         {
         }
 
         /// <summary>
         /// Creates an instance of <see cref="MixpanelObjectStructureException"/>.
         /// </summary>
-        public MixpanelObjectStructureException(string message)
+        internal MixpanelObjectStructureException(string message)
             : base(message)
         {
         }
@@ -27,16 +26,8 @@ namespace Mixpanel.Exceptions
         /// <summary>
         /// Creates an instance of <see cref="MixpanelObjectStructureException"/>.
         /// </summary>
-        public MixpanelObjectStructureException(string message, Exception innerException)
+        internal MixpanelObjectStructureException(string message, Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// Creates an instance of <see cref="MixpanelObjectStructureException"/>.
-        /// </summary>
-        protected MixpanelObjectStructureException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

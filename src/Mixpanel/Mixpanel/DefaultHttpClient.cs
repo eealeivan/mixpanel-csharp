@@ -12,6 +12,10 @@ namespace Mixpanel
     {
         public bool Post(string url, string formData)
         {
+#if (PORTABLE || PORTABLE40)
+            throw new NotImplementedException(
+                "There is no default HTTP POST method in portable builds. Please use configuration to set it.");
+#else
             var req = CreateWebRequest(url);
 
             using (var reqStream = req.GetRequestStream())
@@ -32,11 +36,16 @@ namespace Mixpanel
                     }
                 }
             }
+#endif
         }
 
 #if !(NET40 || NET35)
         public async Task<bool> PostAsync(string url, string formData)
         {
+#if (PORTABLE || PORTABLE40)
+            throw new NotImplementedException(
+                "There is no default async HTTP POST method in portable builds. Please use configuration to set it.");
+#else
             var req = CreateWebRequest(url);
             using (var reqStream = await req.GetRequestStreamAsync())
             {
@@ -56,10 +65,11 @@ namespace Mixpanel
                     }
                 }
             }
+#endif
         }
 #endif
 
-
+#if !(PORTABLE || PORTABLE40)
         private HttpWebRequest CreateWebRequest(string url)
         {
             var req = (HttpWebRequest)WebRequest.CreateDefault(new Uri(url));
@@ -70,5 +80,6 @@ namespace Mixpanel
             req.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             return req;
         }
+#endif
     }
 }

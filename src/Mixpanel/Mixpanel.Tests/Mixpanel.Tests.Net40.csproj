@@ -46,6 +46,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BatchMessageWrapperTests.cs" />
     <Compile Include="ExtensionsTests.cs" />
     <Compile Include="MixpanelClientTests.cs" />
     <Compile Include="MessageDataTests.cs" />

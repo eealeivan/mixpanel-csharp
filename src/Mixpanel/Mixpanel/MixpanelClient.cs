@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using Mixpanel.Exceptions;
+using Mixpanel.Misc;
 #if !(NET40 || NET35)
 using System.Threading.Tasks;
 #endif
@@ -244,7 +246,7 @@ namespace Mixpanel
         {
             return await AliasAsync(null, alias);
         }
-        
+
         /// <summary>
         /// Creates an alias to given <paramref name="distinctId"/>. 
         /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
@@ -1741,7 +1743,7 @@ namespace Mixpanel
                 {
                     result.SentBatches = _sentBatches.Select(x => x.AsReadOnly()).ToList().AsReadOnly();
                 }
-                
+
                 if (_failedBatches != null)
                 {
                     result.FailedBatches = _failedBatches.Select(x => x.AsReadOnly()).ToList().AsReadOnly();
