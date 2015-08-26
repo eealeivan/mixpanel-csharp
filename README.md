@@ -8,7 +8,7 @@
 - Add properties globally to all messages with super properties. Usable for properties such as `distinct_id`
 - Great [configurability](https://github.com/eealeivan/mixpanel-csharp/wiki/Configuration). For example you can provide your own JSON serializer or function that will make HTTP requests
 - No dependencies. Keeps your project clean
-- Runs on many platforms: NET35, NET40, NET45 (PORTABLE is comming soon)
+- Runs on many platforms: .NET 3.5, .NET 4, .NET 4.5 and .NET Portable (.NET 4.5, Windows 8, Windows Phone 8.1, Windows Phone Silverlight 8)
 - Good [documentation](https://github.com/eealeivan/mixpanel-csharp/wiki)
 
 ##Sample usage
