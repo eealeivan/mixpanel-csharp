@@ -1036,21 +1036,6 @@ namespace Mixpanel
 
         #endregion PeopleTrackCharge
 
-        #region Super properties
-
-        /// <summary>
-        /// Sets super properties that will be attached to every message for the current mixpanel client.
-        /// All previosly set super properties will be removed.
-        /// </summary>
-        /// <param name="superProperties">
-        /// Object with super properties to set.
-        /// If some of the properties are not valid mixpanel properties they will be ignored. Check documentation
-        /// on project page https://github.com/eealeivan/mixpanel-csharp for valid property types.
-        /// </param>
-        void SetSuperProperties(object superProperties);
-
-        #endregion Super properties
-
         #region Send
 
         /// <summary>

@@ -50,10 +50,18 @@ namespace Mixpanel
         /// when you want to call only 'Send' and 'SendAsync' methods, because in this case
         /// token is already specified in each <see cref="MixpanelMessage"/>.
         /// </summary>
+        /// <param name="config">
+        /// Configuration for this particular client. Set properties from this class will override global properties.
+        /// </param>
+        /// <param name="superProperties">
+        /// Object with properties that will be attached to every message for the current mixpanel client.
+        /// If some of the properties are not valid mixpanel properties they will be ignored. Check documentation
+        /// on project page https://github.com/eealeivan/mixpanel-csharp for valid property types.
+        /// </param>
         public MixpanelClient(MixpanelConfig config = null, object superProperties = null)
         {
             _config = config;
-            SetSuperProperties(superProperties);
+            _superProperties = superProperties;
             UtcNow = () => DateTime.UtcNow;
         }
 
@@ -1757,21 +1765,7 @@ namespace Mixpanel
 
         #region Super properties
 
-        private object _superProperties;
-
-        /// <summary>
-        /// Sets super properties that will be attached to every message for the current mixpanel client.
-        /// All previosly set super properties will be removed.
-        /// </summary>
-        /// <param name="superProperties">
-        /// Object with super properties to set.
-        /// If some of the properties are not valid mixpanel properties they will be ignored. Check documentation
-        /// on project page https://github.com/eealeivan/mixpanel-csharp for valid property types.
-        /// </param>
-        public void SetSuperProperties(object superProperties)
-        {
-            _superProperties = superProperties;
-        }
+        private readonly object _superProperties;
 
         #endregion Super properties
 
