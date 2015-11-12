@@ -61,8 +61,8 @@ namespace Mixpanel.Core
         private static readonly ThreadSafeCache<Type, List<ObjectPropertyInfo>> 
             PropertyInfosCache = new ThreadSafeCache<Type, List<ObjectPropertyInfo>>();
 #elif (PORTABLE || PORTABLE40)
-        private static readonly PortableThreadSafeFakeCache<Type, List<ObjectPropertyInfo>>
-            PropertyInfosCache = new PortableThreadSafeFakeCache<Type, List<ObjectPropertyInfo>>();
+        private static readonly PortableThreadSafeCache<Type, List<ObjectPropertyInfo>>
+            PropertyInfosCache = new PortableThreadSafeCache<Type, List<ObjectPropertyInfo>>();
 #else
         private static readonly ConcurrentDictionary<Type, List<ObjectPropertyInfo>>
             PropertyInfosCache = new ConcurrentDictionary<Type, List<ObjectPropertyInfo>>();

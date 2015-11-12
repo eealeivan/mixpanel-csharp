@@ -71,7 +71,7 @@
     <Compile Include="IMixpanelClient.cs" />
     <Compile Include="MessageKind.cs" />
     <Compile Include="Misc\DateTimeExtensions.cs" />
-    <Compile Include="Misc\PortableThreadSafeFakeCache.cs" />
+    <Compile Include="Misc\PortableThreadSafeCache.cs" />
     <Compile Include="Misc\ReadOnlyHelper.cs" />
     <Compile Include="Misc\ReflectionHelper.cs" />
     <Compile Include="Misc\StringHelper.cs" />
