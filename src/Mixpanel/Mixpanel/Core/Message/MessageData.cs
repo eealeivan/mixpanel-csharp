@@ -70,28 +70,28 @@ namespace Mixpanel.Core.Message
             }
         }
 
-        public void ParseAndSetSuperProperties(object superProperties)
+        public void SetSuperProperties(IList<ObjectProperty> superProperties)
         {
             if (superProperties == null)
             {
                 return;
             }
 
-            foreach (var property in _propertiesDigger.Get(superProperties))
+            foreach (var superProperty in superProperties)
             {
                 switch (_superPropertiesRules)
                 {
                     case SuperPropertiesRules.All:
-                        SetProperty(property.PropertyName, property.Value, property.PropertyNameSource);
+                        SetProperty(superProperty.PropertyName, superProperty.Value, superProperty.PropertyNameSource);
                         break;
                     case SuperPropertiesRules.DistinctIdOnly:
                         string distinctIdBindingProp;
                         bool isDistinctId = _distinctIdPropsBindings.TryGetValue(
-                            property.PropertyName.ToLower(), out distinctIdBindingProp);
+                            superProperty.PropertyName.ToLower(), out distinctIdBindingProp);
 
                         if (isDistinctId)
                         {
-                            SetProperty(property.PropertyName, property.Value, property.PropertyNameSource);
+                            SetProperty(superProperty.PropertyName, superProperty.Value, superProperty.PropertyNameSource);
                         }
                         break;
                     default:

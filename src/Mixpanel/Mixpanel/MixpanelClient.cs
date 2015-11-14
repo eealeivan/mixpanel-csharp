@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using Mixpanel.Core;
 using Mixpanel.Exceptions;
 using Mixpanel.Misc;
 #if !(NET40 || NET35)
@@ -24,6 +25,13 @@ namespace Mixpanel
         /// Func for getting/setting current utc date. Simplifies testing.
         /// </summary>
         internal Func<DateTime> UtcNow { get; set; }
+
+        /// <summary>
+        /// Parsed super properties which are added to every message.
+        /// Collection is only initialized in constructor and never changed, so it's safe
+        /// to be iterated by multiple threads.
+        /// </summary>
+        private readonly IList<ObjectProperty> _superProperties;
 
         /// <summary>
         /// Creates an instance of <see cref="MixpanelClient"/>.
@@ -61,8 +69,11 @@ namespace Mixpanel
         public MixpanelClient(MixpanelConfig config = null, object superProperties = null)
         {
             _config = config;
-            _superProperties = superProperties;
             UtcNow = () => DateTime.UtcNow;
+
+            // Parse super properties only one time
+            var propertiesDigger = new PropertiesDigger();
+            _superProperties = propertiesDigger.Get(superProperties);
         }
 
         #region Track
@@ -1763,12 +1774,6 @@ namespace Mixpanel
 
         #endregion Send
 
-        #region Super properties
-
-        private readonly object _superProperties;
-
-        #endregion Super properties
-
         /// <summary>
         /// Returns dictionary that contains Mixpanel message and is ready to be serialized. 
         /// </summary>
@@ -1790,7 +1795,7 @@ namespace Mixpanel
                 builder.SuperPropertiesRules,
                 _config);
             md.SetProperty(MixpanelProperty.Token, _token);
-            md.ParseAndSetSuperProperties(_superProperties);
+            md.SetSuperProperties(_superProperties);
             md.ParseAndSetProperties(userProperties);
             md.ParseAndSetPropertiesIfNotNull(extraProperties);
 
