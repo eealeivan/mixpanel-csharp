@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="BatchMessageWrapperTests.cs" />
     <Compile Include="ExtensionsTests.cs" />
+    <Compile Include="MixpanelClientHttpTests.cs" />
     <Compile Include="MixpanelClientTests.cs" />
     <Compile Include="MessageDataTests.cs" />
     <Compile Include="MixpanelTestsBase.cs" />

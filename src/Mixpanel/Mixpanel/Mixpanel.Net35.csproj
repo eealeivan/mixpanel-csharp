@@ -79,6 +79,7 @@
     <Compile Include="MixpanelClient.cs" />
     <Compile Include="MixpanelClient.Http.cs" />
     <Compile Include="MixpanelConfig.cs" />
+    <Compile Include="MixpanelIpAddressHandling.cs" />
     <Compile Include="MixpanelMessage.cs" />
     <Compile Include="MixpanelNameAttribute.cs" />
     <Compile Include="MixpanelMessageTest.cs" />
