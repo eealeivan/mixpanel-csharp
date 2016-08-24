@@ -41,7 +41,12 @@ namespace Mixpanel
         /// <summary>
         /// Gets or sets the format for mixpanel properties.
         /// </summary>
-        public MixpanelPropertyNameFormat MixpanelPropertyNameFormat { get; set; }
+        public MixpanelPropertyNameFormat? MixpanelPropertyNameFormat { get; set; }
+
+        /// <summary>
+        /// Regulates "ip" query string parameter.
+        /// </summary>
+        public MixpanelIpAddressHandling? IpAddressHandling { get; set; }
 
         /// <summary>
         /// A global instance of the config.
@@ -64,7 +69,8 @@ namespace Mixpanel
             AsyncHttpPostFn = null;
 #endif
             ErrorLogFn = null;
-            MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.None;
+            MixpanelPropertyNameFormat = null;
+            IpAddressHandling = null;
         }
     }
 }

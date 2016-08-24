@@ -80,5 +80,35 @@ namespace Mixpanel
 
         }
 #endif
+
+        public static MixpanelPropertyNameFormat GetMixpanelPropertyNameFormat(MixpanelConfig config)
+        {
+            if (config != null && config.MixpanelPropertyNameFormat != null)
+            {
+                return config.MixpanelPropertyNameFormat.Value;
+            }
+
+            if (MixpanelConfig.Global.MixpanelPropertyNameFormat != null)
+            {
+                return MixpanelConfig.Global.MixpanelPropertyNameFormat.Value;
+            }
+
+            return MixpanelPropertyNameFormat.None;
+        }
+
+        public static MixpanelIpAddressHandling GetIpAddressHandling(MixpanelConfig config)
+        {
+            if (config != null && config.IpAddressHandling != null)
+            {
+                return config.IpAddressHandling.Value;
+            }
+
+            if (MixpanelConfig.Global.IpAddressHandling != null)
+            {
+                return MixpanelConfig.Global.IpAddressHandling.Value;
+            }
+
+            return MixpanelIpAddressHandling.None;
+        }
     }
 }

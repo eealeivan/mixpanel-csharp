@@ -17,9 +17,8 @@ namespace Mixpanel.Core
         {
             Debug.Assert(!propName.IsNullOrWhiteSpace());
 
-            var propertyNameFormat = _config != null
-                ? _config.MixpanelPropertyNameFormat
-                : MixpanelConfig.Global.MixpanelPropertyNameFormat;
+            MixpanelPropertyNameFormat propertyNameFormat = 
+                ConfigHelper.GetMixpanelPropertyNameFormat(_config);
 
             if (propertyNameFormat == MixpanelPropertyNameFormat.None || 
                 propertyNameSource != PropertyNameSource.Default)
