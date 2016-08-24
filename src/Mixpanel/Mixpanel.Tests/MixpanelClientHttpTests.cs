@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+#if (PORTABLE || PORTABLE40)
+using Newtonsoft.Json;
+#endif
 
 namespace Mixpanel.Tests
 {
@@ -51,7 +54,10 @@ namespace Mixpanel.Tests
                 {
                     _urls.Add(endpoint);
                     return true;
-                }
+                },
+#if (PORTABLE || PORTABLE40)
+                SerializeJsonFn = obj => JsonConvert.SerializeObject(obj)
+#endif
             };
         }
 
