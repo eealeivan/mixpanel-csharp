@@ -47,6 +47,8 @@ namespace Mixpanel.Tests
         [SetUp]
         public void SetUp()
         {
+            MixpanelConfig.Global.Reset();
+
             _httpPostEntries = new List<HttpPostEntry>();
 
             string testName = TestContext.CurrentContext.Test.Name;
@@ -502,6 +504,17 @@ namespace Mixpanel.Tests
         {
             _client.PeopleSet(DistinctId, GetPeopleSetDictionary());
             CheckPeopleSet();
+        }
+
+        [Test]
+        public void PeopleSet_IpOnly_CorrectDataSent()
+        {
+            _client.PeopleSet(DistinctId, new Dictionary<string, object>
+            {
+                {MixpanelProperty.Ip, Ip}
+            });
+            var msg = ParseMessageData(_httpPostEntries.Single().Data);
+            Assert.That(msg[MixpanelProperty.PeopleIp].Value<string>(), Is.EqualTo(Ip));
         }
 
         [Test]

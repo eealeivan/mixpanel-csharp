@@ -15,7 +15,20 @@ namespace Mixpanel
 
         private string GenerateUrl(string endpoint)
         {
-            return string.Format(UrlFormat, endpoint);
+            var url = string.Format(UrlFormat, endpoint);
+
+            MixpanelIpAddressHandling ipAddressHandling = ConfigHelper.GetIpAddressHandling(_config);
+            switch (ipAddressHandling)
+            {
+                case MixpanelIpAddressHandling.UseRequestIp:
+                    url += "?ip=1";
+                    break;
+                case MixpanelIpAddressHandling.IgnoreRequestIp:
+                    url += "?ip=0";
+                    break;
+            }
+
+            return url;
         }
 
         private string ToJson(object obj)
