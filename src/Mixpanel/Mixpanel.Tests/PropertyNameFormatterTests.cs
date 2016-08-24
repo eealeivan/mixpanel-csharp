@@ -21,10 +21,6 @@ namespace Mixpanel.Tests
         public void Format_DefaultConfig_PropertyNameNotChanged()
         {
             CheckDefault(_defaultFormatter);
-
-            MixpanelConfig.Global.MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.SentenceCase;
-            var formatter = new PropertyNameFormatter(new MixpanelConfig());
-            CheckDefault(formatter);
         }
 
         [Test]
