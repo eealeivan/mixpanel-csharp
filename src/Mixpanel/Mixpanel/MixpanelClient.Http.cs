@@ -13,9 +13,22 @@ namespace Mixpanel
         internal const string EndpointTrack = "track";
         internal const string EndpointEngage = "engage";
 
-        private string GenerateUrl(string endpoint)
+        private string GetEndpoint(MixpanelMessageEndpoint endpoint)
         {
-            var url = string.Format(UrlFormat, endpoint);
+            switch (endpoint)
+            {
+                case MixpanelMessageEndpoint.Track:
+                    return EndpointTrack;
+                case MixpanelMessageEndpoint.Engage:
+                    return EndpointEngage;
+                default:
+                    throw new ArgumentOutOfRangeException("endpoint");
+            }
+        }
+
+        private string GenerateUrl(MixpanelMessageEndpoint endpoint)
+        {
+            string url = string.Format(UrlFormat, GetEndpoint(endpoint));
 
             MixpanelIpAddressHandling ipAddressHandling = ConfigHelper.GetIpAddressHandling(_config);
             switch (ipAddressHandling)
@@ -41,7 +54,12 @@ namespace Mixpanel
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
         }
 
-        private string GetFormData(Func<object> messageDataFn, MessageKind messageKind)
+        private string ToMixpanelMessageFormat(string base64)
+        {
+            return "data=" + base64;
+        }
+
+        private string GetMessageBody(Func<object> messageDataFn, MessageKind messageKind)
         {
 #if (PORTABLE || PORTABLE40)
             if (!ConfigHelper.SerializeJsonFnSet(_config))
@@ -84,11 +102,26 @@ namespace Mixpanel
             }
         }
 
-        private bool SendMessageInternal(
-            Func<object> getMessageDataFn, string endpoint, MessageKind messageKind)
+        private bool HttpPost(MixpanelMessageEndpoint endpoint, string messageBody)
         {
-            string formData = GetFormData(getMessageDataFn, messageKind);
-            if (formData == null)
+            string url = GenerateUrl(endpoint);
+            try
+            {
+                var httpPostFn = ConfigHelper.GetHttpPostFn(_config);
+                return httpPostFn(url, messageBody);
+            }
+            catch (Exception e)
+            {
+                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, messageBody), e);
+                return false;
+            }
+        }
+
+        private bool SendMessageInternal(
+            Func<object> getMessageDataFn, MixpanelMessageEndpoint endpoint, MessageKind messageKind)
+        {
+            string messageBody = GetMessageBody(getMessageDataFn, messageKind);
+            if (messageBody == null)
             {
                 return false;
             }
@@ -101,24 +134,34 @@ namespace Mixpanel
             }
 #endif
 
-            string url = GenerateUrl(endpoint);
-            try
+            return HttpPost(endpoint, messageBody);
+        }
+
+        private bool SendMessageInternal(
+            MixpanelMessageEndpoint endpoint, string messageJson)
+        {
+            string messageBody = ToMixpanelMessageFormat(ToBase64(messageJson));
+            if (messageBody == null)
             {
-                var httpPostFn = ConfigHelper.GetHttpPostFn(_config);
-                return httpPostFn(url, formData);
-            }
-            catch (Exception e)
-            {
-                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, formData), e);
                 return false;
             }
+
+#if (PORTABLE || PORTABLE40)
+            if (!ConfigHelper.HttpPostFnSet(_config))
+            {
+                throw new MixpanelConfigurationException(
+                    "There is no default HTTP POST method in portable builds. Please use configuration to set it.");
+            }
+#endif
+
+            return HttpPost(endpoint, messageBody);
         }
 
 #if !(NET40 || NET35)
         private async Task<bool> SendMessageInternalAsync(
-            Func<object> getMessageDataFn, string endpoint, MessageKind messageKind)
+            Func<object> getMessageDataFn, MixpanelMessageEndpoint endpoint, MessageKind messageKind)
         {
-            string formData = GetFormData(getMessageDataFn, messageKind);
+            string formData = GetMessageBody(getMessageDataFn, messageKind);
             if (formData == null)
             {
                 return false;

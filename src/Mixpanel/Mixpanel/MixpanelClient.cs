@@ -106,7 +106,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreateTrackMessageObject(@event, distinctId, properties),
-                EndpointTrack,
+                MixpanelMessageEndpoint.Track, 
                 MessageKind.Track);
         }
 
@@ -139,7 +139,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreateTrackMessageObject(@event, distinctId, properties),
-                EndpointTrack,
+                MixpanelMessageEndpoint.Track, 
                 MessageKind.Track);
         }
 #endif
@@ -250,7 +250,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreateAliasMessageObject(distinctId, alias),
-                EndpointTrack,
+                MixpanelMessageEndpoint.Track, 
                 MessageKind.Alias);
         }
 
@@ -277,7 +277,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreateAliasMessageObject(distinctId, alias),
-                EndpointTrack,
+                MixpanelMessageEndpoint.Track,
                 MessageKind.Alias);
         }
 #endif
@@ -381,7 +381,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreatePeopleSetMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleSet);
         }
 
@@ -414,7 +414,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreatePeopleSetMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleSet);
         }
 #endif
@@ -522,7 +522,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreatePeopleSetOnceMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleSetOnce);
         }
 
@@ -555,7 +555,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreatePeopleSetOnceMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleSetOnce);
         }
 #endif
@@ -668,7 +668,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreatePeopleAddMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleAdd);
         }
 
@@ -705,7 +705,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreatePeopleAddMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleAdd);
         }
 #endif
@@ -818,7 +818,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreatePeopleAppendMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleAppend);
         }
 
@@ -853,7 +853,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreatePeopleAppendMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleAppend);
         }
 #endif
@@ -964,7 +964,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreatePeopleUnionMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleUnion);
         }
 
@@ -999,7 +999,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreatePeopleUnionMessageObject(distinctId, properties),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleUnion);
         }
 #endif
@@ -1106,7 +1106,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreatePeopleUnsetMessageObject(distinctId, propertyNames),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleUnset);
         }
 
@@ -1133,7 +1133,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreatePeopleUnsetMessageObject(distinctId, propertyNames),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleUnset);
         }
 #endif
@@ -1228,7 +1228,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreatePeopleDeleteObject(distinctId),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleDelete);
         }
 
@@ -1254,7 +1254,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreatePeopleDeleteObject(distinctId),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleDelete);
         }
 #endif
@@ -1364,7 +1364,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleTrackCharge);
         }
 
@@ -1414,7 +1414,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
-                EndpointEngage,
+                MixpanelMessageEndpoint.Engage,
                 MessageKind.PeopleTrackCharge);
         }
 
@@ -1566,7 +1566,7 @@ namespace Mixpanel
                 {
                     var msgs = trackMessages;
                     bool success = SendMessageInternal(
-                        () => GetBatchMessageData(msgs), EndpointTrack, MessageKind.Batch);
+                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Track, MessageKind.Batch);
                     resultInternal.Update(success, msgs);
                 }
             }
@@ -1578,7 +1578,7 @@ namespace Mixpanel
                 {
                     var msgs = engageMessages;
                     bool success = SendMessageInternal(
-                        () => GetBatchMessageData(msgs), EndpointEngage, MessageKind.Batch);
+                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Engage, MessageKind.Batch);
                     resultInternal.Update(success, msgs);
                 }
             }
@@ -1622,7 +1622,7 @@ namespace Mixpanel
                 {
                     var msgs = trackMessages;
                     bool success = await SendMessageInternalAsync(
-                        () => GetBatchMessageData(msgs), EndpointTrack, MessageKind.Batch);
+                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Track, MessageKind.Batch);
                     resultInternal.Update(success, msgs);
                 }
             }
@@ -1634,7 +1634,7 @@ namespace Mixpanel
                 {
                     var msgs = engageMessages;
                     bool success = await SendMessageInternalAsync(
-                        () => GetBatchMessageData(msgs), EndpointEngage, MessageKind.Batch);
+                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Engage, MessageKind.Batch);
                     resultInternal.Update(success, msgs);
                 }
             }
@@ -1773,6 +1773,24 @@ namespace Mixpanel
         }
 
         #endregion Send
+
+        #region SendJson
+
+        /// <summary>
+        /// Sends <paramref name="messageJson"/> to given <paramref name="endpoint"/>.
+        /// This method gives you total control of what message will be sent to Mixpanel.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="endpoint">Endpoint where message will be sent.</param>
+        /// <param name="messageJson">
+        /// Message in rae JSON. Base64 encoding will applied before sending.
+        /// </param>
+        public bool SendJson(MixpanelMessageEndpoint endpoint, string messageJson)
+        {
+            return SendMessageInternal(endpoint, messageJson);
+        }
+
+        #endregion SendJson
 
         /// <summary>
         /// Returns dictionary that contains Mixpanel message and is ready to be serialized. 
