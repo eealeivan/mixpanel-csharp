@@ -113,9 +113,28 @@ namespace Mixpanel
             catch (Exception e)
             {
                 LogError(string.Format("POST fails to '{0}' with data '{1}'", url, messageBody), e);
-                return false;
             }
+
+            return false;
         }
+
+#if !(NET40 || NET35)
+        private async Task<bool> HttpPostAsync(MixpanelMessageEndpoint endpoint, string messageBody)
+        {
+            string url = GenerateUrl(endpoint);
+            try
+            {
+                var httpPostFn = ConfigHelper.GetAsyncHttpPostFn(_config);
+                return await httpPostFn(url, messageBody);
+            }
+            catch (Exception e)
+            {
+                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, messageBody), e);
+            }
+
+            return await Task.FromResult(false);
+        }
+#endif
 
         private bool SendMessageInternal(
             Func<object> getMessageDataFn, MixpanelMessageEndpoint endpoint, MessageKind messageKind)
@@ -161,10 +180,10 @@ namespace Mixpanel
         private async Task<bool> SendMessageInternalAsync(
             Func<object> getMessageDataFn, MixpanelMessageEndpoint endpoint, MessageKind messageKind)
         {
-            string formData = GetMessageBody(getMessageDataFn, messageKind);
-            if (formData == null)
+            string messageBody = GetMessageBody(getMessageDataFn, messageKind);
+            if (messageBody == null)
             {
-                return false;
+                return await Task.FromResult(false);
             }
 
 #if (PORTABLE || PORTABLE40)
@@ -175,18 +194,29 @@ namespace Mixpanel
             }
 #endif
 
+            return await HttpPostAsync(endpoint, messageBody);
+        }
+#endif
 
-            string url = GenerateUrl(endpoint);
-            try
+#if !(NET40 || NET35)
+        private async Task<bool> SendMessageInternalAsync(
+            MixpanelMessageEndpoint endpoint, string messageJson)
+        {
+            string messageBody = ToMixpanelMessageFormat(ToBase64(messageJson));
+            if (messageBody == null)
             {
-                var httpPostFn = ConfigHelper.GetAsyncHttpPostFn(_config);
-                return await httpPostFn(url, formData);
+                return await Task.FromResult(false);
             }
-            catch (Exception e)
+
+#if (PORTABLE || PORTABLE40)
+            if (!ConfigHelper.AsyncHttpPostFnSet(_config))
             {
-                LogError(string.Format("POST fails to '{0}' with data '{1}'", url, formData), e);
-                return false;
+                throw new MixpanelConfigurationException(
+                    "There is no default async HTTP POST method in portable builds. Please use configuration to set it.");
             }
+#endif
+
+            return await HttpPostAsync(endpoint, messageBody);
         }
 #endif
     }

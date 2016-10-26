@@ -81,6 +81,7 @@
     <Compile Include="MixpanelConfig.cs" />
     <Compile Include="MixpanelIpAddressHandling.cs" />
     <Compile Include="MixpanelMessage.cs" />
+    <Compile Include="MixpanelMessageEndpoint.cs" />
     <Compile Include="MixpanelNameAttribute.cs" />
     <Compile Include="MixpanelMessageTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

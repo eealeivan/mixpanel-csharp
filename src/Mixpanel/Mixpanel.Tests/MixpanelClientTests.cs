@@ -60,7 +60,7 @@ namespace Mixpanel.Tests
                 _client = new MixpanelClient(
                     Token, GetConfig(), GetSuperPropertiesDictionary(includeDistinctId: true));
             }
-            else if(setSuperProperties)
+            else if (setSuperProperties)
             {
                 _client = new MixpanelClient(
                     Token, GetConfig(), GetSuperPropertiesDictionary());
@@ -1675,6 +1675,82 @@ namespace Mixpanel.Tests
         }
 
         #endregion Send
+
+        #region SendJson
+
+        [Test]
+        public void SendJson_CorrectDataSent()
+        {
+            bool result = _client.SendJson(MixpanelMessageEndpoint.Track, CreateJsonMessage());
+
+            Assert.That(result, Is.True);
+            Assert.That(_httpPostEntries.Single().Endpoint, Is.EqualTo(TrackUrl));
+            CheckSendJsonMessage();
+        }
+
+        [Test]
+        public void SendJson_HttpPostThrowsException_FalseReturned()
+        {
+            MixpanelConfig.Global.HttpPostFn = (url, data) => { throw new Exception(); };
+            var client = new MixpanelClient();
+
+            bool result = client.SendJson(MixpanelMessageEndpoint.Track, CreateJsonMessage());
+            Assert.That(result, Is.False);
+        }
+
+#if !(NET40 || NET35)
+
+        [Test]
+        public async void SendJsonAsync_CorrectDataSent()
+        {
+            bool result = await _client.SendJsonAsync(MixpanelMessageEndpoint.Track, CreateJsonMessage());
+
+            Assert.That(result, Is.True);
+            Assert.That(_httpPostEntries.Single().Endpoint, Is.EqualTo(TrackUrl));
+            CheckSendJsonMessage();
+        }
+
+        [Test]
+        public async void SendJsonAsync_HttpPostThrowsException_FalseReturned()
+        {
+            MixpanelConfig.Global.AsyncHttpPostFn = (url, data) => { throw new Exception(); };
+            var client = new MixpanelClient();
+
+            bool result = await client.SendJsonAsync(MixpanelMessageEndpoint.Track, CreateJsonMessage());
+            Assert.That(result, Is.False);
+        }
+
+#endif
+
+        private string CreateJsonMessage()
+        {
+            var message = new
+            {
+                @event = Event,
+                properties = new
+                {
+                    token = Token,
+                    distinct_id = DistinctId,
+                    StringProperty = StringPropertyValue
+                }
+            };
+            string messageJson = JsonConvert.SerializeObject(message);
+            return messageJson;
+        }
+
+        private void CheckSendJsonMessage()
+        {
+            var msg = ParseMessageData(_httpPostEntries.Single().Data);
+            Assert.That(msg.Count, Is.EqualTo(2));
+            Assert.That(msg[MixpanelProperty.TrackEvent].Value<string>(), Is.EqualTo(Event));
+            var props = (JObject)msg[MixpanelProperty.TrackProperties];
+            Assert.That(props.Count, Is.EqualTo(3));
+            Assert.That(props[MixpanelProperty.TrackToken].Value<string>(), Is.EqualTo(Token));
+            Assert.That(props[MixpanelProperty.TrackDistinctId].Value<string>(), Is.EqualTo(DistinctId));
+            Assert.That(props[StringPropertyName].Value<string>(), Is.EqualTo(StringPropertyValue));
+        }
+
+        #endregion
 
         #region SuperProperties
 

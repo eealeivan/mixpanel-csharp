@@ -106,7 +106,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreateTrackMessageObject(@event, distinctId, properties),
-                MixpanelMessageEndpoint.Track, 
+                MixpanelMessageEndpoint.Track,
                 MessageKind.Track);
         }
 
@@ -139,7 +139,7 @@ namespace Mixpanel
         {
             return await SendMessageInternalAsync(
                 () => CreateTrackMessageObject(@event, distinctId, properties),
-                MixpanelMessageEndpoint.Track, 
+                MixpanelMessageEndpoint.Track,
                 MessageKind.Track);
         }
 #endif
@@ -250,7 +250,7 @@ namespace Mixpanel
         {
             return SendMessageInternal(
                 () => CreateAliasMessageObject(distinctId, alias),
-                MixpanelMessageEndpoint.Track, 
+                MixpanelMessageEndpoint.Track,
                 MessageKind.Alias);
         }
 
@@ -1783,12 +1783,28 @@ namespace Mixpanel
         /// </summary>
         /// <param name="endpoint">Endpoint where message will be sent.</param>
         /// <param name="messageJson">
-        /// Message in rae JSON. Base64 encoding will applied before sending.
+        /// Raw JSON without any encoding.
         /// </param>
         public bool SendJson(MixpanelMessageEndpoint endpoint, string messageJson)
         {
             return SendMessageInternal(endpoint, messageJson);
         }
+
+#if !(NET40 || NET35)
+        /// <summary>
+        /// Sends <paramref name="messageJson"/> to given <paramref name="endpoint"/>.
+        /// This method gives you total control of what message will be sent to Mixpanel.
+        /// Returns true if call was successful, and false otherwise.
+        /// </summary>
+        /// <param name="endpoint">Endpoint where message will be sent.</param>
+        /// <param name="messageJson">
+        /// Raw JSON without any encoding.
+        /// </param>
+        public async Task<bool> SendJsonAsync(MixpanelMessageEndpoint endpoint, string messageJson)
+        {
+            return await SendMessageInternalAsync(endpoint, messageJson);
+        }
+#endif
 
         #endregion SendJson
 
