@@ -35,13 +35,14 @@ namespace Mixpanel.Core
             if (!isRecursiveCall && IsEnumerable(value))
             {
                 var list = (
-                    from object val in (value as IEnumerable)
-                    select Parse(val, true)
+                        from object val in value as IEnumerable
+                        select Parse(val, true)
                         into parsedVal
                         where parsedVal.IsValid
-                        select parsedVal.Value).ToList();
+                        select parsedVal.Value)
+                    .ToList();
 
-                return list.Count > 0 ? Valid(list) : Invalid(list);
+                return Valid(list);
             }
 
             return Invalid(value);

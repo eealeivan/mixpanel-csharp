@@ -162,15 +162,16 @@ namespace Mixpanel.Tests
             Assert.That(val.IsValid, Is.True);
         }
 
-        [Test]
-        public void Parse_ListOfStrings_Parsed()
+        [TestCase("one", "two", "three")]
+        [TestCase(1, 2, 3)]
+        [TestCase] // Empty 
+        public void Parse_ValidArray_Parsed(params object[] listValues)
         {
-            var list = new List<string> { "one", "two", "three" };
-            var val = _vp.Parse(list);
+            ParsedValue val = _vp.Parse(listValues);
             Assert.That(val.Value, Is.TypeOf<List<object>>());
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < listValues.Length; i++)
             {
-                Assert.That(list[i], Is.EqualTo(((List<object>)val.Value)[i]));
+                Assert.That(listValues[i], Is.EqualTo(((List<object>)val.Value)[i]));
             }
             Assert.That(val.IsValid, Is.True);
         }
