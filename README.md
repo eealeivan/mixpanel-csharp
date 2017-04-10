@@ -1,7 +1,7 @@
-#mixpanel-csharp [![NuGet Version](http://img.shields.io/nuget/v/mixpanel-csharp.svg?style=flat)](https://www.nuget.org/packages/mixpanel-csharp/)
+# mixpanel-csharp [![NuGet Version](http://img.shields.io/nuget/v/mixpanel-csharp.svg?style=flat)](https://www.nuget.org/packages/mixpanel-csharp/)
 [Mixpanel](https://mixpanel.com/) is a great analitics platform, but unfortunetally there are no official integration library for .NET. So if you are writing code on .NET and want to use Mixpanel, then ```mixpanel-csharp``` can be an excellent choise. ```mixpanel-csharp``` main idea is to hide most api details (you don't need to remember what time formatting to use, or in which cases you should prefix properties with ```$```) and concentrate on data that you want to analize.
 
-##Features
+## Features
 - Supports full [Mixpanel HTTP Tracking API](https://mixpanel.com/help/reference/http)
 - [Send tracking messages](https://github.com/eealeivan/mixpanel-csharp/wiki/Sending-messages) synchronously or asynchronously, pack them into batches, save messages to send them later
 - Pass [message data](https://github.com/eealeivan/mixpanel-csharp/wiki/Message-data) in form that you prefer: `IDictionary<string, object>`, dynamic type, anonymous type or _normal_ class
@@ -11,7 +11,7 @@
 - Runs on many platforms: .NET 3.5, .NET 4, .NET 4.5 and .NET Portable (.NET 4.5, Windows 8, Windows Phone 8.1, Windows Phone Silverlight 8)
 - Good [documentation](https://github.com/eealeivan/mixpanel-csharp/wiki)
 
-##Sample usage
+## Sample usage
 ```csharp
 var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
 await mc.TrackAsync("Level Complete", new {
@@ -33,8 +33,8 @@ This will send the following JSON to `http://api.mixpanel.com/track/`:
 }
 ```
 
-##Copyright
+## Copyright
 Copyright © 2015 Aleksandr Ivanov
 
-##Licence
+## Licence
 ```mixpanel-csharp``` is licensed under [MIT](http://www.opensource.org/licenses/mit-license.php). Refer to [LICENSE](https://github.com/eealeivan/mixpanel-csharp/blob/master/LICENSE) for more information.
