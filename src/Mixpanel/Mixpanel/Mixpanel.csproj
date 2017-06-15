@@ -1,102 +1,76 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{50E3A1C0-C171-42E5-891F-10DF80E8DAF4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mixpanel</RootNamespace>
-    <AssemblyName>Mixpanel</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFrameworks>net35;net40;net45;netstandard1.6</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PreserveCompilationContext>false</PreserveCompilationContext>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\Net45\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+
+  <!--NET 3.5-->
+  <PropertyGroup Condition="'$(TargetFramework)'=='net35'">
+    <AssemblyTitle>Mixpanel C# .NET 3.5</AssemblyTitle>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\Net45\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Net45\Mixpanel.XML</DocumentationFile>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net35'">
+    <DefineConstants>TRACE;DEBUG;NET35;HTTP;JSON</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net35'">
+    <DefineConstants>TRACE;RELEASE;NET35;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net35'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Core\Message\AliasMessageBuilder.cs" />
-    <Compile Include="Core\Message\MessageBuilderBase.cs" />
-    <Compile Include="Core\Message\MessageData.cs" />
-    <Compile Include="Core\Message\MessagePropetiesRules.cs" />
-    <Compile Include="Core\Message\PeopleAddMessageBuilder.cs" />
-    <Compile Include="Core\Message\PeopleAppendMessageBuilder.cs" />
-    <Compile Include="Core\Message\PeopleDeleteMessageBuilder.cs" />
-    <Compile Include="Core\Message\PeopleMessageBuilderBase.cs" />
-    <Compile Include="Core\Message\PeopleSetMessageBuilder.cs" />
-    <Compile Include="Core\Message\PeopleSetOnceMessageBuilder.cs" />
-    <Compile Include="Core\Message\PeopleTrackChargeMessageBuilder.cs" />
-    <Compile Include="Core\Message\PeopleUnionMessageBuilder.cs" />
-    <Compile Include="Core\Message\PeopleUnsetMessageBuilder.cs" />
-    <Compile Include="Core\Message\SuperPropertiesRules.cs" />
-    <Compile Include="Core\Message\TrackMessageBuilder.cs" />
-    <Compile Include="Core\Message\TrackMessageBuilderBase.cs" />
-    <Compile Include="Core\ObjectProperty.cs" />
-    <Compile Include="Core\ObjectPropertyInfo.cs" />
-    <Compile Include="Core\ParsedValue.cs" />
-    <Compile Include="Core\PropertiesDigger.cs" />
-    <Compile Include="Core\PropertyNameFormatter.cs" />
-    <Compile Include="Core\PropertyNameSource.cs" />
-    <Compile Include="Core\ValueParser.cs" />
-    <Compile Include="ConfigHelper.cs" />
-    <Compile Include="DefaultHttpClient.cs" />
-    <Compile Include="DefaultJsonSerializer.cs" />
-    <Compile Include="Exceptions\MixpanelConfigurationException.cs" />
-    <Compile Include="Exceptions\MixpanelObjectStructureException.cs" />
-    <Compile Include="Exceptions\MixpanelRequiredPropertyNullOrEmptyException.cs" />
-    <Compile Include="IMixpanelClient.cs" />
-    <Compile Include="MessageKind.cs" />
-    <Compile Include="Misc\DateTimeExtensions.cs" />
-    <Compile Include="Misc\PortableThreadSafeCache.cs" />
-    <Compile Include="Misc\ReadOnlyHelper.cs" />
-    <Compile Include="Misc\ReflectionHelper.cs" />
-    <Compile Include="Misc\StringHelper.cs" />
-    <Compile Include="Misc\ThreadSafeCache.cs" />
-    <Compile Include="BatchMessageWrapper.cs" />
-    <Compile Include="MixpanelBatchMessageTest.cs" />
-    <Compile Include="MixpanelClient.cs" />
-    <Compile Include="MixpanelClient.Http.cs" />
-    <Compile Include="MixpanelConfig.cs" />
-    <Compile Include="MixpanelIpAddressHandling.cs" />
-    <Compile Include="MixpanelMessage.cs" />
-    <Compile Include="MixpanelMessageEndpoint.cs" />
-    <Compile Include="MixpanelNameAttribute.cs" />
-    <Compile Include="MixpanelMessageTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MixpanelProperty.cs" />
-    <Compile Include="MixpanelPropertyNameFormat.cs" />
-    <Compile Include="SendResult.cs" />
+  
+  <!--NET 4.0-->
+  <PropertyGroup Condition="'$(TargetFramework)'=='net40'">
+    <AssemblyTitle>Mixpanel C# .NET 4.0</AssemblyTitle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
+    <DefineConstants>TRACE;DEBUG;NET40;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
+    <DefineConstants>TRACE;RELEASE;NET40;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net40'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <!--NET 4.5-->
+  <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
+    <AssemblyTitle>Mixpanel C# .NET 4.5</AssemblyTitle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
+    <DefineConstants>TRACE;DEBUG;NET45;ASYNC;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
+    <DefineConstants>TRACE;RELEASE;NET45;ASYNC;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net45'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <!--NET STANDARD 1.6-->
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.6'">
+    <AssemblyTitle>Mixpanel C# .NET Standard 1.6</AssemblyTitle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard1.6'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD16;ASYNC</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard1.6'">
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD16;ASYNC</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.6'">
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
 </Project>

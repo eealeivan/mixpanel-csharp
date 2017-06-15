@@ -1,78 +1,72 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0ACDB4A7-5717-4CA7-BA9D-E168413DC487}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mixpanel.Tests</RootNamespace>
-    <AssemblyName>Mixpanel.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
+    <TargetFrameworks>net35;net40;net45;netcoreapp1.1</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\Net45\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\Net45\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="NUnit" Version="3.7.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0-alpha1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mixpanel\Mixpanel.csproj" />
+  </ItemGroup>
+
+  <!--NET 3.5-->
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net35'">
+    <DefineConstants>NET35;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net35'">
+    <DefineConstants>NET35;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net35'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BatchMessageWrapperTests.cs" />
-    <Compile Include="ExtensionsTests.cs" />
-    <Compile Include="MixpanelClientHttpTests.cs" />
-    <Compile Include="MixpanelClientTests.cs" />
-    <Compile Include="MessageDataTests.cs" />
-    <Compile Include="MixpanelTestsBase.cs" />
-    <Compile Include="PeopleSetMessageBuilderTests.cs" />
-    <Compile Include="PropertiesDiggerTests.cs" />
-    <Compile Include="PropertyNameFormatterTests.cs" />
-    <Compile Include="TrackMessageBuilderTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ValueParserTests.cs" />
+
+  <!--NET 4.0-->
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
+    <DefineConstants>NET40;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
+    <DefineConstants>NET40;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net40'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+  
+  <!--NET 4.5-->
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
+    <DefineConstants>NET45;ASYNC;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
+    <DefineConstants>NET45;ASYNC;HTTP;JSON</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net45'">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Mixpanel\Mixpanel.csproj">
-      <Project>{50E3A1C0-C171-42E5-891F-10DF80E8DAF4}</Project>
-      <Name>Mixpanel</Name>
-    </ProjectReference>
+
+  <!--NET CORE 1.1-->
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp1.1'">
+    <DefineConstants>NETSTANDARD16;ASYNC</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp1.1'">
+    <DefineConstants>NETSTANDARD16;ASYNC</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp1.1'">
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

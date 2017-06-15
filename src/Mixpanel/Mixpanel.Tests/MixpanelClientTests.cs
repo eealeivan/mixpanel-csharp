@@ -4,9 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
-#if (PORTABLE || PORTABLE40)
 using Mixpanel.Exceptions;
-#endif
 #if !NET35
 using System.Threading.Tasks;
 #endif
@@ -82,14 +80,14 @@ namespace Mixpanel.Tests
                     _httpPostEntries.Add(new HttpPostEntry(endpoint, data));
                     return true;
                 },
-#if !(NET40 || NET35)
+#if ASYNC
                 AsyncHttpPostFn = (endpoint, data) =>
                 {
                     _httpPostEntries.Add(new HttpPostEntry(endpoint, data));
                     return Task.Run(() => true);
                 },
 #endif
-#if (PORTABLE || PORTABLE40)
+#if !JSON
                 SerializeJsonFn = obj => JsonConvert.SerializeObject(obj)
 #endif
             };
@@ -161,14 +159,14 @@ namespace Mixpanel.Tests
 
 #if !(NET35 || NET40)
         [Test]
-        public async void TrackAsync_AnonymousObject_CorrectDataSent()
+        public async Task TrackAsync_AnonymousObject_CorrectDataSent()
         {
             await _client.TrackAsync(Event, DistinctId, GetTrackObject());
             CheckTrack();
         }
 
         [Test]
-        public async void TrackAsync_AnonymousObjectWithDistinctId_CorrectDataSent()
+        public async Task TrackAsync_AnonymousObjectWithDistinctId_CorrectDataSent()
         {
             await _client.TrackAsync(Event, GetTrackObject(includeDistinctId: true));
             CheckTrack();
@@ -176,21 +174,21 @@ namespace Mixpanel.Tests
 
 
         [Test]
-        public async void TrackAsync_Dictionary_CorrectDataSent()
+        public async Task TrackAsync_Dictionary_CorrectDataSent()
         {
             await _client.TrackAsync(Event, DistinctId, GetTrackDictionary());
             CheckTrack();
         }
 
         [Test]
-        public async void TrackAsync_DictionaryWithDistinctId_CorrectDataSent()
+        public async Task TrackAsync_DictionaryWithDistinctId_CorrectDataSent()
         {
             await _client.TrackAsync(Event, GetTrackDictionary(includeDistinctId: true));
             CheckTrack();
         }
 
         [Test]
-        public async void TrackAsync_DictionaryAndSuperProps_CorrectDataSent()
+        public async Task TrackAsync_DictionaryAndSuperProps_CorrectDataSent()
         {
             await _client.TrackAsync(Event, DistinctId, GetTrackDictionary());
             CheckTrack(CheckOptions.SuperPropsSet);
@@ -400,9 +398,9 @@ namespace Mixpanel.Tests
             CheckAlias(CheckOptions.DistinctIdSet | CheckOptions.SuperPropsDistinctIdSet);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [Test]
-        public async void AliasAsync_SuperPropsDistinctId_CorrectDataSent()
+        public async Task AliasAsync_SuperPropsDistinctId_CorrectDataSent()
         {
             await _client.AliasAsync(Alias);
             CheckAlias(CheckOptions.SuperPropsSet | CheckOptions.SuperPropsDistinctIdSet);
@@ -415,14 +413,14 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        public async void AliasAsync_ParamDistinctId_CorrectDataSent()
+        public async Task AliasAsync_ParamDistinctId_CorrectDataSent()
         {
             await _client.AliasAsync(DistinctId, Alias);
             CheckAlias();
         }
 
         [Test]
-        public async void AliasAsync_ParamDistinctIdAndSuperProps_CorrectDataSent()
+        public async Task AliasAsync_ParamDistinctIdAndSuperProps_CorrectDataSent()
         {
             // Super properties should be ignored
             await _client.AliasAsync(DistinctId, Alias);
@@ -541,16 +539,16 @@ namespace Mixpanel.Tests
                 CheckOptions.DistinctIdSet | CheckOptions.SuperPropsSet | CheckOptions.SuperPropsDistinctIdSet);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [Test]
-        public async void PeopleSetAsync_Dictionary_CorrectDataSent()
+        public async Task PeopleSetAsync_Dictionary_CorrectDataSent()
         {
             await _client.PeopleSetAsync(DistinctId, GetPeopleSetDictionary());
             CheckPeopleSet();
         }
 
         [Test]
-        public async void PeopleSetAsync_DictionaryWithDistinctId_CorrectDataSent()
+        public async Task PeopleSetAsync_DictionaryWithDistinctId_CorrectDataSent()
         {
             await _client.PeopleSetAsync(GetPeopleSetDictionary(includeDistinctId: true));
             CheckPeopleSet();
@@ -678,16 +676,16 @@ namespace Mixpanel.Tests
             CheckPeopleSetOnce();
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [Test]
-        public async void PeopleSetOnceAsync_Dictionary_CorrectDataSent()
+        public async Task PeopleSetOnceAsync_Dictionary_CorrectDataSent()
         {
             await _client.PeopleSetOnceAsync(DistinctId, GetPeopleSetOnceDictionary());
             CheckPeopleSetOnce();
         }
 
         [Test]
-        public async void PeopleSetOnceAsync_DictionaryWithDistinctId_CorrectDataSent()
+        public async Task PeopleSetOnceAsync_DictionaryWithDistinctId_CorrectDataSent()
         {
             await _client.PeopleSetOnceAsync(GetPeopleSetOnceDictionary(includeDistinctId: true));
             CheckPeopleSetOnce();
@@ -790,23 +788,23 @@ namespace Mixpanel.Tests
             CheckPeopleAdd();
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [Test]
-        public async void PeopleAddAsync_NumericInput_CorrectDataSent()
+        public async Task PeopleAddAsync_NumericInput_CorrectDataSent()
         {
             await _client.PeopleAddAsync(DistinctId, GetPeopleAddDictionary());
             CheckPeopleAdd();
         }
 
         [Test]
-        public async void PeopleAddAsync_NumericInputWithDistinctId_CorrectDataSent()
+        public async Task PeopleAddAsync_NumericInputWithDistinctId_CorrectDataSent()
         {
             await _client.PeopleAddAsync(GetPeopleAddDictionary(includeDistinctId: true));
             CheckPeopleAdd();
         }
 
         [Test]
-        public async void PeopleAddAsync_MixedInput_CorrectDataSent()
+        public async Task PeopleAddAsync_MixedInput_CorrectDataSent()
         {
             await _client.PeopleAddAsync(DistinctId, GetPeopleAddDictionary(includeNonNumericValues: true));
             CheckPeopleAdd();
@@ -912,16 +910,16 @@ namespace Mixpanel.Tests
             CheckPeopleAppend();
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [Test]
-        public async void PeopleAppendAsync_Dictionary_CorrectDataSent()
+        public async Task PeopleAppendAsync_Dictionary_CorrectDataSent()
         {
             await _client.PeopleAppendAsync(DistinctId, GetPeopleAppendDictionary());
             CheckPeopleAppend();
         }
 
         [Test]
-        public async void PeopleAppendAsync_DictionaryWithDistinctId_CorrectDataSent()
+        public async Task PeopleAppendAsync_DictionaryWithDistinctId_CorrectDataSent()
         {
             await _client.PeopleAppendAsync(GetPeopleAppendDictionary(includeDistinctId: true));
             CheckPeopleAppend();
@@ -1022,23 +1020,23 @@ namespace Mixpanel.Tests
             CheckPeopleUnion();
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [Test]
-        public async void PeopleUnionAsync_Dictionary_CorrectDataSent()
+        public async Task PeopleUnionAsync_Dictionary_CorrectDataSent()
         {
             await _client.PeopleUnionAsync(DistinctId, GetPeopleUnionDictionary());
             CheckPeopleUnion();
         }
 
         [Test]
-        public async void PeopleUnionAsync_DictionaryWithDistinctId_CorrectDataSent()
+        public async Task PeopleUnionAsync_DictionaryWithDistinctId_CorrectDataSent()
         {
             await _client.PeopleUnionAsync(GetPeopleUnionDictionary(includeDistinctId: true));
             CheckPeopleUnion();
         }
 
         [Test]
-        public async void PeopleUnionAsync_DictionaryWithDistinctIdAndInvalidData_CorrectDataSent()
+        public async Task PeopleUnionAsync_DictionaryWithDistinctIdAndInvalidData_CorrectDataSent()
         {
             await _client.PeopleUnionAsync(
                 GetPeopleUnionDictionary(includeDistinctId: true, includeInvalidData: true));
@@ -1160,16 +1158,16 @@ namespace Mixpanel.Tests
             CheckPeopleUnset(CheckOptions.SuperPropsDistinctIdSet);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [Test]
-        public async void PeopleUnsetAsync_ValidData_CorrectDataSent()
+        public async Task PeopleUnsetAsync_ValidData_CorrectDataSent()
         {
             await _client.PeopleUnsetAsync(DistinctId, StringPropertyArray);
             CheckPeopleUnset();
         }
 
         [Test]
-        public async void PeopleUnsetAsync_SuperPropsDistinctId_CorrectDataSent()
+        public async Task PeopleUnsetAsync_SuperPropsDistinctId_CorrectDataSent()
         {
             await _client.PeopleUnsetAsync(StringPropertyArray);
             CheckPeopleUnset(CheckOptions.SuperPropsDistinctIdSet);
@@ -1277,9 +1275,9 @@ namespace Mixpanel.Tests
             EnsureNotSent(() => _client.PeopleDelete());
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [Test]
-        public async void PeopleDeleteAsync_ParamDistinctId_CorrectDataSent()
+        public async Task PeopleDeleteAsync_ParamDistinctId_CorrectDataSent()
         {
             var res = await _client.PeopleDeleteAsync(DistinctId);
 
@@ -1288,7 +1286,7 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        public async void PeopleDeleteAsync_SuperPropsDistinctId_CorrectDataSent()
+        public async Task PeopleDeleteAsync_SuperPropsDistinctId_CorrectDataSent()
         {
             var res = await _client.PeopleDeleteAsync();
 
@@ -1410,9 +1408,9 @@ namespace Mixpanel.Tests
             CheckPeopleTrackCharge(CheckOptions.SuperPropsDistinctIdSet);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [Test]
-        public async void PeopleTrackChargeAsync_ParamDistinctIdNoTime_CorrectDataSent()
+        public async Task PeopleTrackChargeAsync_ParamDistinctIdNoTime_CorrectDataSent()
         {
             _client.UtcNow = () => Time;
             var res = await _client.PeopleTrackChargeAsync(DistinctId, DecimalPropertyValue);
@@ -1422,7 +1420,7 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        public async void PeopleTrackChargeAsync_SuperPropsDistinctIdAndNoTime_CorrectDataSent()
+        public async Task PeopleTrackChargeAsync_SuperPropsDistinctIdAndNoTime_CorrectDataSent()
         {
             _client.UtcNow = () => Time;
             var res = await _client.PeopleTrackChargeAsync(DecimalPropertyValue);
@@ -1432,7 +1430,7 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        public async void PeopleTrackChargeAsync_ParamDistinctIdAndWithTime_CorrectDataSent()
+        public async Task PeopleTrackChargeAsync_ParamDistinctIdAndWithTime_CorrectDataSent()
         {
             var res = await _client.PeopleTrackChargeAsync(DistinctId, DecimalPropertyValue, Time);
 
@@ -1441,7 +1439,7 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        public async void PeopleTrackChargeAsync_SuperPropsDistinctIdAndWithTime_CorrectDataSent()
+        public async Task PeopleTrackChargeAsync_SuperPropsDistinctIdAndWithTime_CorrectDataSent()
         {
             var res = await _client.PeopleTrackChargeAsync(DecimalPropertyValue, Time);
 
@@ -1591,7 +1589,7 @@ namespace Mixpanel.Tests
             CheckSend(2, 2);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         [TestCase(5, 7)]
         [TestCase(49, 51)]
         [TestCase(50, 50)]
@@ -1602,7 +1600,7 @@ namespace Mixpanel.Tests
         [TestCase(5, 0)]
         [TestCase(75, 0)]
         [TestCase(125, 200)]
-        public async void SendAsync_DifferentVariantsAsEnumerable_CorrectDataSent(
+        public async Task SendAsync_DifferentVariantsAsEnumerable_CorrectDataSent(
             int trackMessagesCount, int engageMessagesCount)
         {
             SendResult res = await _client.SendAsync(GetSendMessages(trackMessagesCount, engageMessagesCount));
@@ -1612,7 +1610,7 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        public async void SendAsync_AsParams_CorrectDataSent()
+        public async Task SendAsync_AsParams_CorrectDataSent()
         {
             var messages = GetSendMessages(2, 2);
             SendResult res = await _client.SendAsync(messages[0], messages[1], messages[2], messages[3]);
@@ -1698,10 +1696,10 @@ namespace Mixpanel.Tests
             Assert.That(result, Is.False);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
 
         [Test]
-        public async void SendJsonAsync_CorrectDataSent()
+        public async Task SendJsonAsync_CorrectDataSent()
         {
             bool result = await _client.SendJsonAsync(MixpanelMessageEndpoint.Track, CreateJsonMessage());
 
@@ -1711,7 +1709,7 @@ namespace Mixpanel.Tests
         }
 
         [Test]
-        public async void SendJsonAsync_HttpPostThrowsException_FalseReturned()
+        public async Task SendJsonAsync_HttpPostThrowsException_FalseReturned()
         {
             MixpanelConfig.Global.AsyncHttpPostFn = (url, data) => { throw new Exception(); };
             var client = new MixpanelClient();
@@ -1794,9 +1792,9 @@ namespace Mixpanel.Tests
 
         #endregion SuperProperties
 
-        #region Portable
+        #region NET Standard
 
-#if (PORTABLE || PORTABLE40)
+#if !JSON
 
         [Test]
         public void Track_JsonSerializerFnNotSet_ThrowsException()
@@ -1809,7 +1807,10 @@ namespace Mixpanel.Tests
                 () => { mc.Track(Event, DistinctId, GetTrackDictionary()); },
                 Throws.TypeOf<MixpanelConfigurationException>());
         }
-        
+#endif
+
+#if !HTTP
+
         [Test]
         public void Track_HttpPostFnNotSet_ThrowsException()
         {
@@ -1836,7 +1837,7 @@ namespace Mixpanel.Tests
 #endif
 
 
-        #endregion Portable
+        #endregion NET Standard
 
         private JObject ParseMessageData(string data)
         {
@@ -1869,9 +1870,10 @@ namespace Mixpanel.Tests
         private string GetJsonFromData(string data)
         {
             // Remove "data=" to get raw BASE64
-            var base64 = data.Remove(0, 5);
+            string base64 = data.Remove(0, 5);
+            byte[] bytesString = Convert.FromBase64String(base64);
 
-            var json = Encoding.UTF8.GetString(Convert.FromBase64String(base64));
+            var json = Encoding.UTF8.GetString(bytesString, 0, bytesString.Length);
             return json;
         }
 
@@ -1910,7 +1912,7 @@ namespace Mixpanel.Tests
             return DistinctId;
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         private void EnsureNotSent(Func<Task<bool>> fn)
         {
             bool res = fn().Result;

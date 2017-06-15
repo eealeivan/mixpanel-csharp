@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using Mixpanel.Exceptions;
-#if !(NET40 || NET35)
+#if ASYNC
 using System.Threading.Tasks;
 #endif
 
@@ -61,11 +61,11 @@ namespace Mixpanel
 
         private string GetMessageBody(Func<object> messageDataFn, MessageKind messageKind)
         {
-#if (PORTABLE || PORTABLE40)
+#if !JSON
             if (!ConfigHelper.SerializeJsonFnSet(_config))
             {
                 throw new MixpanelConfigurationException(
-                    "There is no default JSON serializer in portable builds. Please use configuration to set it.");
+                    "There is no default JSON serializer in .NET Standard builds. Please use configuration to set it.");
             }
 #endif
 
@@ -118,7 +118,7 @@ namespace Mixpanel
             return false;
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         private async Task<bool> HttpPostAsync(MixpanelMessageEndpoint endpoint, string messageBody)
         {
             string url = GenerateUrl(endpoint);
@@ -145,11 +145,11 @@ namespace Mixpanel
                 return false;
             }
 
-#if (PORTABLE || PORTABLE40)
+#if !HTTP
             if (!ConfigHelper.HttpPostFnSet(_config))
             {
                 throw new MixpanelConfigurationException(
-                    "There is no default HTTP POST method in portable builds. Please use configuration to set it.");
+                    "There is no default HTTP POST method in .NET Standard builds. Please use configuration to set it.");
             }
 #endif
 
@@ -165,18 +165,18 @@ namespace Mixpanel
                 return false;
             }
 
-#if (PORTABLE || PORTABLE40)
+#if !HTTP
             if (!ConfigHelper.HttpPostFnSet(_config))
             {
                 throw new MixpanelConfigurationException(
-                    "There is no default HTTP POST method in portable builds. Please use configuration to set it.");
+                    "There is no default HTTP POST method in .NET Standard builds. Please use configuration to set it.");
             }
 #endif
 
             return HttpPost(endpoint, messageBody);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         private async Task<bool> SendMessageInternalAsync(
             Func<object> getMessageDataFn, MixpanelMessageEndpoint endpoint, MessageKind messageKind)
         {
@@ -186,11 +186,11 @@ namespace Mixpanel
                 return await Task.FromResult(false);
             }
 
-#if (PORTABLE || PORTABLE40)
+#if !HTTP
             if (!ConfigHelper.AsyncHttpPostFnSet(_config))
             {
                 throw new MixpanelConfigurationException(
-                    "There is no default async HTTP POST method in portable builds. Please use configuration to set it.");
+                    "There is no default async HTTP POST method in .NET Standard builds. Please use configuration to set it.");
             }
 #endif
 
@@ -198,7 +198,7 @@ namespace Mixpanel
         }
 #endif
 
-#if !(NET40 || NET35)
+#if ASYNC
         private async Task<bool> SendMessageInternalAsync(
             MixpanelMessageEndpoint endpoint, string messageJson)
         {
@@ -208,11 +208,11 @@ namespace Mixpanel
                 return await Task.FromResult(false);
             }
 
-#if (PORTABLE || PORTABLE40)
+#if !HTTP
             if (!ConfigHelper.AsyncHttpPostFnSet(_config))
             {
                 throw new MixpanelConfigurationException(
-                    "There is no default async HTTP POST method in portable builds. Please use configuration to set it.");
+                    "There is no default async HTTP POST method in .NET Standard builds. Please use configuration to set it.");
             }
 #endif
 

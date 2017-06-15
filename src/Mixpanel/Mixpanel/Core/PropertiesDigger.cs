@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 using Mixpanel.Misc;
-#if !(NET35 || PORTABLE || PORTABLE40)
+#if !(NET35)
 using System.Collections.Concurrent;
 #endif
 using System.Collections.Generic;
@@ -60,9 +60,6 @@ namespace Mixpanel.Core
 #if NET35 
         private static readonly ThreadSafeCache<Type, List<ObjectPropertyInfo>> 
             PropertyInfosCache = new ThreadSafeCache<Type, List<ObjectPropertyInfo>>();
-#elif (PORTABLE || PORTABLE40)
-        private static readonly PortableThreadSafeCache<Type, List<ObjectPropertyInfo>>
-            PropertyInfosCache = new PortableThreadSafeCache<Type, List<ObjectPropertyInfo>>();
 #else
         private static readonly ConcurrentDictionary<Type, List<ObjectPropertyInfo>>
             PropertyInfosCache = new ConcurrentDictionary<Type, List<ObjectPropertyInfo>>();
@@ -72,7 +69,7 @@ namespace Mixpanel.Core
         {
             return PropertyInfosCache.GetOrAdd(type, t =>
             {
-#if (PORTABLE || PORTABLE40)
+#if (NETSTANDARD13 || NETSTANDARD16)
                 bool isDataContract = t.GetTypeInfo().GetCustomAttribute<DataContractAttribute>() != null;
                 var infos = t.GetRuntimeProperties().Where(x => x.CanRead).ToArray();
 #else

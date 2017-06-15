@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-#if (PORTABLE || PORTABLE40)
+#if !JSON
 using Newtonsoft.Json;
 #endif
 
@@ -40,7 +40,7 @@ namespace Mixpanel.Tests
                 () => _client.PeopleTrackCharge(DistinctId, DecimalPropertyValue),
                 () => _client.Send(new MixpanelMessage
                 {
-                    Kind = MessageKind.PeopleSet, 
+                    Kind = MessageKind.PeopleSet,
                     Data = DictionaryWithStringProperty
                 }),
             };
@@ -55,7 +55,7 @@ namespace Mixpanel.Tests
                     _urls.Add(endpoint);
                     return true;
                 },
-#if (PORTABLE || PORTABLE40)
+#if !JSON
                 SerializeJsonFn = obj => JsonConvert.SerializeObject(obj)
 #endif
             };
@@ -91,7 +91,7 @@ namespace Mixpanel.Tests
             MixpanelConfig.Global.IpAddressHandling = MixpanelIpAddressHandling.UseRequestIp;
 
             CallAllMixpnaleMethods();
-            AssertAllUrls(url => Assert.That(url, Is.StringContaining(Ip1Param)));
+            AssertAllUrls(url => Assert.That(url, Does.Contain(Ip1Param)));
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace Mixpanel.Tests
             MixpanelConfig.Global.IpAddressHandling = MixpanelIpAddressHandling.IgnoreRequestIp;
 
             CallAllMixpnaleMethods();
-            AssertAllUrls(url => Assert.That(url, Is.StringContaining(Ip0Param)));
+            AssertAllUrls(url => Assert.That(url, Does.Contain(Ip0Param)));
         }
 
         private void AssertAllUrls(Action<string> assertFn)
@@ -114,9 +114,18 @@ namespace Mixpanel.Tests
         private bool IsUrlValid(string url)
         {
             Uri uriResult;
+
+#if (NETSTANDARD16)
+            return
+                Uri.TryCreate(url, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == "http" || uriResult.Scheme == "https");
+#else
             return
                 Uri.TryCreate(url, UriKind.Absolute, out uriResult)
                 && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+#endif
+
+
         }
     }
 }

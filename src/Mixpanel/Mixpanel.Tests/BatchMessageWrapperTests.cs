@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-#if (PORTABLE || PORTABLE40)
+#if !HTTP
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 #endif
+using Newtonsoft.Json;
 
 using NUnit.Framework;
 
@@ -20,9 +20,12 @@ namespace Mixpanel.Tests
             _mc = new MixpanelClient(Token,
                    new MixpanelConfig
                    {
-#if (PORTABLE || PORTABLE40)
+#if !HTTP
                        HttpPostFn = (endpoint, data) => true,
                        AsyncHttpPostFn = (endpoint, data) => Task.Run(() => true),
+                       
+#endif
+#if !JSON
                        SerializeJsonFn = obj => JsonConvert.SerializeObject(obj)
 #endif
                    });

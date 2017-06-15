@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-#if !(NET40 || NET35)
+#if ASYNC
 using System.Threading.Tasks;
 #endif
 
@@ -37,7 +37,7 @@ namespace Mixpanel
         /// </param>
         bool Track(string @event, object distinctId, object properties);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Adds an event to Mixpanel by sending a message to 'http://api.mixpanel.com/track/' endpoint.
         /// Returns true if call was successful, and false otherwise.
@@ -137,7 +137,7 @@ namespace Mixpanel
         /// <param name="alias">Alias for original user profile identifier.</param>
         bool Alias(object distinctId, object alias);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Creates an alias to 'Distinct ID' that is provided with super properties. 
         /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
@@ -222,7 +222,7 @@ namespace Mixpanel
         /// </param>
         bool PeopleSet(object distinctId, object properties);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Sets <paramref name="properties"></paramref> for profile. If profile doesn't exists, then new profile
         /// will be created. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -324,7 +324,7 @@ namespace Mixpanel
         /// </param>
         bool PeopleSetOnce(object distinctId, object properties);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Sets <paramref name="properties"></paramref> for profile without overwriting existing values. 
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -430,7 +430,7 @@ namespace Mixpanel
         /// </param>
         bool PeopleAdd(object distinctId, object properties);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// The property values are added to the existing values of the properties on the profile. 
         /// If the property is not present on the profile, the value will be added to 0. 
@@ -540,7 +540,7 @@ namespace Mixpanel
         /// </param>
         bool PeopleAppend(object distinctId, object properties);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Appends each property value to list associated with the corresponding property name.
         /// Appending to a property that doesn't exist will result in assigning a list with one element to that property.
@@ -646,7 +646,7 @@ namespace Mixpanel
         /// </param>
         bool PeopleUnion(object distinctId, object properties);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Property list values will be merged with the existing lists on the user profile, ignoring 
         /// duplicate list values. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -748,7 +748,7 @@ namespace Mixpanel
         /// <param name="propertyNames">List of property names to remove.</param>
         bool PeopleUnset(object distinctId, IEnumerable<string> propertyNames);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Properties with names containing in <paramref name="propertyNames"/> will be permanently
         /// removed. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -825,7 +825,7 @@ namespace Mixpanel
         /// <param name="distinctId">Unique user profile identifier.</param>
         bool PeopleDelete(object distinctId);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Permanently delete the profile from Mixpanel, along with all of its properties.
         /// 'Distinct ID' will be taken from super properties.
@@ -916,7 +916,7 @@ namespace Mixpanel
         /// <param name="time">The date transaction was done.</param>
         bool PeopleTrackCharge(object distinctId, decimal amount, DateTime time);
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -1060,7 +1060,7 @@ namespace Mixpanel
         /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         SendResult Send(IEnumerable<MixpanelMessage> messages);
 
-#if !(NET40 || NET35)
+#if ASYNC
 
         /// <summary>
         /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.

@@ -1,5 +1,5 @@
 ﻿using System;
-#if !(NET40 || NET35)
+#if ASYNC
 using System.Threading.Tasks;
 #endif
 
@@ -25,7 +25,7 @@ namespace Mixpanel
         /// </summary>
         public Func<string, string, bool> HttpPostFn { get; set; }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Gets or sets user defined function that will make async HTTP POST requests to mixpanel endpoints.
         /// Takes 2 string parameters: url and content. Returns true if call was successful, and false otherwise.
@@ -65,7 +65,7 @@ namespace Mixpanel
         {
             SerializeJsonFn = null;
             HttpPostFn = null;
-#if !(NET40 || NET35)
+#if ASYNC
             AsyncHttpPostFn = null;
 #endif
             ErrorLogFn = null;

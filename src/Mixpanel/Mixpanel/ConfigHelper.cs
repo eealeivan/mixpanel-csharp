@@ -1,5 +1,5 @@
 ﻿using System;
-#if !(NET40 || NET35)
+#if ASYNC
 using System.Threading.Tasks;
 #endif
 
@@ -29,7 +29,7 @@ namespace Mixpanel
             return new DefaultHttpClient().Post;
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         public static Func<string, string, Task<bool>> GetAsyncHttpPostFn(MixpanelConfig config)
         {
             if (config != null && config.AsyncHttpPostFn != null)
@@ -41,8 +41,7 @@ namespace Mixpanel
             return new DefaultHttpClient().PostAsync;
         }
 #endif
-
-
+        
         public static Action<string, Exception> GetErrorLogFn(MixpanelConfig config)
         {
             if (config != null && config.ErrorLogFn != null)
@@ -55,7 +54,7 @@ namespace Mixpanel
         }
 
 
-#if (PORTABLE || PORTABLE40)
+#if !JSON
         public static bool SerializeJsonFnSet(MixpanelConfig config)
         {
             return
@@ -63,7 +62,9 @@ namespace Mixpanel
                 (config != null && config.SerializeJsonFn != null);
 
         }
+#endif
 
+#if !HTTP
         public static bool HttpPostFnSet(MixpanelConfig config)
         {
             return

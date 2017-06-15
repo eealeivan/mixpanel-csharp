@@ -1,4 +1,4 @@
-﻿#if !(PORTABLE || PORTABLE40)
+﻿#if JSON
 using System.Web.Script.Serialization;
 #endif
 using System;
@@ -9,12 +9,12 @@ namespace Mixpanel
     {
         public string Serialize(object obj)
         {
-#if !(PORTABLE || PORTABLE40)
+#if JSON
             var serializer = new JavaScriptSerializer();
             return serializer.Serialize(obj);
 #else
             throw new NotImplementedException(
-                "There is no default JSON serializer in portable builds. Please use configuration to set it.");
+                "There is no default JSON serializer in .NET Standard builds. Please use configuration to set it.");
 #endif
         }
     }

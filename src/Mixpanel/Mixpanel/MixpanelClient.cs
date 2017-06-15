@@ -6,7 +6,7 @@ using System.Linq;
 using Mixpanel.Core;
 using Mixpanel.Exceptions;
 using Mixpanel.Misc;
-#if !(NET40 || NET35)
+#if ASYNC
 using System.Threading.Tasks;
 #endif
 using Mixpanel.Core.Message;
@@ -110,7 +110,7 @@ namespace Mixpanel
                 MessageKind.Track);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Adds an event to Mixpanel by sending a message to 'http://api.mixpanel.com/track/' endpoint.
         /// Returns true if call was successful, and false otherwise.
@@ -254,7 +254,7 @@ namespace Mixpanel
                 MessageKind.Alias);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Creates an alias to 'Distinct ID' that is provided with super properties. 
         /// Message will be sent to 'http://api.mixpanel.com/track/' endpoint.
@@ -385,7 +385,7 @@ namespace Mixpanel
                 MessageKind.PeopleSet);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Sets <paramref name="properties"></paramref> for profile. If profile doesn't exists, then new profile
         /// will be created. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -526,7 +526,7 @@ namespace Mixpanel
                 MessageKind.PeopleSetOnce);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Sets <paramref name="properties"></paramref> for profile without overwriting existing values. 
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -672,7 +672,7 @@ namespace Mixpanel
                 MessageKind.PeopleAdd);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// The property values are added to the existing values of the properties on the profile. 
         /// If the property is not present on the profile, the value will be added to 0. 
@@ -822,7 +822,7 @@ namespace Mixpanel
                 MessageKind.PeopleAppend);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Appends each property value to list associated with the corresponding property name.
         /// Appending to a property that doesn't exist will result in assigning a list with one element to that property.
@@ -968,7 +968,7 @@ namespace Mixpanel
                 MessageKind.PeopleUnion);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Property list values will be merged with the existing lists on the user profile, ignoring 
         /// duplicate list values. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -1110,7 +1110,7 @@ namespace Mixpanel
                 MessageKind.PeopleUnset);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Properties with names containing in <paramref name="propertyNames"/> will be permanently
         /// removed. Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -1232,7 +1232,7 @@ namespace Mixpanel
                 MessageKind.PeopleDelete);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Permanently delete the profile from Mixpanel, along with all of its properties.
         /// 'Distinct ID' will be taken from super properties.
@@ -1368,7 +1368,7 @@ namespace Mixpanel
                 MessageKind.PeopleTrackCharge);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Adds new transaction to profile. 'Distinct ID' will be taken from super properties.
         /// Sends a message to 'http://api.mixpanel.com/engage/' endpoint.
@@ -1600,7 +1600,7 @@ namespace Mixpanel
             return Send(messages as IEnumerable<MixpanelMessage>);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Sends messages passed in <paramref name="messages"/> parameter to Mixpanel.
         /// If <paramref name="messages"/> contains both track (Track and Alias) and engage (People*)
@@ -1790,7 +1790,7 @@ namespace Mixpanel
             return SendMessageInternal(endpoint, messageJson);
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         /// <summary>
         /// Sends <paramref name="messageJson"/> to given <paramref name="endpoint"/>.
         /// This method gives you total control of what message will be sent to Mixpanel.

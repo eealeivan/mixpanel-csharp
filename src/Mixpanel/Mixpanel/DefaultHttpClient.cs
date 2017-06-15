@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-#if !(NET40 || NET35)
+#if ASYNC
 using System.Threading.Tasks;
 #endif
 
@@ -12,9 +12,9 @@ namespace Mixpanel
     {
         public bool Post(string url, string formData)
         {
-#if (PORTABLE || PORTABLE40)
+#if !HTTP
             throw new NotImplementedException(
-                "There is no default HTTP POST method in portable builds. Please use configuration to set it.");
+                "There is no default HTTP POST method in .NET Standard builds. Please use configuration to set it.");
 #else
             var req = CreateWebRequest(url);
 
@@ -39,12 +39,12 @@ namespace Mixpanel
 #endif
         }
 
-#if !(NET40 || NET35)
+#if ASYNC
         public async Task<bool> PostAsync(string url, string formData)
         {
-#if (PORTABLE || PORTABLE40)
+#if !HTTP
             throw new NotImplementedException(
-                "There is no default async HTTP POST method in portable builds. Please use configuration to set it.");
+                "There is no default async HTTP POST method in .NET Standrad builds. Please use configuration to set it.");
 #else
             var req = CreateWebRequest(url);
             using (var reqStream = await req.GetRequestStreamAsync())
@@ -69,7 +69,7 @@ namespace Mixpanel
         }
 #endif
 
-#if !(PORTABLE || PORTABLE40)
+#if HTTP
         private HttpWebRequest CreateWebRequest(string url)
         {
             var req = (HttpWebRequest)WebRequest.CreateDefault(new Uri(url));

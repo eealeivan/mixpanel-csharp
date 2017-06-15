@@ -92,7 +92,6 @@ namespace Mixpanel.Tests
             CheckProperties(properties);
         }
 
-
         [Test]
         public void Get_Hashtable_Parsed()
         {
@@ -108,7 +107,7 @@ namespace Mixpanel.Tests
             CheckProperties(properties);
         }
 
-#if !NET35
+#if !(NET35 || NETSTANDARD16)
         [Test]
         public void Get_ExpandoObject_Parsed()
         {
