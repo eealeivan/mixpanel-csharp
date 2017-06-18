@@ -25,7 +25,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
   <!--NET 4.0-->
@@ -59,10 +58,10 @@
 
   <!--NET CORE 1.1-->
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp1.1'">
-    <DefineConstants>NETSTANDARD16;ASYNC</DefineConstants>
+    <DefineConstants>NETCOREAPP11;ASYNC</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp1.1'">
-    <DefineConstants>NETSTANDARD16;ASYNC</DefineConstants>
+    <DefineConstants>NETCOREAPP11;ASYNC</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp1.1'">
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />

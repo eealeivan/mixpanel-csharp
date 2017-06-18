@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;net45;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks>net35;net40;net45;netstandard1.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
@@ -59,17 +59,17 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
 
-  <!--NET STANDARD 1.6-->
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.6'">
-    <AssemblyTitle>Mixpanel C# .NET Standard 1.6</AssemblyTitle>
+  <!--NET STANDARD 1.0-->
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.0'">
+    <AssemblyTitle>Mixpanel C# .NET Standard 1.0</AssemblyTitle>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard1.6'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD16;ASYNC</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard1.0'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD10;ASYNC</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard1.6'">
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD16;ASYNC</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard1.0'">
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD10;ASYNC</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.6'">
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.0'">
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
   </ItemGroup>
 

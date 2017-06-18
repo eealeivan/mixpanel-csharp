@@ -107,7 +107,7 @@ namespace Mixpanel.Tests
             CheckProperties(properties);
         }
 
-#if !(NET35 || NETSTANDARD16)
+#if !(NET35 || NETCOREAPP11)
         [Test]
         public void Get_ExpandoObject_Parsed()
         {

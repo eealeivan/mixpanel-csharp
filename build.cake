@@ -112,7 +112,7 @@ void RunNUnitTests(string testAssemblyFile)
 void RunDotnetCoreTest(string framework)
 {
     string arguments = 
-        "test " + TESTS_PROJ_FILE + " -f " + framework + " --no-build";
+        "test " + TESTS_PROJ_FILE + " -f " + framework + " -c " + configuration + " --no-build";
 
     int rc = StartProcess("dotnet", arguments);    
     if(rc != 0) 

@@ -14,7 +14,7 @@ namespace Mixpanel.Tests
             var utcDateTime = new DateTime(2013, 9, 26, 22, 21, 11, DateTimeKind.Utc);
             Assert.That(utcDateTime.ToUnixTime(), Is.EqualTo(1380234071L));
 
-#if !NETSTANDARD16
+#if !NETCOREAPP11
             // Local time
             var localDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local);
             Assert.That(localDateTime.ToUnixTime(), Is.EqualTo(1380234071L));

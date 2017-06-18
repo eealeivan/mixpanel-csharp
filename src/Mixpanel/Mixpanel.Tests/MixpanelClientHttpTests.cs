@@ -115,7 +115,7 @@ namespace Mixpanel.Tests
         {
             Uri uriResult;
 
-#if (NETSTANDARD16)
+#if NETCOREAPP11
             return
                 Uri.TryCreate(url, UriKind.Absolute, out uriResult)
                 && (uriResult.Scheme == "http" || uriResult.Scheme == "https");

@@ -1,4 +1,4 @@
-﻿#if NET35
+﻿#if (NET35 || NETSTANDARD10) 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +7,7 @@ using System.Threading;
 namespace Mixpanel.Misc
 {
     /// <summary>
-    /// Used for Net 3.5 to substitute ConcurrentDictionary.
+    /// Used for Net 3.5 and .NET Standard to substitute ConcurrentDictionary.
     /// </summary>
     internal class ThreadSafeCache<TKey, TValue>
     {
