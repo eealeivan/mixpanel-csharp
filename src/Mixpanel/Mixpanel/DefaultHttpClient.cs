@@ -46,22 +46,22 @@ namespace Mixpanel
             throw new NotImplementedException(
                 "There is no default async HTTP POST method in .NET Standrad builds. Please use configuration to set it.");
 #else
-            var req = CreateWebRequest(url);
-            using (var reqStream = await req.GetRequestStreamAsync())
+            HttpWebRequest req = CreateWebRequest(url);
+            using (Stream reqStream = await req.GetRequestStreamAsync().ConfigureAwait(false))
             {
                 using (var writer = new StreamWriter(reqStream))
                 {
                     writer.Write(formData);
                 }
             }
-
-            using (var res = await req.GetResponseAsync())
+            
+            using (WebResponse res = await req.GetResponseAsync().ConfigureAwait(false))
             {
-                using (var resStream = res.GetResponseStream())
+                using (Stream resStream = res.GetResponseStream())
                 {
                     using (var reader = new StreamReader(resStream))
                     {
-                        return await reader.ReadToEndAsync() == "1";
+                        return await reader.ReadToEndAsync().ConfigureAwait(false) == "1";
                     }
                 }
             }

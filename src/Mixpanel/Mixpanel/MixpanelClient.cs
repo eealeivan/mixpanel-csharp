@@ -122,7 +122,7 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> TrackAsync(string @event, object properties)
         {
-            return await TrackAsync(@event, null, properties);
+            return await TrackAsync(@event, null, properties).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreateTrackMessageObject(@event, distinctId, properties),
                 MixpanelMessageEndpoint.Track,
-                MessageKind.Track);
+                MessageKind.Track).ConfigureAwait(false);
         }
 #endif
 
@@ -263,7 +263,7 @@ namespace Mixpanel
         /// <param name="alias">Alias for original user profile identifier.</param>
         public async Task<bool> AliasAsync(object alias)
         {
-            return await AliasAsync(null, alias);
+            return await AliasAsync(null, alias).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreateAliasMessageObject(distinctId, alias),
                 MixpanelMessageEndpoint.Track,
-                MessageKind.Alias);
+                MessageKind.Alias).ConfigureAwait(false);
         }
 #endif
 
@@ -397,7 +397,7 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> PeopleSetAsync(object properties)
         {
-            return await PeopleSetAsync(null, properties);
+            return await PeopleSetAsync(null, properties).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -415,7 +415,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreatePeopleSetMessageObject(distinctId, properties),
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleSet);
+                MessageKind.PeopleSet).ConfigureAwait(false);
         }
 #endif
 
@@ -538,7 +538,7 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> PeopleSetOnceAsync(object properties)
         {
-            return await PeopleSetOnceAsync(null, properties);
+            return await PeopleSetOnceAsync(null, properties).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -556,7 +556,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreatePeopleSetOnceMessageObject(distinctId, properties),
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleSetOnce);
+                MessageKind.PeopleSetOnce).ConfigureAwait(false);
         }
 #endif
 
@@ -686,7 +686,7 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> PeopleAddAsync(object properties)
         {
-            return await PeopleAddAsync(null, properties);
+            return await PeopleAddAsync(null, properties).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -706,7 +706,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreatePeopleAddMessageObject(distinctId, properties),
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleAdd);
+                MessageKind.PeopleAdd).ConfigureAwait(false);
         }
 #endif
 
@@ -835,7 +835,7 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> PeopleAppendAsync(object properties)
         {
-            return await PeopleAppendAsync(null, properties);
+            return await PeopleAppendAsync(null, properties).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -854,7 +854,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreatePeopleAppendMessageObject(distinctId, properties),
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleAppend);
+                MessageKind.PeopleAppend).ConfigureAwait(false);
         }
 #endif
 
@@ -981,7 +981,7 @@ namespace Mixpanel
         ///</param>
         public async Task<bool> PeopleUnionAsync(object properties)
         {
-            return await PeopleUnionAsync(null, properties);
+            return await PeopleUnionAsync(null, properties).ConfigureAwait(false);
         }
 
         ///  <summary>
@@ -1000,7 +1000,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreatePeopleUnionMessageObject(distinctId, properties),
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleUnion);
+                MessageKind.PeopleUnion).ConfigureAwait(false);
         }
 #endif
 
@@ -1119,7 +1119,7 @@ namespace Mixpanel
         /// <param name="propertyNames">List of property names to remove.</param>
         public async Task<bool> PeopleUnsetAsync(IEnumerable<string> propertyNames)
         {
-            return await PeopleUnsetAsync(null, propertyNames);
+            return await PeopleUnsetAsync(null, propertyNames).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1134,7 +1134,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreatePeopleUnsetMessageObject(distinctId, propertyNames),
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleUnset);
+                MessageKind.PeopleUnset).ConfigureAwait(false);
         }
 #endif
 
@@ -1241,7 +1241,7 @@ namespace Mixpanel
         /// </summary>
         public async Task<bool> PeopleDeleteAsync()
         {
-            return await PeopleDeleteAsync(null);
+            return await PeopleDeleteAsync(null).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1255,7 +1255,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreatePeopleDeleteObject(distinctId),
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleDelete);
+                MessageKind.PeopleDelete).ConfigureAwait(false);
         }
 #endif
 
@@ -1377,7 +1377,7 @@ namespace Mixpanel
         /// <param name="amount">Amount of the transaction.</param>
         public async Task<bool> PeopleTrackChargeAsync(decimal amount)
         {
-            return await PeopleTrackChargeAsync(null, amount);
+            return await PeopleTrackChargeAsync(null, amount).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1388,7 +1388,7 @@ namespace Mixpanel
         /// <param name="amount">Amount of the transaction.</param>
         public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount)
         {
-            return await PeopleTrackChargeAsync(distinctId, amount, UtcNow());
+            return await PeopleTrackChargeAsync(distinctId, amount, UtcNow()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1400,7 +1400,7 @@ namespace Mixpanel
         /// <param name="time">The date transaction was done.</param>
         public async Task<bool> PeopleTrackChargeAsync(decimal amount, DateTime time)
         {
-            return await PeopleTrackChargeAsync(null, amount, time);
+            return await PeopleTrackChargeAsync(null, amount, time).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1415,7 +1415,7 @@ namespace Mixpanel
             return await SendMessageInternalAsync(
                 () => CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleTrackCharge);
+                MessageKind.PeopleTrackCharge).ConfigureAwait(false);
         }
 
 #endif
@@ -1622,7 +1622,7 @@ namespace Mixpanel
                 {
                     var msgs = trackMessages;
                     bool success = await SendMessageInternalAsync(
-                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Track, MessageKind.Batch);
+                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Track, MessageKind.Batch).ConfigureAwait(false);
                     resultInternal.Update(success, msgs);
                 }
             }
@@ -1634,7 +1634,7 @@ namespace Mixpanel
                 {
                     var msgs = engageMessages;
                     bool success = await SendMessageInternalAsync(
-                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Engage, MessageKind.Batch);
+                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Engage, MessageKind.Batch).ConfigureAwait(false);
                     resultInternal.Update(success, msgs);
                 }
             }
@@ -1653,7 +1653,7 @@ namespace Mixpanel
         /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         public async Task<SendResult> SendAsync(params MixpanelMessage[] messages)
         {
-            return await SendAsync(messages as IEnumerable<MixpanelMessage>);
+            return await SendAsync(messages as IEnumerable<MixpanelMessage>).ConfigureAwait(false);
         }
 #endif
 
@@ -1802,7 +1802,7 @@ namespace Mixpanel
         /// </param>
         public async Task<bool> SendJsonAsync(MixpanelMessageEndpoint endpoint, string messageJson)
         {
-            return await SendMessageInternalAsync(endpoint, messageJson);
+            return await SendMessageInternalAsync(endpoint, messageJson).ConfigureAwait(false);
         }
 #endif
 

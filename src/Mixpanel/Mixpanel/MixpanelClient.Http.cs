@@ -125,14 +125,14 @@ namespace Mixpanel
             try
             {
                 var httpPostFn = ConfigHelper.GetAsyncHttpPostFn(_config);
-                return await httpPostFn(url, messageBody);
+                return await httpPostFn(url, messageBody).ConfigureAwait(false);
             }
             catch (Exception e)
             {
                 LogError(string.Format("POST fails to '{0}' with data '{1}'", url, messageBody), e);
             }
 
-            return await Task.FromResult(false);
+            return await Task.FromResult(false).ConfigureAwait(false);
         }
 #endif
 
@@ -183,7 +183,7 @@ namespace Mixpanel
             string messageBody = GetMessageBody(getMessageDataFn, messageKind);
             if (messageBody == null)
             {
-                return await Task.FromResult(false);
+                return await Task.FromResult(false).ConfigureAwait(false);
             }
 
 #if !HTTP
@@ -194,7 +194,7 @@ namespace Mixpanel
             }
 #endif
 
-            return await HttpPostAsync(endpoint, messageBody);
+            return await HttpPostAsync(endpoint, messageBody).ConfigureAwait(false);
         }
 #endif
 
@@ -205,7 +205,7 @@ namespace Mixpanel
             string messageBody = ToMixpanelMessageFormat(ToBase64(messageJson));
             if (messageBody == null)
             {
-                return await Task.FromResult(false);
+                return await Task.FromResult(false).ConfigureAwait(false);
             }
 
 #if !HTTP
@@ -216,7 +216,7 @@ namespace Mixpanel
             }
 #endif
 
-            return await HttpPostAsync(endpoint, messageBody);
+            return await HttpPostAsync(endpoint, messageBody).ConfigureAwait(false);
         }
 #endif
     }
