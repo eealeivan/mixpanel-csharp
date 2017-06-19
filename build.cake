@@ -66,7 +66,8 @@ Task("BuildSolution")
     {
         MSBuild(SOLUTION_FILE, settings =>
             settings
-                .SetConfiguration(configuration));
+                .SetConfiguration(configuration)
+                .SetVerbosity(Verbosity.Minimal));
        
     });
 

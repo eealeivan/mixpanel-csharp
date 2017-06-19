@@ -1,5 +1,8 @@
 ﻿namespace Mixpanel
 {
+    /// <summary>
+    /// Contains predifined property names for Mixpanel that can be used for message building.
+    /// </summary>
     public sealed class MixpanelProperty
     {
         /// <summary>

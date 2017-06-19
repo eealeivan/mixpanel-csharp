@@ -9,6 +9,9 @@ namespace Mixpanel
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class MixpanelNameAttribute : Attribute
     {
+        /// <summary>
+        /// Name to use for a property.
+        /// </summary>
         public readonly string Name;
 
         /// <summary>
