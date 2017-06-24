@@ -16,10 +16,10 @@
 
   <!--NET 3.5-->
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net35'">
-    <DefineConstants>NET35;HTTP;JSON</DefineConstants>
+    <DefineConstants>NET35;WEB_REQUEST;JSON</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net35'">
-    <DefineConstants>NET35;HTTP;JSON</DefineConstants>
+    <DefineConstants>NET35;WEB_REQUEST;JSON</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net35'">
     <Reference Include="System" />
@@ -29,10 +29,10 @@
 
   <!--NET 4.0-->
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
-    <DefineConstants>NET40;HTTP;JSON</DefineConstants>
+    <DefineConstants>NET40;WEB_REQUEST;JSON</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
-    <DefineConstants>NET40;HTTP;JSON</DefineConstants>
+    <DefineConstants>NET40;WEB_REQUEST;JSON</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net40'">
     <Reference Include="System" />
@@ -43,10 +43,10 @@
   
   <!--NET 4.5-->
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
-    <DefineConstants>NET45;ASYNC;HTTP;JSON</DefineConstants>
+    <DefineConstants>NET45;ASYNC;HTTP_CLIENT;JSON</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
-    <DefineConstants>NET45;ASYNC;HTTP;JSON</DefineConstants>
+    <DefineConstants>NET45;ASYNC;HTTP_CLIENT;JSON</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net45'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
@@ -58,10 +58,10 @@
 
   <!--NET CORE 1.1-->
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp1.1'">
-    <DefineConstants>NETCOREAPP11;ASYNC</DefineConstants>
+    <DefineConstants>NETCOREAPP11;ASYNC;HTTP_CLIENT</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp1.1'">
-    <DefineConstants>NETCOREAPP11;ASYNC</DefineConstants>
+    <DefineConstants>NETCOREAPP11;ASYNC;HTTP_CLIENT</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp1.1'">
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />

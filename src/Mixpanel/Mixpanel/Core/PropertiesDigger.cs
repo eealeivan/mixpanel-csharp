@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 using Mixpanel.Misc;
-#if !(NET35 || NETSTANDARD10)
+#if !NET35
 using System.Collections.Concurrent;
 #endif
 using System.Collections.Generic;
@@ -57,7 +57,7 @@ namespace Mixpanel.Core
             return props;
         }
 
-#if (NET35 || NETSTANDARD10) 
+#if NET35 
         private static readonly ThreadSafeCache<Type, List<ObjectPropertyInfo>> 
             PropertyInfosCache = new ThreadSafeCache<Type, List<ObjectPropertyInfo>>();
 #else
@@ -69,7 +69,7 @@ namespace Mixpanel.Core
         {
             return PropertyInfosCache.GetOrAdd(type, t =>
             {
-#if NETSTANDARD10
+#if NETSTANDARD11
                 bool isDataContract = t.GetTypeInfo().GetCustomAttribute<DataContractAttribute>() != null;
                 var infos = t.GetRuntimeProperties().Where(x => x.CanRead).ToArray();
 #else

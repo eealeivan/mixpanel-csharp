@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+#if HTTP_CLIENT
+using System.Net.Http;
+#endif
 #if ASYNC
 using System.Threading.Tasks;
 #endif
@@ -10,12 +13,22 @@ namespace Mixpanel
 {
     internal sealed class DefaultHttpClient
     {
+#if HTTP_CLIENT
+        static readonly HttpClient HttpClient = new HttpClient();
+#endif
+
         public bool Post(string url, string formData)
         {
-#if !HTTP
-            throw new NotImplementedException(
-                "There is no default HTTP POST method in .NET Standard builds. Please use configuration to set it.");
-#else
+#if HTTP_CLIENT
+            HttpResponseMessage responseMessage = HttpClient.PostAsync(url, new StringContent(formData)).Result;
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                return false;
+            }
+
+            string responseContent = responseMessage.Content.ReadAsStringAsync().Result;
+            return responseContent == "1";
+#elif WEB_REQUEST
             var req = CreateWebRequest(url);
 
             using (var reqStream = req.GetRequestStream())
@@ -36,16 +49,26 @@ namespace Mixpanel
                     }
                 }
             }
+#else
+            throw new NotImplementedException(
+                "There is no default HTTP POST method in this build of Mixpanel C#. Please use configuration to set it.");
 #endif
         }
 
 #if ASYNC
         public async Task<bool> PostAsync(string url, string formData)
         {
-#if !HTTP
-            throw new NotImplementedException(
-                "There is no default async HTTP POST method in .NET Standrad builds. Please use configuration to set it.");
-#else
+#if HTTP_CLIENT
+            HttpResponseMessage responseMessage =
+                await HttpClient.PostAsync(url, new StringContent(formData)).ConfigureAwait(false);
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                return false;
+            }
+
+            string responseContent = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return responseContent == "1";
+#elif WEB_REQUEST
             HttpWebRequest req = CreateWebRequest(url);
             using (Stream reqStream = await req.GetRequestStreamAsync().ConfigureAwait(false))
             {
@@ -65,11 +88,14 @@ namespace Mixpanel
                     }
                 }
             }
+#else
+             throw new NotImplementedException(
+                "There is no default HTTP POST method in this build of Mixpanel C#. Please use configuration to set it.");
 #endif
         }
 #endif
 
-#if HTTP
+#if WEB_REQUEST
         private HttpWebRequest CreateWebRequest(string url)
         {
             var req = (HttpWebRequest)WebRequest.CreateDefault(new Uri(url));

@@ -1,4 +1,4 @@
-﻿#if (NET35 || NETSTANDARD10) 
+﻿#if NET35 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

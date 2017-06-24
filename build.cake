@@ -77,7 +77,7 @@ Task("BuildSolution")
 
 Task("TestSolution")
     .Description("Tests all versions of Mixpanel.")
-    // .IsDependentOn("BuildSolution")
+    .IsDependentOn("BuildSolution")
     .Does(() =>
     {  
         var testAssemblyDirs = GetDirectories(TESTS_BIN_DIR.ToString() + "/*");

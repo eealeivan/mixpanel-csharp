@@ -1809,33 +1809,6 @@ namespace Mixpanel.Tests
         }
 #endif
 
-#if !HTTP
-
-        [Test]
-        public void Track_HttpPostFnNotSet_ThrowsException()
-        {
-            var config = GetConfig();
-            config.HttpPostFn = null;
-            var mc = new MixpanelClient(Token, config);
-
-            Assert.That(
-                () => { mc.Track(Event, DistinctId, GetTrackDictionary()); },
-                Throws.TypeOf<MixpanelConfigurationException>());
-        }
-        
-        [Test]
-        public void Track_AsyncHttpPostFnNotSet_ThrowsException()
-        {
-            var config = GetConfig();
-            config.AsyncHttpPostFn = null;
-            var mc = new MixpanelClient(Token, config);
-
-            var aggregate = Assert.Throws<AggregateException>(
-                () => mc.TrackAsync(Event, DistinctId, GetTrackDictionary()).Wait());
-            Assert.That(aggregate.InnerExceptions.Single(), Is.InstanceOf<MixpanelConfigurationException>());
-        }
-#endif
-
 
         #endregion NET Standard
 

@@ -5,7 +5,7 @@ namespace Mixpanel.Misc
 {
     internal static class ListExtensions
     {
-#if NETSTANDARD10
+#if NETSTANDARD11
         public static ReadOnlyCollection<T> AsReadOnly<T>(this IList<T> list)
         {
             return new ReadOnlyCollection<T>(list);

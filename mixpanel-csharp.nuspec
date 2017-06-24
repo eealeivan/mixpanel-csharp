@@ -8,8 +8,8 @@
         <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
         <projectUrl>https://github.com/eealeivan/mixpanel-csharp</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<summary>Mixpanel .NET integration library that supports the complete Mixpanel API. Supported platforms: .NET 3.5, .NET 4.0, .NET 4.5 and .NET Standard 1.0.</summary>
-        <description>An open source Mixpanel .NET integration library that supports the complete Mixpanel API. The main idea of the library is to hide API details allowing you to concentrate on data that you want to analyze. Supported platforms: .NET 3.5, .NET 4.0, .NET 4.5 and .NET Standard 1.0. It's also well documented, configurable and testable. Check the example usage on the project site.</description>
+		<summary>Mixpanel .NET integration library that supports the complete Mixpanel API. Supported platforms: .NET 3.5, .NET 4.0, .NET 4.5 and .NET Standard 1.1.</summary>
+        <description>An open source Mixpanel .NET integration library that supports the complete Mixpanel API. The main idea of the library is to hide API details allowing you to concentrate on data that you want to analyze. Supported platforms: .NET 3.5, .NET 4.0, .NET 4.5 and .NET Standard 1.1. It's also well documented, configurable and testable. Check the example usage on the project site.</description>
         <tags>Mixpanel, analytics, data, tracking, .NET, netstandard, netcore, xamarin, Xamarin.iOS, Xamarin.Android, Mono</tags>
     </metadata>   
 </package>

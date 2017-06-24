@@ -64,24 +64,6 @@ namespace Mixpanel
         }
 #endif
 
-#if !HTTP
-        public static bool HttpPostFnSet(MixpanelConfig config)
-        {
-            return
-                MixpanelConfig.Global.HttpPostFn != null ||
-                (config != null && config.HttpPostFn != null);
-
-        }
-
-        public static bool AsyncHttpPostFnSet(MixpanelConfig config)
-        {
-            return
-                MixpanelConfig.Global.AsyncHttpPostFn != null ||
-                (config != null && config.AsyncHttpPostFn != null);
-
-        }
-#endif
-
         public static MixpanelPropertyNameFormat GetMixpanelPropertyNameFormat(MixpanelConfig config)
         {
             if (config != null && config.MixpanelPropertyNameFormat != null)

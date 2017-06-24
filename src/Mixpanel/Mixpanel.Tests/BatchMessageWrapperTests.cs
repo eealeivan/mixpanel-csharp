@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-#if !HTTP
-using System.Threading.Tasks;
-#endif
+#if !JSON
 using Newtonsoft.Json;
-
+#endif
 using NUnit.Framework;
 
 namespace Mixpanel.Tests
@@ -20,11 +18,6 @@ namespace Mixpanel.Tests
             _mc = new MixpanelClient(Token,
                    new MixpanelConfig
                    {
-#if !HTTP
-                       HttpPostFn = (endpoint, data) => true,
-                       AsyncHttpPostFn = (endpoint, data) => Task.Run(() => true),
-                       
-#endif
 #if !JSON
                        SerializeJsonFn = obj => JsonConvert.SerializeObject(obj)
 #endif

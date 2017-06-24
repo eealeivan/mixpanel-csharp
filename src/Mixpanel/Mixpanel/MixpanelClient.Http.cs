@@ -65,7 +65,7 @@ namespace Mixpanel
             if (!ConfigHelper.SerializeJsonFnSet(_config))
             {
                 throw new MixpanelConfigurationException(
-                    "There is no default JSON serializer in .NET Standard builds. Please use configuration to set it.");
+                    "There is no default JSON serializer in this build of Mixpanel C#. Please use configuration to set it. JSON.NET example: MixpanelConfig.Global.SerializeJsonFn = JsonConvert.SerializeObject;");
             }
 #endif
 
@@ -145,14 +145,6 @@ namespace Mixpanel
                 return false;
             }
 
-#if !HTTP
-            if (!ConfigHelper.HttpPostFnSet(_config))
-            {
-                throw new MixpanelConfigurationException(
-                    "There is no default HTTP POST method in .NET Standard builds. Please use configuration to set it.");
-            }
-#endif
-
             return HttpPost(endpoint, messageBody);
         }
 
@@ -164,14 +156,6 @@ namespace Mixpanel
             {
                 return false;
             }
-
-#if !HTTP
-            if (!ConfigHelper.HttpPostFnSet(_config))
-            {
-                throw new MixpanelConfigurationException(
-                    "There is no default HTTP POST method in .NET Standard builds. Please use configuration to set it.");
-            }
-#endif
 
             return HttpPost(endpoint, messageBody);
         }
@@ -186,14 +170,6 @@ namespace Mixpanel
                 return await Task.FromResult(false).ConfigureAwait(false);
             }
 
-#if !HTTP
-            if (!ConfigHelper.AsyncHttpPostFnSet(_config))
-            {
-                throw new MixpanelConfigurationException(
-                    "There is no default async HTTP POST method in .NET Standard builds. Please use configuration to set it.");
-            }
-#endif
-
             return await HttpPostAsync(endpoint, messageBody).ConfigureAwait(false);
         }
 #endif
@@ -207,14 +183,6 @@ namespace Mixpanel
             {
                 return await Task.FromResult(false).ConfigureAwait(false);
             }
-
-#if !HTTP
-            if (!ConfigHelper.AsyncHttpPostFnSet(_config))
-            {
-                throw new MixpanelConfigurationException(
-                    "There is no default async HTTP POST method in .NET Standard builds. Please use configuration to set it.");
-            }
-#endif
 
             return await HttpPostAsync(endpoint, messageBody).ConfigureAwait(false);
         }

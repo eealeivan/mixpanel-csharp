@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;net45;netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>net35;net40;net45;netstandard1.1</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
@@ -18,10 +18,10 @@
     <AssemblyTitle>Mixpanel C# .NET 3.5</AssemblyTitle>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net35'">
-    <DefineConstants>TRACE;DEBUG;NET35;HTTP;JSON</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET35;WEB_REQUEST;JSON</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net35'">
-    <DefineConstants>TRACE;RELEASE;NET35;HTTP;JSON</DefineConstants>
+    <DefineConstants>TRACE;RELEASE;NET35;WEB_REQUEST;JSON</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net35'">
     <Reference Include="System" />
@@ -35,10 +35,10 @@
     <AssemblyTitle>Mixpanel C# .NET 4.0</AssemblyTitle>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
-    <DefineConstants>TRACE;DEBUG;NET40;HTTP;JSON</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET40;WEB_REQUEST;JSON</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
-    <DefineConstants>TRACE;RELEASE;NET40;HTTP;JSON</DefineConstants>
+    <DefineConstants>TRACE;RELEASE;NET40;WEB_REQUEST;JSON</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net40'">
     <Reference Include="System" />
@@ -52,29 +52,30 @@
     <AssemblyTitle>Mixpanel C# .NET 4.5</AssemblyTitle>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
-    <DefineConstants>TRACE;DEBUG;NET45;ASYNC;HTTP;JSON</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET45;ASYNC;HTTP_CLIENT;JSON</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
-    <DefineConstants>TRACE;RELEASE;NET45;ASYNC;HTTP;JSON</DefineConstants>
+    <DefineConstants>TRACE;RELEASE;NET45;ASYNC;HTTP_CLIENT;JSON</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net45'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
-  <!--NET STANDARD 1.0-->
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.0'">
-    <AssemblyTitle>Mixpanel C# .NET Standard 1.0</AssemblyTitle>
+  <!--NET STANDARD 1.1-->
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.1'">
+    <AssemblyTitle>Mixpanel C# .NET Standard 1.1</AssemblyTitle>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard1.0'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD10;ASYNC</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard1.1'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD11;ASYNC;HTTP_CLIENT</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard1.0'">
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD10;ASYNC</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard1.1'">
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD11;ASYNC;HTTP_CLIENT</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.0'">
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.1'">
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
   </ItemGroup>
 
