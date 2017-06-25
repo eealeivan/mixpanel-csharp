@@ -134,7 +134,19 @@ Task("CreateImage")
 
         var imageLibDir = IMAGE_DIR + Directory("lib");
         CreateDirectory(imageLibDir);      
-        CopyDirectory(BIN_DIR, imageLibDir);         
+        CopyDirectory(BIN_DIR, imageLibDir); 
+
+        var validFileExtensions = new [] {"dll", "xml"};
+        CleanDirectory(imageLibDir, fileSystemInfo =>
+        {
+            if(!(fileSystemInfo is IFile)) 
+            {
+                return false;
+            }
+            
+            var fileExtension = ((IFile)fileSystemInfo).Path.GetExtension();
+            return !validFileExtensions.Any(fileExtension.Contains);
+        });        
     });
 
 Task("Create-NuGet-Package")
