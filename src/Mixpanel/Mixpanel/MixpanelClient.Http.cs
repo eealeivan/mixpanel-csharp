@@ -9,7 +9,7 @@ namespace Mixpanel
 {
     public sealed partial class MixpanelClient
     {
-        internal const string UrlFormat = "http://api.mixpanel.com/{0}";
+        internal const string UrlFormat = "https://api.mixpanel.com/{0}";
         internal const string EndpointTrack = "track";
         internal const string EndpointEngage = "engage";
 
