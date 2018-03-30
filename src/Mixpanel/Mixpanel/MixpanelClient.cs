@@ -1551,7 +1551,7 @@ namespace Mixpanel
         /// messages then they will be devided in 2 batches and will be sent separately. 
         /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
         /// and will be sent separately.
-        /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
+        /// Returns a <see cref="SendResult"/> object that contains lists of success and failed batches. 
         /// </summary>
         /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         public SendResult Send(IEnumerable<MixpanelMessage> messages)
@@ -1592,7 +1592,7 @@ namespace Mixpanel
         /// messages then they will be devided in 2 batches and will be sent separately. 
         /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
         /// and will be sent separately.
-        /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
+        /// Returns a <see cref="SendResult"/> object that contains lists of success and failed batches. 
         /// </summary>
         /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         public SendResult Send(params MixpanelMessage[] messages)
@@ -1607,7 +1607,7 @@ namespace Mixpanel
         /// messages then they will be devided in 2 batches and will be sent separately. 
         /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
         /// and will be sent separately.
-        /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
+        /// Returns a <see cref="SendResult"/> object that contains lists of success and failed batches. 
         /// </summary>
         /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         public async Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages)
@@ -1648,7 +1648,7 @@ namespace Mixpanel
         /// messages then they will be devided in 2 batches and will be sent separately. 
         /// If amount of messages of one type exceeds 50,  then messages will be devided in batches
         /// and will be sent separately.
-        /// Returns a <see cref="SendResult"/> object that contains lists uf success and failed batches. 
+        /// Returns a <see cref="SendResult"/> object that contains lists of success and failed batches. 
         /// </summary>
         /// <param name="messages">List of <see cref="MixpanelMessage"/> to send.</param>
         public async Task<SendResult> SendAsync(params MixpanelMessage[] messages)
