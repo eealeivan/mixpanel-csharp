@@ -70,6 +70,11 @@
         /// </summary>
         public const string Alias = "alias";
 
+        /// <summary>
+        /// Duration for track messages.
+        /// </summary>
+        public const string Duration = "duration";
+
         internal const string TrackEvent = "event";
         internal const string TrackToken = "token";
         internal const string TrackDistinctId = "distinct_id";
