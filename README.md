@@ -16,7 +16,6 @@
 var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
 await mc.TrackAsync("Level Complete", new {
     DistinctId = "12345",
-    Time = new DateTime(2013, 11, 30, 0, 0, 0, DateTimeKind.Utc),
     LevelNumber = 5
 });
 ```
@@ -27,7 +26,6 @@ This will send the following JSON to `http://api.mixpanel.com/track/`:
   "properties": {
     "token": "e3bc4100330c35722740fb8c6f5abddc",
     "distinct_id": "12345",
-    "time": 1385769600,
     "LevelNumber": 5
   }
 }
