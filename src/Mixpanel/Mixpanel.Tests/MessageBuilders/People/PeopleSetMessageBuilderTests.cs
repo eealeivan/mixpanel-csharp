@@ -158,6 +158,49 @@ namespace Mixpanel.Tests.MessageBuilders.People
         }
 
         [Test]
+        public void When_PredefinedPropertiesUsed_Then_AllPropertiesInMessage()
+        {
+            var rawProperties = new Dictionary<string, object>
+            {
+                {MixpanelProperty.DistinctId, DistinctId },
+                {MixpanelProperty.Ip, Ip },
+                {MixpanelProperty.Time, Time },
+                {MixpanelProperty.IgnoreTime, IgnoreTime },
+                {MixpanelProperty.IgnoreAlias, IgnoreAlias },
+                {MixpanelProperty.FirstName, FirstName },
+                {MixpanelProperty.LastName, LastName },
+                {MixpanelProperty.Name, Name },
+                {MixpanelProperty.Email, Email },
+                {MixpanelProperty.Phone, Phone },
+                {MixpanelProperty.Created, Created }
+            };
+
+            MessageBuildResult messageBuildResult =
+                PeopleSetMessageBuilder.BuildSet(Token, null, rawProperties, null, null);
+
+            AssertMessageSuccess(
+                messageBuildResult,
+                new (string name, object value)[]
+                {
+                    (PeopleSpecialProperty.Token, Token),
+                    (PeopleSpecialProperty.DistinctId, DistinctId),
+                    (PeopleSpecialProperty.Ip, Ip),
+                    (PeopleSpecialProperty.Time, TimeUnix),
+                    (PeopleSpecialProperty.IgnoreTime, IgnoreTime),
+                    (PeopleSpecialProperty.IgnoreAlias, IgnoreAlias)
+                },
+                new (string name, object value)[]
+                {
+                    (PeopleSpecialProperty.FirstName, FirstName),
+                    (PeopleSpecialProperty.LastName, LastName),
+                    (PeopleSpecialProperty.Name, Name),
+                    (PeopleSpecialProperty.Email, Email),
+                    (PeopleSpecialProperty.Phone, Phone),
+                    (PeopleSpecialProperty.Created, CreatedFormat),
+                });
+        }
+
+        [Test]
         public void When_NameFormattingConfigured_Then_FormattingAppliedToPropertyNames()
         {
             var config = new MixpanelConfig { MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.TitleCase };

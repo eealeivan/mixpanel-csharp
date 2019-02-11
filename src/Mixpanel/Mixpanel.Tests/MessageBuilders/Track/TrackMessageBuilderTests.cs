@@ -155,6 +155,36 @@ namespace Mixpanel.Tests.MessageBuilders.Track
         }
 
         [Test]
+        public void When_PredefinedPropertiesUsed_Then_AllPropertiesInMessage()
+        {
+            var rawProperties = new Dictionary<string, object>
+            {
+                {MixpanelProperty.DistinctId, DistinctId },
+                {MixpanelProperty.Time, Time },
+                {MixpanelProperty.Ip, Ip },
+                {MixpanelProperty.Duration, Duration },
+                {MixpanelProperty.Os, Os },
+                {MixpanelProperty.ScreenWidth, ScreenWidth },
+                {MixpanelProperty.ScreenHeight, ScreenHeight }
+            };
+
+            MessageBuildResult messageBuildResult =
+                TrackMessageBuilder.Build(Token, Event, null, rawProperties, null, null);
+
+            AssertMessageSuccess(
+                messageBuildResult,
+                Token,
+                Event,
+                DistinctId,
+                new KeyValuePair<string, object>(TrackSpecialProperty.Time, TimeUnix),
+                new KeyValuePair<string, object>(TrackSpecialProperty.Ip, Ip),
+                new KeyValuePair<string, object>(TrackSpecialProperty.Duration, DurationSeconds),
+                new KeyValuePair<string, object>(TrackSpecialProperty.Os, Os),
+                new KeyValuePair<string, object>(TrackSpecialProperty.ScreenWidth, ScreenWidth),
+                new KeyValuePair<string, object>(TrackSpecialProperty.ScreenHeight, ScreenHeight));
+        }
+
+        [Test]
         public void When_NameFormattingConfigured_Then_FormattingAppliedToPropertyNames()
         {
             var config = new MixpanelConfig { MixpanelPropertyNameFormat = MixpanelPropertyNameFormat.TitleCase };

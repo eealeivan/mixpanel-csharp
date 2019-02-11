@@ -16,14 +16,9 @@
         public const string DistinctId = "distinct_id";
 
         /// <summary>
-        /// Event for track messages.
+        /// Time for both track and engage messages.
         /// </summary>
-        public const string Event = "event";
-
-        /// <summary>
-        /// Alias for track messages.
-        /// </summary>
-        public const string Alias = "alias";
+        public const string Time = "time";
 
         /// <summary>
         /// Ip for both track and engage messages.
@@ -31,14 +26,24 @@
         public const string Ip = "ip";
 
         /// <summary>
-        /// Time for both track and engage messages.
-        /// </summary>
-        public const string Time = "time";
-
-        /// <summary>
         /// Duration for track messages.
         /// </summary>
         public const string Duration = "duration";
+
+        /// <summary>
+        /// Operating system for track messages.
+        /// </summary>
+        public const string Os = "os";
+
+        /// <summary>
+        /// Screen width for track messages.
+        /// </summary>
+        public const string ScreenWidth = "screen_width";
+
+        /// <summary>
+        /// Screen height for track messages.
+        /// </summary>
+        public const string ScreenHeight = "screen_height";
 
         /// <summary>
         /// First name for engage messages.
