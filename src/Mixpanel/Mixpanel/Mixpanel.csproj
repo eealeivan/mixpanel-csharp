@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;net45;netstandard1.1</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.1</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <AssemblyVersion>4.0.1.0</AssemblyVersion>
@@ -10,52 +10,18 @@
     <Version>4.0.1</Version>
     <Authors>Aleksandr Ivanov</Authors>
     <PackageId>mixpanel-csharp</PackageId>
-    <Copyright>Copyright © Aleksandr Ivanov 2017</Copyright>
+    <Copyright>Copyright © Aleksandr Ivanov 2018</Copyright>
   </PropertyGroup>
-
-  <!--NET 3.5-->
-  <PropertyGroup Condition="'$(TargetFramework)'=='net35'">
-    <AssemblyTitle>Mixpanel C# .NET 3.5</AssemblyTitle>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net35'">
-    <DefineConstants>TRACE;DEBUG;NET35;WEB_REQUEST;JSON</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net35'">
-    <DefineConstants>TRACE;RELEASE;NET35;WEB_REQUEST;JSON</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net35'">
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web.Extensions" />
-  </ItemGroup>
-  
-  <!--NET 4.0-->
-  <PropertyGroup Condition="'$(TargetFramework)'=='net40'">
-    <AssemblyTitle>Mixpanel C# .NET 4.0</AssemblyTitle>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
-    <DefineConstants>TRACE;DEBUG;NET40;WEB_REQUEST;JSON</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
-    <DefineConstants>TRACE;RELEASE;NET40;WEB_REQUEST;JSON</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net40'">
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web.Extensions" />
-  </ItemGroup>
 
   <!--NET 4.5-->
   <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
     <AssemblyTitle>Mixpanel C# .NET 4.5</AssemblyTitle>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
-    <DefineConstants>TRACE;DEBUG;NET45;ASYNC;HTTP_CLIENT;JSON</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET45;JSON</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
-    <DefineConstants>TRACE;RELEASE;NET45;ASYNC;HTTP_CLIENT;JSON</DefineConstants>
+    <DefineConstants>TRACE;RELEASE;NET45;JSON</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net45'">
     <Reference Include="System" />
@@ -70,10 +36,10 @@
     <AssemblyTitle>Mixpanel C# .NET Standard 1.1</AssemblyTitle>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard1.1'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD11;ASYNC;HTTP_CLIENT</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD11</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard1.1'">
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD11;ASYNC;HTTP_CLIENT</DefineConstants>
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD11</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.1'">
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />

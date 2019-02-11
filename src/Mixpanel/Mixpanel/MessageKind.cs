@@ -48,6 +48,12 @@
         PeopleUnion,
 
         /// <summary>
+        /// PeopleRemove message. If you manually create a <see cref="MixpanelMessage"/>, please check 
+        /// corresponding Test method for a correct message structure.
+        /// </summary>
+        PeopleRemove,
+
+        /// <summary>
         /// PeopleUnset message. If you manually create a <see cref="MixpanelMessage"/>, please check 
         /// corresponding Test method for a correct message structure.
         /// </summary>

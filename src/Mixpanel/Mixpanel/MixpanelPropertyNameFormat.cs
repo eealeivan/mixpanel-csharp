@@ -7,7 +7,7 @@
     public enum MixpanelPropertyNameFormat
     {
         /// <summary>
-        /// No formatting will be applied. This is default value.
+        /// No formatting will be applied. This is a default value.
         /// </summary>
         None,
 

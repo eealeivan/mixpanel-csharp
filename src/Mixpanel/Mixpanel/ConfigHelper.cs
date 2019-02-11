@@ -1,7 +1,5 @@
 ﻿using System;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 
 namespace Mixpanel
 {
@@ -29,7 +27,6 @@ namespace Mixpanel
             return new DefaultHttpClient().Post;
         }
 
-#if ASYNC
         public static Func<string, string, Task<bool>> GetAsyncHttpPostFn(MixpanelConfig config)
         {
             if (config != null && config.AsyncHttpPostFn != null)
@@ -40,7 +37,6 @@ namespace Mixpanel
 
             return new DefaultHttpClient().PostAsync;
         }
-#endif
         
         public static Action<string, Exception> GetErrorLogFn(MixpanelConfig config)
         {
