@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Mixpanel
 {
     /// <summary>
-    /// Can be used to check all steps of creating a batch mixapnel messages for
+    /// Can be used to check all steps of creating a batch mixpanel messages for
     /// MixpanelClient 'Send' and 'SendAsync' methods.
     /// </summary>
     public sealed class MixpanelBatchMessageTest
