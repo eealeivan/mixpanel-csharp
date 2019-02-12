@@ -4,13 +4,13 @@
     <TargetFrameworks>net45;netstandard1.1</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PreserveCompilationContext>false</PreserveCompilationContext>
-    <AssemblyVersion>4.0.1.0</AssemblyVersion>
-    <FileVersion>4.0.1.0</FileVersion>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
+    <FileVersion>5.0.0.0</FileVersion>
     <Product>Mixpanel C#</Product>
-    <Version>4.0.1</Version>
+    <Version>5.0.0</Version>
     <Authors>Aleksandr Ivanov</Authors>
     <PackageId>mixpanel-csharp</PackageId>
-    <Copyright>Copyright © Aleksandr Ivanov 2018</Copyright>
+    <Copyright>Copyright © Aleksandr Ivanov 2019</Copyright>
   </PropertyGroup>
 
   <!--NET 4.5-->
