@@ -153,6 +153,16 @@ namespace Mixpanel
 
         /// <summary>
         /// Returns a <see cref="MixpanelMessage"/> for 'Alias'. 
+        /// 'Distinct ID' must ne set with super properties.
+        /// If message can't be created, then null is returned.
+        /// No data will be sent to Mixpanel.
+        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// </summary>
+        /// <param name="alias">Alias for original user profile identifier.</param>
+        MixpanelMessage GetAliasMessage(object alias);
+
+        /// <summary>
+        /// Returns a <see cref="MixpanelMessage"/> for 'Alias'. 
         /// If message can't be created, then null is returned.
         /// No data will be sent to Mixpanel.
         /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
@@ -162,15 +172,14 @@ namespace Mixpanel
         MixpanelMessage GetAliasMessage(object distinctId, object alias);
 
         /// <summary>
-        /// Returns a <see cref="MixpanelMessage"/> for 'Alias'. 
-        /// 'Distinct ID' must ne set with super properties.
-        /// If message can't be created, then null is returned.
-        /// No data will be sent to Mixpanel.
-        /// You can send returned message using <see cref="Send(Mixpanel.MixpanelMessage[])"/> method.
+        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
+        /// base64) of building 'Alias' message. If some error occurs during the process of 
+        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
+        /// The message will NOT be sent to Mixpanel.
         /// </summary>
         /// <param name="alias">Alias for original user profile identifier.</param>
-        MixpanelMessage GetAliasMessage(object alias);
-        
+        MixpanelMessageTest AliasTest(object alias);
+
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'Alias' message. If some error occurs during the process of 
@@ -180,15 +189,6 @@ namespace Mixpanel
         /// <param name="distinctId">Original unique user profile identifier to create alias for.</param>
         /// <param name="alias">Alias for original user profile identifier.</param>
         MixpanelMessageTest AliasTest(object distinctId, object alias);
-
-        /// <summary>
-        /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
-        /// base64) of building 'Alias' message. If some error occurs during the process of 
-        /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
-        /// The message will NOT be sent to Mixpanel.
-        /// </summary>
-        /// <param name="alias">Alias for original user profile identifier.</param>
-        MixpanelMessageTest AliasTest(object alias);
 
         #endregion Alias
 

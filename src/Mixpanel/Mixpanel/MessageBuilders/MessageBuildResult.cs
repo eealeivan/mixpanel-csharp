@@ -2,7 +2,7 @@
 
 namespace Mixpanel.MessageBuilders
 {
-    internal class MessageBuildResult
+    internal sealed class MessageBuildResult
     {
         public bool Success { get; }
         public IDictionary<string, object> Message { get; }

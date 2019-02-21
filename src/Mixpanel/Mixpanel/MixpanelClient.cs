@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Mixpanel.Extensibility;
@@ -29,7 +28,7 @@ namespace Mixpanel
         /// to be iterated by multiple threads.
         /// </summary>
         private readonly IList<ObjectProperty> superProperties;
-        
+
         /// <summary>
         /// Creates an instance of <see cref="MixpanelClient"/>.
         /// </summary>
@@ -84,9 +83,9 @@ namespace Mixpanel
         public bool Track(string @event, object distinctId, object properties)
         {
             return SendMessageInternal(
-                () => CreateTrackMessageObject(@event, distinctId, properties),
+                MessageKind.Track,
                 MixpanelMessageEndpoint.Track,
-                MessageKind.Track);
+                () => BuildTrackMessage(@event, distinctId, properties));
         }
 
         /// <inheritdoc/>
@@ -99,9 +98,10 @@ namespace Mixpanel
         public async Task<bool> TrackAsync(string @event, object distinctId, object properties)
         {
             return await SendMessageInternalAsync(
-                () => CreateTrackMessageObject(@event, distinctId, properties),
-                MixpanelMessageEndpoint.Track,
-                MessageKind.Track).ConfigureAwait(false);
+                    MessageKind.Track,
+                    MixpanelMessageEndpoint.Track,
+                    () => BuildTrackMessage(@event, distinctId, properties))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -115,7 +115,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.Track,
-                () => CreateTrackMessageObject(@event, distinctId, properties));
+                () => BuildTrackMessage(@event, distinctId, properties));
         }
 
         /// <inheritdoc/>
@@ -127,15 +127,14 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest TrackTest(string @event, object distinctId, object properties)
         {
-            return TestMessage(() => CreateTrackMessageObject(@event, distinctId, properties));
+            return TestMessage(() => BuildTrackMessage(@event, distinctId, properties));
         }
 
-        private IDictionary<string, object> CreateTrackMessageObject(
+        private MessageBuildResult BuildTrackMessage(
             string @event, object distinctId, object properties)
         {
-            MessageBuildResult result = TrackMessageBuilder.Build(
+            return TrackMessageBuilder.Build(
                 token, @event, superProperties, properties, distinctId, config);
-            return GetMessageObject(result);
         }
 
         #endregion
@@ -152,24 +151,32 @@ namespace Mixpanel
         public bool Alias(object distinctId, object alias)
         {
             return SendMessageInternal(
-                () => CreateAliasMessageObject(distinctId, alias),
+                MessageKind.Alias,
                 MixpanelMessageEndpoint.Track,
-                MessageKind.Alias);
+                () => BuildAliasMessage(distinctId, alias));
         }
 
         /// <inheritdoc/>
         public async Task<bool> AliasAsync(object alias)
         {
-            return await AliasAsync(null, alias).ConfigureAwait(false);
+            return await AliasAsync(null, alias)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> AliasAsync(object distinctId, object alias)
         {
             return await SendMessageInternalAsync(
-                () => CreateAliasMessageObject(distinctId, alias),
+                MessageKind.Alias,
                 MixpanelMessageEndpoint.Track,
-                MessageKind.Alias).ConfigureAwait(false);
+                () => BuildAliasMessage(distinctId, alias))
+                .ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        public MixpanelMessage GetAliasMessage(object alias)
+        {
+            return GetAliasMessage(null, alias);
         }
 
         /// <inheritdoc/>
@@ -177,33 +184,24 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.Alias,
-                () => CreateAliasMessageObject(distinctId, alias));
-        }
-
-        /// <inheritdoc/>
-        public MixpanelMessage GetAliasMessage(object alias)
-        {
-            return GetMessage(
-                MessageKind.Alias,
-                () => CreateAliasMessageObject(null, alias));
-        }
-
-        /// <inheritdoc/>
-        public MixpanelMessageTest AliasTest(object distinctId, object alias)
-        {
-            return TestMessage(() => CreateAliasMessageObject(distinctId, alias));
+                () => BuildAliasMessage(distinctId, alias));
         }
 
         /// <inheritdoc/>
         public MixpanelMessageTest AliasTest(object alias)
         {
-            return TestMessage(() => CreateAliasMessageObject(null, alias));
+            return AliasTest(null, alias);
         }
 
-        private IDictionary<string, object> CreateAliasMessageObject(object distinctId, object alias)
+        /// <inheritdoc/>
+        public MixpanelMessageTest AliasTest(object distinctId, object alias)
         {
-            MessageBuildResult result = AliasMessageBuilder.Build(token, superProperties, distinctId, alias);
-            return GetMessageObject(result);
+            return TestMessage(() => BuildAliasMessage(distinctId, alias));
+        }
+
+        private MessageBuildResult BuildAliasMessage(object distinctId, object alias)
+        {
+            return AliasMessageBuilder.Build(token, superProperties, distinctId, alias);
         }
 
         #endregion Alias
@@ -220,24 +218,26 @@ namespace Mixpanel
         public bool PeopleSet(object distinctId, object properties)
         {
             return SendMessageInternal(
-                () => CreatePeopleSetMessageObject(distinctId, properties),
+                MessageKind.PeopleSet,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleSet);
+                () => BuildPeopleSetMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleSetAsync(object properties)
         {
-            return await PeopleSetAsync(null, properties).ConfigureAwait(false);
+            return await PeopleSetAsync(null, properties)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleSetAsync(object distinctId, object properties)
         {
             return await SendMessageInternalAsync(
-                () => CreatePeopleSetMessageObject(distinctId, properties),
+                MessageKind.PeopleSet,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleSet).ConfigureAwait(false);
+                () => BuildPeopleSetMessage(distinctId, properties))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -251,7 +251,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.PeopleSet,
-                () => CreatePeopleSetMessageObject(distinctId, properties));
+                () => BuildPeopleSetMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
@@ -263,13 +263,12 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest PeopleSetTest(object distinctId, object properties)
         {
-            return TestMessage(() => CreatePeopleSetMessageObject(distinctId, properties));
+            return TestMessage(() => BuildPeopleSetMessage(distinctId, properties));
         }
 
-        private IDictionary<string, object> CreatePeopleSetMessageObject(object distinctId, object properties)
+        private MessageBuildResult BuildPeopleSetMessage(object distinctId, object properties)
         {
-            MessageBuildResult result = PeopleSetMessageBuilder.BuildSet(token, superProperties, properties, distinctId, config);
-            return GetMessageObject(result);
+            return PeopleSetMessageBuilder.BuildSet(token, superProperties, properties, distinctId, config);
         }
 
         #endregion PeopleSet
@@ -286,24 +285,26 @@ namespace Mixpanel
         public bool PeopleSetOnce(object distinctId, object properties)
         {
             return SendMessageInternal(
-                () => CreatePeopleSetOnceMessageObject(distinctId, properties),
+                MessageKind.PeopleSetOnce,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleSetOnce);
+                () => BuildPeopleSetOnceMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleSetOnceAsync(object properties)
         {
-            return await PeopleSetOnceAsync(null, properties).ConfigureAwait(false);
+            return await PeopleSetOnceAsync(null, properties)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleSetOnceAsync(object distinctId, object properties)
         {
             return await SendMessageInternalAsync(
-                () => CreatePeopleSetOnceMessageObject(distinctId, properties),
+                MessageKind.PeopleSetOnce,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleSetOnce).ConfigureAwait(false);
+                () => BuildPeopleSetOnceMessage(distinctId, properties))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -317,7 +318,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.PeopleSetOnce,
-                () => CreatePeopleSetOnceMessageObject(distinctId, properties));
+                () => BuildPeopleSetOnceMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
@@ -329,14 +330,12 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest PeopleSetOnceTest(object distinctId, object properties)
         {
-            return TestMessage(() => CreatePeopleSetOnceMessageObject(distinctId, properties));
+            return TestMessage(() => BuildPeopleSetOnceMessage(distinctId, properties));
         }
 
-        private IDictionary<string, object> CreatePeopleSetOnceMessageObject(object distinctId, object properties)
+        private MessageBuildResult BuildPeopleSetOnceMessage(object distinctId, object properties)
         {
-            MessageBuildResult result = 
-                PeopleSetMessageBuilder.BuildSetOnce(token, superProperties, properties, distinctId, config);
-            return GetMessageObject(result);
+            return PeopleSetMessageBuilder.BuildSetOnce(token, superProperties, properties, distinctId, config);
         }
 
         #endregion PeopleSetOnce
@@ -353,24 +352,26 @@ namespace Mixpanel
         public bool PeopleAdd(object distinctId, object properties)
         {
             return SendMessageInternal(
-                () => CreatePeopleAddMessageObject(distinctId, properties),
+                MessageKind.PeopleAdd,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleAdd);
+                () => BuildPeopleAddMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleAddAsync(object properties)
         {
-            return await PeopleAddAsync(null, properties).ConfigureAwait(false);
+            return await PeopleAddAsync(null, properties)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleAddAsync(object distinctId, object properties)
         {
             return await SendMessageInternalAsync(
-                () => CreatePeopleAddMessageObject(distinctId, properties),
+                MessageKind.PeopleAdd,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleAdd).ConfigureAwait(false);
+                () => BuildPeopleAddMessage(distinctId, properties))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -384,7 +385,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.PeopleAdd,
-                () => CreatePeopleAddMessageObject(distinctId, properties));
+                () => BuildPeopleAddMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
@@ -396,15 +397,12 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest PeopleAddTest(object distinctId, object properties)
         {
-            return TestMessage(() => CreatePeopleAddMessageObject(distinctId, properties));
+            return TestMessage(() => BuildPeopleAddMessage(distinctId, properties));
         }
 
-        private IDictionary<string, object> CreatePeopleAddMessageObject(
-            object distinctId, object properties)
+        private MessageBuildResult BuildPeopleAddMessage(object distinctId, object properties)
         {
-            MessageBuildResult result = 
-                PeopleAddMessageBuilder.Build(token, superProperties, properties, distinctId, config);
-            return GetMessageObject(result);
+            return PeopleAddMessageBuilder.Build(token, superProperties, properties, distinctId, config);
         }
 
         #endregion PeopleAdd
@@ -421,24 +419,26 @@ namespace Mixpanel
         public bool PeopleAppend(object distinctId, object properties)
         {
             return SendMessageInternal(
-                () => CreatePeopleAppendMessageObject(distinctId, properties),
+                MessageKind.PeopleAppend,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleAppend);
+                () => BuildPeopleAppendMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleAppendAsync(object properties)
         {
-            return await PeopleAppendAsync(null, properties).ConfigureAwait(false);
+            return await PeopleAppendAsync(null, properties)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleAppendAsync(object distinctId, object properties)
         {
             return await SendMessageInternalAsync(
-                () => CreatePeopleAppendMessageObject(distinctId, properties),
+                MessageKind.PeopleAppend,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleAppend).ConfigureAwait(false);
+                () => BuildPeopleAppendMessage(distinctId, properties))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -452,7 +452,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.PeopleAppend,
-                () => CreatePeopleAppendMessageObject(distinctId, properties));
+                () => BuildPeopleAppendMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
@@ -464,15 +464,12 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest PeopleAppendTest(object distinctId, object properties)
         {
-            return TestMessage(() => CreatePeopleAppendMessageObject(distinctId, properties));
+            return TestMessage(() => BuildPeopleAppendMessage(distinctId, properties));
         }
 
-        private IDictionary<string, object> CreatePeopleAppendMessageObject(
-            object distinctId, object properties)
+        private MessageBuildResult BuildPeopleAppendMessage(object distinctId, object properties)
         {
-            MessageBuildResult result =
-                PeopleAppendMessageBuilder.Build(token, superProperties, properties, distinctId, config);
-            return GetMessageObject(result);
+            return PeopleAppendMessageBuilder.Build(token, superProperties, properties, distinctId, config);
         }
 
         #endregion PeopleAppend
@@ -489,24 +486,26 @@ namespace Mixpanel
         public bool PeopleUnion(object distinctId, object properties)
         {
             return SendMessageInternal(
-                () => CreatePeopleUnionMessageObject(distinctId, properties),
+                MessageKind.PeopleUnion,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleUnion);
+                () => BuildPeopleUnionMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleUnionAsync(object properties)
         {
-            return await PeopleUnionAsync(null, properties).ConfigureAwait(false);
+            return await PeopleUnionAsync(null, properties)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleUnionAsync(object distinctId, object properties)
         {
             return await SendMessageInternalAsync(
-                () => CreatePeopleUnionMessageObject(distinctId, properties),
+                MessageKind.PeopleUnion,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleUnion).ConfigureAwait(false);
+                () => BuildPeopleUnionMessage(distinctId, properties))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -520,7 +519,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.PeopleUnion,
-                () => CreatePeopleUnionMessageObject(distinctId, properties));
+                () => BuildPeopleUnionMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
@@ -532,15 +531,12 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest PeopleUnionTest(object distinctId, object properties)
         {
-            return TestMessage(() => CreatePeopleUnionMessageObject(distinctId, properties));
+            return TestMessage(() => BuildPeopleUnionMessage(distinctId, properties));
         }
 
-        private IDictionary<string, object> CreatePeopleUnionMessageObject(
-            object distinctId, object properties)
+        private MessageBuildResult BuildPeopleUnionMessage(object distinctId, object properties)
         {
-            MessageBuildResult result =
-                PeopleUnionMessageBuilder.Build(token, superProperties, properties, distinctId, config);
-            return GetMessageObject(result);
+            return PeopleUnionMessageBuilder.Build(token, superProperties, properties, distinctId, config);
         }
 
         #endregion PeopleUnion
@@ -557,24 +553,26 @@ namespace Mixpanel
         public bool PeopleRemove(object distinctId, object properties)
         {
             return SendMessageInternal(
-                () => CreatePeopleRemoveMessageObject(distinctId, properties),
+                MessageKind.PeopleRemove,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleRemove);
+                () => BuildPeopleRemoveMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleRemoveAsync(object properties)
         {
-            return await PeopleRemoveAsync(null, properties).ConfigureAwait(false);
+            return await PeopleRemoveAsync(null, properties)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleRemoveAsync(object distinctId, object properties)
         {
             return await SendMessageInternalAsync(
-                () => CreatePeopleRemoveMessageObject(distinctId, properties),
+                MessageKind.PeopleRemove,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleRemove).ConfigureAwait(false);
+                () => BuildPeopleRemoveMessage(distinctId, properties))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -588,7 +586,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.PeopleRemove,
-                () => CreatePeopleRemoveMessageObject(distinctId, properties));
+                () => BuildPeopleRemoveMessage(distinctId, properties));
         }
 
         /// <inheritdoc/>
@@ -600,15 +598,12 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest PeopleRemoveTest(object distinctId, object properties)
         {
-            return TestMessage(() => CreatePeopleRemoveMessageObject(distinctId, properties));
+            return TestMessage(() => BuildPeopleRemoveMessage(distinctId, properties));
         }
 
-        private IDictionary<string, object> CreatePeopleRemoveMessageObject(
-            object distinctId, object properties)
+        private MessageBuildResult BuildPeopleRemoveMessage(object distinctId, object properties)
         {
-            MessageBuildResult result =
-                PeopleRemoveMessageBuilder.Build(token, superProperties, properties, distinctId, config);
-            return GetMessageObject(result);
+            return PeopleRemoveMessageBuilder.Build(token, superProperties, properties, distinctId, config);
         }
 
         #endregion PeopleRemove
@@ -625,24 +620,26 @@ namespace Mixpanel
         public bool PeopleUnset(object distinctId, IEnumerable<string> propertyNames)
         {
             return SendMessageInternal(
-                () => CreatePeopleUnsetMessageObject(distinctId, propertyNames),
+                MessageKind.PeopleUnset,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleUnset);
+                () => BuildPeopleUnsetMessage(distinctId, propertyNames));
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleUnsetAsync(IEnumerable<string> propertyNames)
         {
-            return await PeopleUnsetAsync(null, propertyNames).ConfigureAwait(false);
+            return await PeopleUnsetAsync(null, propertyNames)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleUnsetAsync(object distinctId, IEnumerable<string> propertyNames)
         {
             return await SendMessageInternalAsync(
-                () => CreatePeopleUnsetMessageObject(distinctId, propertyNames),
+                MessageKind.PeopleUnset,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleUnset).ConfigureAwait(false);
+                () => BuildPeopleUnsetMessage(distinctId, propertyNames))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -656,7 +653,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.PeopleUnset,
-                () => CreatePeopleUnsetMessageObject(distinctId, propertyNames));
+                () => BuildPeopleUnsetMessage(distinctId, propertyNames));
         }
 
         /// <inheritdoc/>
@@ -668,16 +665,14 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest PeopleUnsetTest(object distinctId, IEnumerable<string> propertyNames)
         {
-            return TestMessage(() => CreatePeopleUnsetMessageObject(distinctId, propertyNames));
+            return TestMessage(() => BuildPeopleUnsetMessage(distinctId, propertyNames));
         }
 
-        private IDictionary<string, object> CreatePeopleUnsetMessageObject(
+        private MessageBuildResult BuildPeopleUnsetMessage(
             object distinctId,
             IEnumerable<string> propertyNames)
         {
-            MessageBuildResult result =
-                PeopleUnsetMessageBuilder.Build(token, superProperties, propertyNames, distinctId, config);
-            return GetMessageObject(result);
+            return PeopleUnsetMessageBuilder.Build(token, superProperties, propertyNames, distinctId, config);
         }
 
         #endregion PeopleUnset
@@ -694,24 +689,26 @@ namespace Mixpanel
         public bool PeopleDelete(object distinctId)
         {
             return SendMessageInternal(
-                () => CreatePeopleDeleteObject(distinctId),
+                MessageKind.PeopleDelete,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleDelete);
+                () => BuildPeopleDeleteMessage(distinctId));
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleDeleteAsync()
         {
-            return await PeopleDeleteAsync(null).ConfigureAwait(false);
+            return await PeopleDeleteAsync(null)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleDeleteAsync(object distinctId)
         {
             return await SendMessageInternalAsync(
-                () => CreatePeopleDeleteObject(distinctId),
+                MessageKind.PeopleDelete,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleDelete).ConfigureAwait(false);
+                () => BuildPeopleDeleteMessage(distinctId))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -725,7 +722,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.PeopleDelete,
-                () => CreatePeopleDeleteObject(distinctId));
+                () => BuildPeopleDeleteMessage(distinctId));
         }
 
         /// <inheritdoc/>
@@ -737,14 +734,12 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest PeopleDeleteTest(object distinctId)
         {
-            return TestMessage(() => CreatePeopleDeleteObject(distinctId));
+            return TestMessage(() => BuildPeopleDeleteMessage(distinctId));
         }
 
-        private IDictionary<string, object> CreatePeopleDeleteObject(object distinctId)
+        private MessageBuildResult BuildPeopleDeleteMessage(object distinctId)
         {
-            MessageBuildResult result =
-                PeopleDeleteMessageBuilder.Build(token, superProperties, distinctId, config);
-            return GetMessageObject(result);
+            return PeopleDeleteMessageBuilder.Build(token, superProperties, distinctId, config);
         }
 
         #endregion PeopleDelete
@@ -773,36 +768,40 @@ namespace Mixpanel
         public bool PeopleTrackCharge(object distinctId, decimal amount, DateTime time)
         {
             return SendMessageInternal(
-                () => CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
+                MessageKind.PeopleTrackCharge,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleTrackCharge);
+                () => BuildPeopleTrackChargeMessage(distinctId, amount, time));
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleTrackChargeAsync(decimal amount)
         {
-            return await PeopleTrackChargeAsync(null, amount).ConfigureAwait(false);
+            return await PeopleTrackChargeAsync(null, amount)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount)
         {
-            return await PeopleTrackChargeAsync(distinctId, amount, UtcNow()).ConfigureAwait(false);
+            return await PeopleTrackChargeAsync(distinctId, amount, UtcNow())
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleTrackChargeAsync(decimal amount, DateTime time)
         {
-            return await PeopleTrackChargeAsync(null, amount, time).ConfigureAwait(false);
+            return await PeopleTrackChargeAsync(null, amount, time)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount, DateTime time)
         {
             return await SendMessageInternalAsync(
-                () => CreatePeopleTrackChargeMessageObject(distinctId, amount, time),
+                MessageKind.PeopleTrackCharge,
                 MixpanelMessageEndpoint.Engage,
-                MessageKind.PeopleTrackCharge).ConfigureAwait(false);
+                () => BuildPeopleTrackChargeMessage(distinctId, amount, time))
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -828,7 +827,7 @@ namespace Mixpanel
         {
             return GetMessage(
                 MessageKind.PeopleTrackCharge,
-                () => CreatePeopleTrackChargeMessageObject(distinctId, amount, time));
+                () => BuildPeopleTrackChargeMessage(distinctId, amount, time));
         }
 
         /// <inheritdoc/>
@@ -852,59 +851,24 @@ namespace Mixpanel
         /// <inheritdoc/>
         public MixpanelMessageTest PeopleTrackChargeTest(object distinctId, decimal amount, DateTime time)
         {
-            return TestMessage(() => CreatePeopleTrackChargeMessageObject(distinctId, amount, time));
+            return TestMessage(() => BuildPeopleTrackChargeMessage(distinctId, amount, time));
         }
 
-        private IDictionary<string, object> CreatePeopleTrackChargeMessageObject(
+        private MessageBuildResult BuildPeopleTrackChargeMessage(
             object distinctId, decimal amount, DateTime time)
         {
-            MessageBuildResult result =
-                PeopleTrackChargeMessageBuilder.Build(
-                    token, 
-                    superProperties, 
-                    amount,
-                    time,
-                    distinctId, 
-                    config);
-            return GetMessageObject(result);
+            return PeopleTrackChargeMessageBuilder.Build(
+                token,
+                superProperties,
+                amount,
+                time,
+                distinctId,
+                config);
         }
 
         #endregion
 
         #region Send
-
-        /// <inheritdoc/>
-        public SendResult Send(IEnumerable<MixpanelMessage> messages)
-        {
-            var resultInternal = new SendResultInternal();
-            var batchMessage = new BatchMessageWrapper(messages);
-
-            List<List<MixpanelMessage>> batchTrackMessages = batchMessage.TrackMessages;
-            if (batchTrackMessages != null)
-            {
-                foreach (var trackMessages in batchTrackMessages)
-                {
-                    var msgs = trackMessages;
-                    bool success = SendMessageInternal(
-                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Track, MessageKind.Batch);
-                    resultInternal.Update(success, msgs);
-                }
-            }
-
-            List<List<MixpanelMessage>> batchEngageMessages = batchMessage.EngageMessages;
-            if (batchEngageMessages != null)
-            {
-                foreach (var engageMessages in batchEngageMessages)
-                {
-                    var msgs = engageMessages;
-                    bool success = SendMessageInternal(
-                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Engage, MessageKind.Batch);
-                    resultInternal.Update(success, msgs);
-                }
-            }
-
-            return resultInternal.ToRealSendResult();
-        }
 
         /// <inheritdoc/>
         public SendResult Send(params MixpanelMessage[] messages)
@@ -913,36 +877,31 @@ namespace Mixpanel
         }
 
         /// <inheritdoc/>
-        public async Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages)
+        public SendResult Send(IEnumerable<MixpanelMessage> messages)
         {
             var resultInternal = new SendResultInternal();
             var batchMessage = new BatchMessageWrapper(messages);
 
-            List<List<MixpanelMessage>> batchTrackMessages = batchMessage.TrackMessages;
-            if (batchTrackMessages != null)
-            {
-                foreach (var trackMessages in batchTrackMessages)
-                {
-                    var msgs = trackMessages;
-                    bool success = await SendMessageInternalAsync(
-                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Track, MessageKind.Batch).ConfigureAwait(false);
-                    resultInternal.Update(success, msgs);
-                }
-            }
-
-            List<List<MixpanelMessage>> batchEngageMessages = batchMessage.EngageMessages;
-            if (batchEngageMessages != null)
-            {
-                foreach (var engageMessages in batchEngageMessages)
-                {
-                    var msgs = engageMessages;
-                    bool success = await SendMessageInternalAsync(
-                        () => GetBatchMessageData(msgs), MixpanelMessageEndpoint.Engage, MessageKind.Batch).ConfigureAwait(false);
-                    resultInternal.Update(success, msgs);
-                }
-            }
+            SendBatches(MixpanelMessageEndpoint.Track, batchMessage.TrackMessages);
+            SendBatches(MixpanelMessageEndpoint.Engage, batchMessage.EngageMessages);
 
             return resultInternal.ToRealSendResult();
+
+            void SendBatches(MixpanelMessageEndpoint endpoint, List<List<MixpanelMessage>> batches)
+            {
+                if (batches == null)
+                {
+                    return;
+                }
+
+                foreach (List<MixpanelMessage> batch in batches)
+                {
+                    bool success = SendMessageInternal(
+                        endpoint,
+                        () => new BatchMessageBuildResult(batch));
+                    resultInternal.Update(success, batch);
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -952,21 +911,50 @@ namespace Mixpanel
         }
 
         /// <inheritdoc/>
+        public async Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages)
+        {
+            var resultInternal = new SendResultInternal();
+            var batchMessage = new BatchMessageWrapper(messages);
+
+            await SendBatches(MixpanelMessageEndpoint.Track, batchMessage.TrackMessages);
+            await SendBatches(MixpanelMessageEndpoint.Engage, batchMessage.EngageMessages);
+
+            return resultInternal.ToRealSendResult();
+
+            async Task SendBatches(MixpanelMessageEndpoint endpoint, List<List<MixpanelMessage>> batches)
+            {
+                if (batches == null)
+                {
+                    return;
+                }
+
+                foreach (List<MixpanelMessage> batch in batches)
+                {
+                    bool success = await SendMessageInternalAsync(
+                        endpoint,
+                        () => new BatchMessageBuildResult(batch));
+                    resultInternal.Update(success, batch);
+                }
+            }
+        }
+
+        /// <inheritdoc/>
         public ReadOnlyCollection<MixpanelBatchMessageTest> SendTest(IEnumerable<MixpanelMessage> messages)
         {
             var batchMessageWrapper = new BatchMessageWrapper(messages);
 
             // Concatenate both 'TrackMessages' and 'EngageMessages' in one list
-            var batchMessages =
+            List<List<MixpanelMessage>> batchMessages =
                 (batchMessageWrapper.TrackMessages ?? new List<List<MixpanelMessage>>(0))
-                .Concat(((batchMessageWrapper.EngageMessages ?? new List<List<MixpanelMessage>>(0))))
+                .Concat(batchMessageWrapper.EngageMessages ?? new List<List<MixpanelMessage>>(0))
                 .ToList();
 
             var testMessages = new List<MixpanelBatchMessageTest>(batchMessages.Count);
 
-            foreach (var batchMessage in batchMessages)
+            foreach (List<MixpanelMessage> batchMessage in batchMessages)
             {
-                var testMessage = new MixpanelBatchMessageTest { Data = GetBatchMessageData(batchMessage) };
+                var batchMessageBuildResult = new BatchMessageBuildResult(batchMessage);
+                var testMessage = new MixpanelBatchMessageTest { Data = batchMessageBuildResult.Message };
 
                 try
                 {
@@ -990,68 +978,6 @@ namespace Mixpanel
             return SendTest(messages as IEnumerable<MixpanelMessage>);
         }
 
-        private IList<IDictionary<string, object>> GetBatchMessageData(IList<MixpanelMessage> messages)
-        {
-            Debug.Assert(messages != null);
-
-            return messages
-                .Select(msg => msg.Data)
-                .ToList();
-        }
-
-        private class SendResultInternal
-        {
-            private bool success;
-            private List<List<MixpanelMessage>> sentBatches;
-            private List<List<MixpanelMessage>> failedBatches;
-
-            public SendResultInternal()
-            {
-                success = true;
-            }
-
-            public void Update(bool batchSuccess, List<MixpanelMessage> mixpanelMessages)
-            {
-                success &= batchSuccess;
-
-                if (batchSuccess)
-                {
-                    if (sentBatches == null)
-                    {
-                        sentBatches = new List<List<MixpanelMessage>>();
-                    }
-
-                    sentBatches.Add(mixpanelMessages);
-                }
-                else
-                {
-                    if (failedBatches == null)
-                    {
-                        failedBatches = new List<List<MixpanelMessage>>();
-                    }
-
-                    failedBatches.Add(mixpanelMessages);
-                }
-            }
-
-            public SendResult ToRealSendResult()
-            {
-                var result = new SendResult { Success = success };
-
-                if (sentBatches != null)
-                {
-                    result.SentBatches = sentBatches.Select(x => x.AsReadOnly()).ToList().AsReadOnly();
-                }
-
-                if (failedBatches != null)
-                {
-                    result.FailedBatches = failedBatches.Select(x => x.AsReadOnly()).ToList().AsReadOnly();
-                }
-
-                return result;
-            }
-        }
-
         #endregion Send
 
         #region SendJson
@@ -1069,43 +995,47 @@ namespace Mixpanel
         }
 
         #endregion SendJson
-        
-
-        private IDictionary<string, object> GetMessageObject(MessageBuildResult messageBuildResult)
-        {
-            if (!messageBuildResult.Success)
-            {
-                throw new Exception(messageBuildResult.Error);
-            }
-
-            return messageBuildResult.Message;
-        }
 
         private MixpanelMessage GetMessage(
-            MessageKind messageKind, Func<IDictionary<string, object>> getMessageDataFn)
+            MessageKind messageKind,
+            Func<MessageBuildResult> messageBuildResultFn)
         {
             try
             {
+                MessageBuildResult messageBuildResult = messageBuildResultFn();
+                if (!messageBuildResult.Success)
+                {
+                    LogError(
+                        $"Cannot build message for {messageKind}.",
+                        new Exception(messageBuildResult.Error));
+                }
+
                 return new MixpanelMessage
                 {
                     Kind = messageKind,
-                    Data = getMessageDataFn()
+                    Data = messageBuildResult.Message
                 };
             }
             catch (Exception e)
             {
-                LogError($"Error creating '{messageKind}' message.", e);
+                LogError($"Error building message for {messageKind}.", e);
                 return null;
             }
         }
 
-        private MixpanelMessageTest TestMessage(Func<IDictionary<string, object>> getMessageDataFn)
+        private MixpanelMessageTest TestMessage(Func<MessageBuildResult> messageBuildResultFn)
         {
             var testMessage = new MixpanelMessageTest();
 
             try
             {
-                testMessage.Data = getMessageDataFn();
+                MessageBuildResult messageBuildResult = messageBuildResultFn();
+                if (!messageBuildResult.Success)
+                {
+                    throw new Exception(messageBuildResult.Error);
+                }
+
+                testMessage.Data = messageBuildResult.Message;
                 testMessage.Json = ToJson(testMessage.Data);
                 testMessage.Base64 = ToBase64(testMessage.Json);
             }

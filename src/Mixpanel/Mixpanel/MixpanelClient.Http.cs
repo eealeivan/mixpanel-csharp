@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Text;
-using Mixpanel.Exceptions;
 using System.Threading.Tasks;
+using Mixpanel.Exceptions;
+using Mixpanel.MessageBuilders;
 
 namespace Mixpanel
 {
@@ -57,27 +58,65 @@ namespace Mixpanel
             return "data=" + base64;
         }
 
-        private string GetMessageBody(Func<object> messageDataFn, MessageKind messageKind)
+        private void ThrowIfJsonNotConfigured()
         {
 #if !JSON
             if (!ConfigHelper.SerializeJsonFnSet(config))
             {
                 throw new MixpanelConfigurationException(
-                    "There is no default JSON serializer in this build of Mixpanel C#. Please use configuration to set it. JSON.NET example: MixpanelConfig.Global.SerializeJsonFn = JsonConvert.SerializeObject;");
+                    "There is no default JSON serializer in this build of Mixpanel C#. " +
+                    "Please use configuration to set it. " +
+                    "JSON.NET example: MixpanelConfig.Global.SerializeJsonFn = JsonConvert.SerializeObject;");
             }
 #endif
+        }
 
-            object messageData;
+        private string GetMessageBody(Func<MessageBuildResult> messageBuildResultFn, MessageKind messageKind)
+        {
+            ThrowIfJsonNotConfigured();
+
+            MessageBuildResult messageBuildResult;
             try
             {
-                messageData = messageDataFn();
+                messageBuildResult = messageBuildResultFn();
             }
             catch (Exception e)
             {
-                LogError($"Error creating message data for {messageKind} message.", e);
+                LogError($"Error building message for {messageKind}.", e);
                 return null;
             }
 
+            if (!messageBuildResult.Success)
+            {
+                LogError(
+                    $"Cannot build message for {messageKind}.",
+                    new Exception(messageBuildResult.Error));
+                return null;
+            }
+
+            return GetMessageBody(messageBuildResult.Message);
+        }
+
+        private string GetMessageBody(Func<BatchMessageBuildResult> getBatchMessageBuildResultFn)
+        {
+            ThrowIfJsonNotConfigured();
+
+            BatchMessageBuildResult batchMessageBuildResult;
+            try
+            {
+                batchMessageBuildResult = getBatchMessageBuildResultFn();
+            }
+            catch (Exception e)
+            {
+                LogError($"Error building message for {MessageKind.Batch}.", e);
+                return null;
+            }
+
+            return GetMessageBody(batchMessageBuildResult.Message);
+        }
+
+        private string GetMessageBody(object messageData)
+        {
             string json;
             try
             {
@@ -89,15 +128,18 @@ namespace Mixpanel
                 return null;
             }
 
+            string base64Message;
             try
             {
-                return "data=" + ToBase64(json);
+                base64Message = "data=" + ToBase64(json);
             }
             catch (Exception e)
             {
                 LogError("Error converting message JSON to base64.", e);
                 return null;
             }
+
+            return base64Message;
         }
 
         private bool HttpPost(MixpanelMessageEndpoint endpoint, string messageBody)
@@ -133,9 +175,11 @@ namespace Mixpanel
         }
 
         private bool SendMessageInternal(
-            Func<object> getMessageDataFn, MixpanelMessageEndpoint endpoint, MessageKind messageKind)
+            MessageKind messageKind,
+            MixpanelMessageEndpoint endpoint,
+            Func<MessageBuildResult> getMessageBuildResultFn)
         {
-            string messageBody = GetMessageBody(getMessageDataFn, messageKind);
+            string messageBody = GetMessageBody(getMessageBuildResultFn, messageKind);
             if (messageBody == null)
             {
                 return false;
@@ -145,7 +189,48 @@ namespace Mixpanel
         }
 
         private bool SendMessageInternal(
-            MixpanelMessageEndpoint endpoint, string messageJson)
+            MixpanelMessageEndpoint endpoint,
+            Func<BatchMessageBuildResult> getBatchMessageBuildResultFn)
+        {
+            string messageBody = GetMessageBody(getBatchMessageBuildResultFn);
+            if (messageBody == null)
+            {
+                return false;
+            }
+
+            return HttpPost(endpoint, messageBody);
+        }
+
+        private async Task<bool> SendMessageInternalAsync(
+            MessageKind messageKind,
+            MixpanelMessageEndpoint endpoint,
+            Func<MessageBuildResult> getMessageBuildResultFn)
+        {
+            string messageBody = GetMessageBody(getMessageBuildResultFn, messageKind);
+            if (messageBody == null)
+            {
+                return await Task.FromResult(false).ConfigureAwait(false);
+            }
+
+            return await HttpPostAsync(endpoint, messageBody).ConfigureAwait(false);
+        }
+
+        private async Task<bool> SendMessageInternalAsync(
+            MixpanelMessageEndpoint endpoint,
+            Func<BatchMessageBuildResult> getBatchMessageBuildResultFn)
+        {
+            string messageBody = GetMessageBody(getBatchMessageBuildResultFn);
+            if (messageBody == null)
+            {
+                return await Task.FromResult(false).ConfigureAwait(false);
+            }
+
+            return await HttpPostAsync(endpoint, messageBody).ConfigureAwait(false);
+        }
+
+        private bool SendMessageInternal(
+            MixpanelMessageEndpoint endpoint,
+            string messageJson)
         {
             string messageBody = ToMixpanelMessageFormat(ToBase64(messageJson));
             if (messageBody == null)
@@ -157,19 +242,8 @@ namespace Mixpanel
         }
 
         private async Task<bool> SendMessageInternalAsync(
-            Func<object> getMessageDataFn, MixpanelMessageEndpoint endpoint, MessageKind messageKind)
-        {
-            string messageBody = GetMessageBody(getMessageDataFn, messageKind);
-            if (messageBody == null)
-            {
-                return await Task.FromResult(false).ConfigureAwait(false);
-            }
-
-            return await HttpPostAsync(endpoint, messageBody).ConfigureAwait(false);
-        }
-
-        private async Task<bool> SendMessageInternalAsync(
-            MixpanelMessageEndpoint endpoint, string messageJson)
+            MixpanelMessageEndpoint endpoint, 
+            string messageJson)
         {
             string messageBody = ToMixpanelMessageFormat(ToBase64(messageJson));
             if (messageBody == null)
