@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -67,6 +68,22 @@ namespace Mixpanel.Tests.MixpanelClient
 
             Assert.That(res.Success, Is.EqualTo(true));
             CheckSend(2, 2);
+        }
+
+        [Test]
+        public void Given_SendTest_When_CorrectMessages_Then_CorrectDataReturned()
+        {
+            ReadOnlyCollection<MixpanelBatchMessageTest> mixpanelBatchMessageTests = 
+                Client.SendTest(GetSendMessages(10, 10));
+
+            Assert.That(mixpanelBatchMessageTests.Count, Is.EqualTo(2));
+            foreach (var mixpanelBatchMessageTest in mixpanelBatchMessageTests)
+            {
+                Assert.That(mixpanelBatchMessageTest.Data.Count, Is.EqualTo(10));
+                Assert.That(mixpanelBatchMessageTest.Json, Is.Not.Null);
+                Assert.That(mixpanelBatchMessageTest.Base64, Is.Not.Null);
+                Assert.That(mixpanelBatchMessageTest.Exception, Is.Null);
+            }
         }
 
         private IList<MixpanelMessage> GetSendMessages(
