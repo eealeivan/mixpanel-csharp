@@ -7,10 +7,10 @@ namespace Mixpanel.Parsers
         public static ValueParseResult Parse(object rawValue, bool allowCollections = false)
         {
             if (rawValue == null ||
+                rawValue is char ||
                 rawValue is string || 
                 rawValue is bool ||
                 NumberParser.IsNumber(rawValue) ||
-                rawValue is char ||
                 rawValue is Guid ||
                 rawValue is TimeSpan)
             {
