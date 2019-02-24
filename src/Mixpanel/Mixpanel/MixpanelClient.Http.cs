@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using Mixpanel.Exceptions;
 using Mixpanel.MessageBuilders;
 
 namespace Mixpanel
@@ -74,7 +75,7 @@ namespace Mixpanel
             {
                 LogError(
                     $"Cannot build message for {messageKind}.",
-                    new Exception(messageBuildResult.Error));
+                    new MixpanelMessageBuildException(messageBuildResult.Error));
                 return null;
             }
 
