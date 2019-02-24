@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-#if !JSON
-using Newtonsoft.Json;
-#endif
 
 namespace Mixpanel.Tests.MixpanelClient
 {
@@ -15,14 +12,7 @@ namespace Mixpanel.Tests.MixpanelClient
         [SetUp]
         public void SetUp()
         {
-            mixpanelClient = new Mixpanel.MixpanelClient(
-                Token,
-                new MixpanelConfig
-                {
-#if !JSON
-                       SerializeJsonFn = obj => JsonConvert.SerializeObject(obj)
-#endif
-                });
+            mixpanelClient = new Mixpanel.MixpanelClient(Token);
         }
 
         [Test]

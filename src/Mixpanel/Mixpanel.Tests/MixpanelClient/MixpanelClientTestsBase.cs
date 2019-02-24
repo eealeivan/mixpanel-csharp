@@ -54,11 +54,7 @@ namespace Mixpanel.Tests.MixpanelClient
                 {
                     HttpPostEntries.Add((endpoint, data));
                     return Task.Run(() => true);
-                },
-
-#if !JSON
-                SerializeJsonFn = obj => JsonConvert.SerializeObject(obj)
-#endif
+                }
             };
         }
 

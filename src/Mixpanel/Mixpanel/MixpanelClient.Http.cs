@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-using Mixpanel.Exceptions;
 using Mixpanel.MessageBuilders;
 
 namespace Mixpanel
@@ -58,23 +57,8 @@ namespace Mixpanel
             return "data=" + base64;
         }
 
-        private void ThrowIfJsonNotConfigured()
-        {
-#if !JSON
-            if (!ConfigHelper.SerializeJsonFnSet(config))
-            {
-                throw new MixpanelConfigurationException(
-                    "There is no default JSON serializer in this build of Mixpanel C#. " +
-                    "Please use configuration to set it. " +
-                    "JSON.NET example: MixpanelConfig.Global.SerializeJsonFn = JsonConvert.SerializeObject;");
-            }
-#endif
-        }
-
         private string GetMessageBody(Func<MessageBuildResult> messageBuildResultFn, MessageKind messageKind)
         {
-            ThrowIfJsonNotConfigured();
-
             MessageBuildResult messageBuildResult;
             try
             {
@@ -99,8 +83,6 @@ namespace Mixpanel
 
         private string GetMessageBody(Func<BatchMessageBuildResult> getBatchMessageBuildResultFn)
         {
-            ThrowIfJsonNotConfigured();
-
             BatchMessageBuildResult batchMessageBuildResult;
             try
             {
@@ -163,7 +145,7 @@ namespace Mixpanel
             string url = GenerateUrl(endpoint);
             try
             {
-                var httpPostFn = ConfigHelper.GetAsyncHttpPostFn(config);
+                var httpPostFn = ConfigHelper.GetHttpPostAsyncFn(config);
                 return await httpPostFn(url, messageBody).ConfigureAwait(false);
             }
             catch (Exception e)

@@ -16,10 +16,10 @@
   
   <!--NET 4.5-->
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
-    <DefineConstants>NET45;JSON</DefineConstants>
+    <DefineConstants>NET45</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
-    <DefineConstants>NET45;JSON</DefineConstants>
+    <DefineConstants>NET45</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net45'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />

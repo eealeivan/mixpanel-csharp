@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Mixpanel.Json;
 
 namespace Mixpanel
 {
@@ -13,7 +14,7 @@ namespace Mixpanel
             if (MixpanelConfig.Global.SerializeJsonFn != null)
                 return MixpanelConfig.Global.SerializeJsonFn;
 
-            return new DefaultJsonSerializer().Serialize;
+            return MixpanelJsonSerializer.Serialize;
         }
 
         public static Func<string, string, bool> GetHttpPostFn(MixpanelConfig config)
@@ -27,7 +28,7 @@ namespace Mixpanel
             return new DefaultHttpClient().Post;
         }
 
-        public static Func<string, string, Task<bool>> GetAsyncHttpPostFn(MixpanelConfig config)
+        public static Func<string, string, Task<bool>> GetHttpPostAsyncFn(MixpanelConfig config)
         {
             if (config != null && config.AsyncHttpPostFn != null)
                 return config.AsyncHttpPostFn;
@@ -48,17 +49,6 @@ namespace Mixpanel
 
             return null;
         }
-
-
-#if !JSON
-        public static bool SerializeJsonFnSet(MixpanelConfig config)
-        {
-            return
-                MixpanelConfig.Global.SerializeJsonFn != null ||
-                (config != null && config.SerializeJsonFn != null);
-
-        }
-#endif
 
         public static MixpanelPropertyNameFormat GetMixpanelPropertyNameFormat(MixpanelConfig config)
         {

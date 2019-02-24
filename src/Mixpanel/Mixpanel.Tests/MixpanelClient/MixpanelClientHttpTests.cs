@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 
-#if !JSON
-using Newtonsoft.Json;
-#endif
-
 namespace Mixpanel.Tests.MixpanelClient
 {
     [TestFixture]
@@ -56,10 +52,7 @@ namespace Mixpanel.Tests.MixpanelClient
                 {
                     urls.Add(endpoint);
                     return true;
-                },
-#if !JSON
-                SerializeJsonFn = obj => JsonConvert.SerializeObject(obj)
-#endif
+                }
             };
         }
 
