@@ -44,7 +44,7 @@ namespace Mixpanel.Json
 
         private static void Object(StringBuilder json, IDictionary<string, object> members)
         {
-            json.Append("{");
+            json.Append('{');
 
             int membersCount = members.Count;
             int counter = 0;
@@ -56,16 +56,16 @@ namespace Mixpanel.Json
                 bool isLast = membersCount == counter;
                 if (!isLast)
                 {
-                    json.Append(",");
+                    json.Append(',');
                 }
             }
 
-            json.Append("}");
+            json.Append('}');
         }
 
         private static void Array(StringBuilder json, ICollection values)
         {
-            json.Append("[");
+            json.Append('[');
 
             int valuesCount = values.Count;
             int counter = 0;
@@ -77,11 +77,11 @@ namespace Mixpanel.Json
                 bool isLast = valuesCount == counter;
                 if (!isLast)
                 {
-                    json.Append(",");
+                    json.Append(',');
                 }
             }
 
-            json.Append("]");
+            json.Append(']');
         }
 
         private static void Member(StringBuilder json, string name, object value)
@@ -89,7 +89,7 @@ namespace Mixpanel.Json
             Quote(json);
             json.Append(name);
             Quote(json);
-            json.Append(":");
+            json.Append(':');
 
             Value(json, value);
         }
@@ -194,32 +194,38 @@ namespace Mixpanel.Json
                 switch (@char)
                 {
                     case '"':
-                        json.Append(@"\");
+                        json.Append('\\');
                         Quote(json);
                         break;
 
                     case '\\':
-                        json.Append(@"\\");
+                        json.Append('\\');
+                        json.Append('\\');
                         break;
 
                     case '\b':
-                        json.Append(@"\b");
+                        json.Append('\\');
+                        json.Append('b');
                         break;
 
                     case '\f':
-                        json.Append(@"\f");
+                        json.Append('\\');
+                        json.Append('f');
                         break;
 
                     case '\n':
-                        json.Append(@"\n");
+                        json.Append('\\');
+                        json.Append('n');
                         break;
 
                     case '\r':
-                        json.Append(@"\r");
+                        json.Append('\\');
+                        json.Append('r');
                         break;
 
                     case '\t':
-                        json.Append(@"\t");
+                        json.Append('\\');
+                        json.Append('t');
                         break;
 
                     default:
@@ -232,7 +238,7 @@ namespace Mixpanel.Json
 
         private static void Quote(StringBuilder json)
         {
-            json.Append("\"");
+            json.Append('"');
         }
     }
 }
