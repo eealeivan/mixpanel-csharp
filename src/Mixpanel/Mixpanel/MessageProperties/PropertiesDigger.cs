@@ -33,8 +33,7 @@ namespace Mixpanel.MessageProperties
                 case IDictionary dic:
                     foreach (DictionaryEntry entry in dic)
                     {
-                        var stringKey = entry.Key as string;
-                        if (stringKey == null)
+                        if (!(entry.Key is string stringKey))
                         {
                             continue;
                         }
@@ -117,7 +116,7 @@ namespace Mixpanel.MessageProperties
             });
         }
 
-        class ObjectPropertyInfo
+        sealed class ObjectPropertyInfo
         {
             public string PropertyName { get; }
             public PropertyNameSource PropertyNameSource { get; }

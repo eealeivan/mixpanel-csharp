@@ -107,6 +107,20 @@ namespace Mixpanel.Tests.MessageProperties
 
 #endif
 
+        [Test]
+        public void Given_AnonymousClass_When_ValidInput_Then_AllParsed()
+        {
+            var obj = new
+            {
+                DecimalProperty = DecimalPropertyValue,
+                StringProperty = StringPropertyValue,
+                DateTimeProperty = DateTimePropertyValue
+            };
+
+            var properties = PropertiesDigger.Get(obj, PropertyOrigin.RawProperty).ToArray();
+            CheckProperties(properties);
+        }
+
         /// <summary>
         /// All properties should be processed
         /// </summary>
