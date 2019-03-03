@@ -3,7 +3,7 @@
 
 ## Features
 - Supports full [Mixpanel HTTP Tracking API](https://mixpanel.com/help/reference/http)
-- [Send tracking messages](https://github.com/eealeivan/mixpanel-csharp/wiki/Sending-messages) synchronously or asynchronously, pack them into batches, save messages to send them later
+- [Send tracking messages](https://github.com/eealeivan/mixpanel-csharp/wiki/Sending-messages) synchronously or asynchronously, pack them into batches, create messages to send them later
 - Pass [message data](https://github.com/eealeivan/mixpanel-csharp/wiki/Message-data) in form that you prefer: predifined contract,  `IDictionary<string, object>`, anonymous type or dynamic
 - Add properties globally to all messages with super properties. Usable for properties such as `distinct_id`
 - Great [configurability](https://github.com/eealeivan/mixpanel-csharp/wiki/Configuration). For example you can provide your own JSON serializer or function that will make HTTP requests
@@ -16,19 +16,19 @@
 var mc = new MixpanelClient("e3bc4100330c35722740fb8c6f5abddc");
 await mc.TrackAsync("Level Complete", new {
     DistinctId = "12345",
-    Time = new DateTime(2013, 11, 30, 0, 0, 0, DateTimeKind.Utc),
-    LevelNumber = 5
+    LevelNumber = 5,
+    Duration = TimeSpan.FromMinutes(1)
 });
 ```
-This will send the following JSON to `http://api.mixpanel.com/track/`:
+This will send the following JSON to `https://api.mixpanel.com/track/`:
 ```json
 {
   "event": "Level Complete",
   "properties": {
     "token": "e3bc4100330c35722740fb8c6f5abddc",
     "distinct_id": "12345",
-    "time": 1385769600,
-    "LevelNumber": 5
+    "LevelNumber": 5,
+    "$duration": 60
   }
 }
 ```
@@ -42,7 +42,7 @@ await mc.PeopleSetAsync(new {
     Kills = 215
 });
 ```
-This will send the following JSON to `http://api.mixpanel.com/engage/`:
+This will send the following JSON to `https://api.mixpanel.com/engage/`:
 ```json
 {
     "$token": "e3bc4100330c35722740fb8c6f5abddc",
