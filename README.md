@@ -1,5 +1,5 @@
 # mixpanel-csharp [![NuGet Version](http://img.shields.io/nuget/v/mixpanel-csharp.svg?style=flat)](https://www.nuget.org/packages/mixpanel-csharp/)
-[Mixpanel](https://mixpanel.com/) is a great analitics platform, but unfortunetally there is no official integration library for .NET. So if you are writing code on .NET and want to use Mixpanel, then ```mixpanel-csharp``` can be an excellent choise. ```mixpanel-csharp``` main idea is to hide most api details (you don't need to remember what time formatting to use, or in which cases you should prefix properties with ```$```) and concentrate on data that you want to analize.
+[Mixpanel](https://mixpanel.com/) is a great analitics platform, but unfortunetally there is no official integration library for .NET. So if you are writing code on .NET and want to use Mixpanel, then ```mixpanel-csharp``` can be an excellent choice. ```mixpanel-csharp``` main idea is to hide most api details (you don't need to remember what time formatting to use, or in which cases you should prefix properties with ```$```) and concentrate on data that you want to analize.
 
 ## Features
 - Supports full [Mixpanel HTTP Tracking API](https://mixpanel.com/help/reference/http)
