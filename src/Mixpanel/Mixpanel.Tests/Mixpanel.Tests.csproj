@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;net45;netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>net45;netcoreapp1.1</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,40 +13,13 @@
   <ItemGroup>
     <ProjectReference Include="..\Mixpanel\Mixpanel.csproj" />
   </ItemGroup>
-
-  <!--NET 3.5-->
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net35'">
-    <DefineConstants>NET35;WEB_REQUEST;JSON</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net35'">
-    <DefineConstants>NET35;WEB_REQUEST;JSON</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net35'">
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-  </ItemGroup>
-
-  <!--NET 4.0-->
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
-    <DefineConstants>NET40;WEB_REQUEST;JSON</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
-    <DefineConstants>NET40;WEB_REQUEST;JSON</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net40'">
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
   
   <!--NET 4.5-->
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
-    <DefineConstants>NET45;ASYNC;HTTP_CLIENT;JSON</DefineConstants>
+    <DefineConstants>NET45</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
-    <DefineConstants>NET45;ASYNC;HTTP_CLIENT;JSON</DefineConstants>
+    <DefineConstants>NET45</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net45'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
@@ -58,10 +31,10 @@
 
   <!--NET CORE 1.1-->
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp1.1'">
-    <DefineConstants>NETCOREAPP11;ASYNC;HTTP_CLIENT</DefineConstants>
+    <DefineConstants>NETCOREAPP11</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp1.1'">
-    <DefineConstants>NETCOREAPP11;ASYNC;HTTP_CLIENT</DefineConstants>
+    <DefineConstants>NETCOREAPP11</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp1.1'">
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
@@ -69,6 +42,21 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.5.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.5.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.5.0</Version>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

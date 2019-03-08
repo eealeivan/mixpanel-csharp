@@ -3,8 +3,7 @@
 namespace Mixpanel.Exceptions
 {
     /// <summary>
-    /// Exception indicates that Mixpanel is not proerly configured. 
-    /// The most common case is missing JSON or HTTP functionality.
+    /// Exception indicates that Mixpanel is not properly configured. 
     /// </summary>
     public class MixpanelConfigurationException : Exception
     {

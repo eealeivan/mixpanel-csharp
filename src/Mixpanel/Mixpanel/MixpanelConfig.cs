@@ -1,7 +1,5 @@
 ﻿using System;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 
 namespace Mixpanel
 {
@@ -24,17 +22,15 @@ namespace Mixpanel
         /// Takes 2 string parameters: url and content. Returns true if call was successful, and false otherwise.
         /// </summary>
         public Func<string, string, bool> HttpPostFn { get; set; }
-
-#if ASYNC
+        
         /// <summary>
         /// Gets or sets user defined function that will make async HTTP POST requests to mixpanel endpoints.
         /// Takes 2 string parameters: url and content. Returns true if call was successful, and false otherwise.
         /// </summary>
         public Func<string, string, Task<bool>> AsyncHttpPostFn { get; set; }
-#endif
 
         /// <summary>
-        /// Gets ot sets user defined function for retrievenig error logs. Takes 2 parameters: message and exception.
+        /// Gets ot sets user defined function for retrieving error logs. Takes 2 parameters: message and exception.
         /// </summary>
         public Action<string, Exception> ErrorLogFn { get; set; }
 
@@ -51,7 +47,7 @@ namespace Mixpanel
         /// <summary>
         /// A global instance of the config.
         /// </summary>
-        public static MixpanelConfig Global { get; private set; }
+        public static MixpanelConfig Global { get; }
 
         static MixpanelConfig()
         {
@@ -65,9 +61,7 @@ namespace Mixpanel
         {
             SerializeJsonFn = null;
             HttpPostFn = null;
-#if ASYNC
             AsyncHttpPostFn = null;
-#endif
             ErrorLogFn = null;
             MixpanelPropertyNameFormat = null;
             IpAddressHandling = null;

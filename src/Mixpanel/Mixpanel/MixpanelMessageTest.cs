@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Mixpanel
 {
     /// <summary>
-    /// Can be used to check all steps of creating a Mixapnel message.
+    /// Can be used to check all steps of creating a Mixpanel message.
     /// </summary>
     public class MixpanelMessageTest
     {
