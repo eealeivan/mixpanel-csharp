@@ -24,14 +24,22 @@ namespace Mixpanel.MessageBuilders.Track
             object distinctId,
             MixpanelConfig config)
         {
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                return MessageBuildResult.CreateFail("'token' is not set.");
-            }
-
             if (string.IsNullOrWhiteSpace(@event))
             {
-                return MessageBuildResult.CreateFail("'event' is not set.");
+                return MessageBuildResult.CreateFail($"'{nameof(@event)}' is not set.");
+            }
+
+            MessageCandidate messageCandidate = TrackMessageBuilderBase.CreateValidMessageCandidate(
+                token,
+                superProperties,
+                rawProperties,
+                distinctId,
+                config,
+                out string messageCandidateErrorMessage);
+
+            if (messageCandidate == null)
+            {
+                return MessageBuildResult.CreateFail(messageCandidateErrorMessage);
             }
 
             var message = new Dictionary<string, object>(2);
@@ -40,24 +48,17 @@ namespace Mixpanel.MessageBuilders.Track
             var properties = new Dictionary<string, object>();
             message["properties"] = properties;
 
-            var messageCandidate = new MessageCandidate(
-                token, 
-                superProperties,
-                rawProperties,
-                distinctId, 
-                config,
-                TrackSpecialPropertyMapper.RawNameToSpecialProperty);
-
             // Special properties
             foreach (KeyValuePair<string, ObjectProperty> pair in messageCandidate.SpecialProperties)
             {
                 string specialPropertyName = pair.Key;
                 ObjectProperty objectProperty = pair.Value;
 
-                ValueParseResult result = TrackSpecialPropertyParser.Parse(specialPropertyName, objectProperty.Value);
+                ValueParseResult result = 
+                    TrackSpecialPropertyParser.Parse(specialPropertyName, objectProperty.Value);
                 if (!result.Success)
                 {
-                    // The only required special properties are 'event' and 'token' which are set separately
+                    // The only required special properties are 'event' and 'token' which are controlled separately
                     continue;
                 }
 

@@ -52,6 +52,18 @@ namespace Mixpanel.Tests.MessageBuilders.Track
         }
 
         [Test]
+        public void When_TokenFromSuperProps_Then_AllPropertiesSet()
+        {
+            var superProperties = CreateSuperProperties(
+                ObjectProperty.Default("token", PropertyOrigin.SuperProperty, Token));
+
+            MessageBuildResult messageBuildResult = 
+                AliasMessageBuilder.Build(null, superProperties, DistinctId, Alias);
+
+            AssertMessageSuccess(messageBuildResult, Token, DistinctId, Alias);
+        }
+
+        [Test]
         public void When_NoToken_Then_MessageBuildFails()
         {
             MessageBuildResult messageBuildResult = AliasMessageBuilder.Build(null, null, DistinctId, Alias);
@@ -77,7 +89,8 @@ namespace Mixpanel.Tests.MessageBuilders.Track
             return objectProperties.ToList();
         }
 
-        private void AssertMessageSuccess(MessageBuildResult messageBuildResult, string token, string distinctId, string alias)
+        private void AssertMessageSuccess(
+            MessageBuildResult messageBuildResult, string token, string distinctId, string alias)
         {
             Assert.That(messageBuildResult.Success, Is.True);
             Assert.That(messageBuildResult.Error, Is.Null);

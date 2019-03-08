@@ -22,9 +22,17 @@ namespace Mixpanel.MessageBuilders.Track
             object distinctId, 
             object alias)
         {
-            if (string.IsNullOrWhiteSpace(token))
+            MessageCandidate messageCandidate = TrackMessageBuilderBase.CreateValidMessageCandidate(
+                token,
+                superProperties,
+                null,
+                distinctId,
+                null,
+                out string messageCandidateErrorMessage);
+
+            if (messageCandidate == null)
             {
-                return MessageBuildResult.CreateFail("'token' is not set.");
+                return MessageBuildResult.CreateFail(messageCandidateErrorMessage);
             }
 
             var message = new Dictionary<string, object>(2);
@@ -34,15 +42,7 @@ namespace Mixpanel.MessageBuilders.Track
             message["properties"] = properties;
 
             // token
-            properties["token"] = token;
-
-            var messageCandidate = new MessageCandidate(
-                token, 
-                superProperties, 
-                null,
-                distinctId, 
-                null,
-                TrackSpecialPropertyMapper.RawNameToSpecialProperty);
+            properties["token"] = messageCandidate.GetSpecialProperty(TrackSpecialProperty.Token).Value;
 
             // distinct_id
             ObjectProperty rawDistinctId = messageCandidate.GetSpecialProperty(TrackSpecialProperty.DistinctId);

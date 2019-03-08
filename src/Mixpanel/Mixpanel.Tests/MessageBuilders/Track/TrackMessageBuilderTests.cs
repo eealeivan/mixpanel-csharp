@@ -214,6 +214,25 @@ namespace Mixpanel.Tests.MessageBuilders.Track
         }
 
         [Test]
+        public void When_TokenFromRawProperties_Then_TokenSetInMessage()
+        {
+            var rawProperties = new
+            {
+                Token,
+                DistinctId
+            };
+
+            MessageBuildResult messageBuildResult =
+                TrackMessageBuilder.Build(null, Event, null, rawProperties, null, null);
+
+            AssertMessageSuccess(
+                messageBuildResult,
+                Token,
+                Event,
+                DistinctId);
+        }
+
+        [Test]
         public void When_NoToken_Then_MessageBuildFails()
         {
             MessageBuildResult messageBuildResult = TrackMessageBuilder.Build(null, Event, null, null, null, null);
