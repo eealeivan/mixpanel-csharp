@@ -48,7 +48,11 @@ namespace Mixpanel.MessageProperties
                 if (char.IsUpper(letter))
                 {
                     // Do not add space if previous letter is space
-                    if (propertyName[i - 1] != ' ')
+                    // Or the current word is "ID" and we're in title case mode
+                    if (propertyName[i - 1] != ' '
+                        && !(titleCase
+                        && char.ToUpper(propertyName[i - 1]).Equals('I')
+                        && char.ToUpper(letter).Equals('D')))
                     {
                         newName.Append(' ');
                     }
@@ -58,6 +62,11 @@ namespace Mixpanel.MessageProperties
                         letter = char.ToLower(letter);
                     }
                 }
+                else if (titleCase && char.ToUpper(letter).Equals('D') && propertyName[i - 1].Equals('I'))
+                {
+                    letter = char.ToUpper(letter);
+                }
+
                 newName.Append(letter);
             }
 
