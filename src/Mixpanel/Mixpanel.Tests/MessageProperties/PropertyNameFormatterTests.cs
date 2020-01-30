@@ -88,7 +88,9 @@ namespace Mixpanel.Tests.MessageProperties
                 ("someCoolProperty", "Some Cool Property"),
                 ("prop", "Prop"),
                 ("PropP", "Prop P"),
-                ("Some Cool Property", "Some Cool Property"));
+                ("Some Cool Property", "Some Cool Property"),
+                ("DistinctID", "Distinct ID"),
+                ("DistinctId", "Distinct ID"));
         }
 
         #endregion TitleCase
