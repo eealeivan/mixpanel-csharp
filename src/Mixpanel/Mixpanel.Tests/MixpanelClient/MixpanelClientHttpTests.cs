@@ -88,6 +88,31 @@ namespace Mixpanel.Tests.MixpanelClient
             AssertAllUrls(url => Assert.That(url, Does.Contain(Ip0Param)));
         }
 
+        [Test]
+        public void Given_CallingAllMethods_When_DefaultConfig_Then_UseDefaultHost()
+        {
+            CallAllMixpanelMethods();
+            AssertAllUrls(url => Assert.That(url, Does.StartWith("https://api.mixpanel.com")));
+        }
+
+        [Test]
+        public void Given_CallingAllMethods_When_ConfigUseDefaultDataResidency_Then_UseDefaultHost()
+        {
+            MixpanelConfig.Global.DataResidencyHandling = MixpanelDataResidencyHandling.Default;
+
+            CallAllMixpanelMethods();
+            AssertAllUrls(url => Assert.That(url, Does.StartWith("https://api.mixpanel.com")));
+        }
+
+        [Test]
+        public void Given_CallingAllMethods_When_ConfigUseEUDataResidency_Then_UseEUHost()
+        {
+            MixpanelConfig.Global.DataResidencyHandling = MixpanelDataResidencyHandling.EU;
+
+            CallAllMixpanelMethods();
+            AssertAllUrls(url => Assert.That(url, Does.StartWith("https://api-eu.mixpanel.com")));
+        }
+
         private void CallAllMixpanelMethods()
         {
             foreach (Action mixpanelMethod in mixpanelMethods)

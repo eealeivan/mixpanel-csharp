@@ -16,11 +16,9 @@ namespace Mixpanel.Tests.MixpanelClient
 
         protected List<(string Endpoint, string Data)> HttpPostEntries;
 
-        protected string TrackUrl =>
-            string.Format(Mixpanel.MixpanelClient.UrlFormat, Mixpanel.MixpanelClient.EndpointTrack);
+        protected string TrackUrl { get; set; }
 
-        protected string EngageUrl =>
-            string.Format(Mixpanel.MixpanelClient.UrlFormat, Mixpanel.MixpanelClient.EndpointEngage);
+        protected string EngageUrl { get; set; }
 
         [SetUp]
         public void MixpanelClientSetUp()
@@ -30,6 +28,9 @@ namespace Mixpanel.Tests.MixpanelClient
             Client = new Mixpanel.MixpanelClient(Token, GetConfig());
 
             HttpPostEntries = new List<(string Endpoint, string Data)>();
+
+            TrackUrl = string.Format(Client.GetUrlFormat(), Mixpanel.MixpanelClient.EndpointTrack);
+            EngageUrl = string.Format(Client.GetUrlFormat(), Mixpanel.MixpanelClient.EndpointEngage);
         }
 
         protected static void IncludeDistinctIdIfNeeded(bool includeDistinctId, Dictionary<string, object> dic)

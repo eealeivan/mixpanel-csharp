@@ -45,6 +45,11 @@ namespace Mixpanel
         public MixpanelIpAddressHandling? IpAddressHandling { get; set; }
 
         /// <summary>
+        /// Regulates which API host to route data to.
+        /// </summary>
+        public MixpanelDataResidencyHandling? DataResidencyHandling { get; set; }
+
+        /// <summary>
         /// A global instance of the config.
         /// </summary>
         public static MixpanelConfig Global { get; }
@@ -65,6 +70,7 @@ namespace Mixpanel
             ErrorLogFn = null;
             MixpanelPropertyNameFormat = null;
             IpAddressHandling = null;
+            DataResidencyHandling = null;
         }
     }
 }

@@ -79,5 +79,20 @@ namespace Mixpanel
 
             return MixpanelIpAddressHandling.None;
         }
+
+        public static MixpanelDataResidencyHandling GetDataResidencyHandling(MixpanelConfig config)
+        {
+            if (config != null && config.DataResidencyHandling != null)
+            {
+                return config.DataResidencyHandling.Value;
+            }
+
+            if (MixpanelConfig.Global.DataResidencyHandling != null)
+            {
+                return MixpanelConfig.Global.DataResidencyHandling.Value;
+            }
+
+            return MixpanelDataResidencyHandling.Default;
+        }
     }
 }
