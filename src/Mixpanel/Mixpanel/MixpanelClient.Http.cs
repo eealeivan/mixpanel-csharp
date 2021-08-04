@@ -8,7 +8,6 @@ namespace Mixpanel
 {
     public sealed partial class MixpanelClient
     {
-        internal const string UrlFormat = "https://api.mixpanel.com/{0}";
         internal const string EndpointTrack = "track";
         internal const string EndpointEngage = "engage";
 
@@ -25,9 +24,22 @@ namespace Mixpanel
             }
         }
 
+        internal string GetUrlFormat()
+        {
+            MixpanelDataResidencyHandling dataResidencyHandling = ConfigHelper.GetDataResidencyHandling(config);
+
+            switch (dataResidencyHandling)
+            {
+                case MixpanelDataResidencyHandling.EU:
+                    return "https://api-eu.mixpanel.com/{0}";
+                default:
+                    return "https://api.mixpanel.com/{0}";
+            }
+        }
+
         private string GenerateUrl(MixpanelMessageEndpoint endpoint)
         {
-            string url = string.Format(UrlFormat, GetEndpoint(endpoint));
+            string url = string.Format(GetUrlFormat(), GetEndpoint(endpoint));
 
             MixpanelIpAddressHandling ipAddressHandling = ConfigHelper.GetIpAddressHandling(config);
             switch (ipAddressHandling)
