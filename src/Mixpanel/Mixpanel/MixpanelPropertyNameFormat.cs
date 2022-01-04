@@ -2,7 +2,10 @@
 {
     /// <summary>
     /// Type of name formatting that will be applied when generating property names.
-    /// Works only for classes (not dictionaries).
+    /// Formatting will be applied only for properties coming from classes that
+    /// do not have an explicit <see cref="MixpanelNameAttribute"/>.
+    /// Formatting supports two-letter acronyms as described in
+    /// https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/capitalization-conventions.
     /// </summary>
     public enum MixpanelPropertyNameFormat
     {

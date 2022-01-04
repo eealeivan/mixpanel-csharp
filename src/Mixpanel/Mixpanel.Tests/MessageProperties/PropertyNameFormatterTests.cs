@@ -12,6 +12,14 @@ namespace Mixpanel.Tests.MessageProperties
             MixpanelConfig.Global.Reset();
         }
 
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void When_NullOrWhiteSpace_Then_PropertyNameNotChanged(string propertyName)
+        {
+            AssertFormattedProperty(propertyName, propertyName);
+        }
+
         #region Default
 
         [Test]
@@ -36,7 +44,9 @@ namespace Mixpanel.Tests.MessageProperties
             AssertFormattedProperties(
                 config,
                 ("SomeCoolProperty", "SomeCoolProperty"),
-                ("someCoolProperty", "someCoolProperty"));
+                ("someCoolProperty", "someCoolProperty"),
+                ("PropP", "PropP"),
+                ("UIControl", "UIControl"));
         }
 
         #endregion Default
@@ -62,7 +72,10 @@ namespace Mixpanel.Tests.MessageProperties
                 ("someCoolProperty", "Some cool property"),
                 ("prop", "Prop"),
                 ("PropP", "Prop p"),
-                ("Some Cool Property", "Some cool property"));
+                ("UIControl", "UI control"),
+                ("nextUIControl", "Next ui control"),
+                ("LevelId", "Level id"),
+                ("LevelID", "Level id"));
         }
 
         #endregion SentenceCase
@@ -88,7 +101,10 @@ namespace Mixpanel.Tests.MessageProperties
                 ("someCoolProperty", "Some Cool Property"),
                 ("prop", "Prop"),
                 ("PropP", "Prop P"),
-                ("Some Cool Property", "Some Cool Property"));
+                ("UIControl", "UI Control"),
+                ("nextUIControl", "Next UI Control"),
+                ("LevelId", "Level Id"),
+                ("LevelID", "Level ID"));
         }
 
         #endregion TitleCase
@@ -114,7 +130,10 @@ namespace Mixpanel.Tests.MessageProperties
                 ("someCoolProperty", "some cool property"),
                 ("prop", "prop"),
                 ("PropP", "prop p"),
-                ("Some Cool Property", "some cool property"));
+                ("UIControl", "ui control"),
+                ("nextUIControl", "next ui control"),
+                ("LevelId", "level id"),
+                ("LevelID", "level id"));
         }
 
         #endregion
@@ -123,7 +142,7 @@ namespace Mixpanel.Tests.MessageProperties
             MixpanelConfig config = null,
             params (string original, string expected)[] props)
         {
-            foreach ((string original, string expected) in props)
+            foreach (var (original, expected) in props)
             {
                 AssertFormattedProperty(original, expected, config);
             }
