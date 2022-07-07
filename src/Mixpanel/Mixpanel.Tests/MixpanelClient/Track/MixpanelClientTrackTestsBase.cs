@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
@@ -13,10 +14,10 @@ namespace Mixpanel.Tests.MixpanelClient.Track
         [SetUp]
         public void MixpanelClientPeopleSetUp()
         {
-            IPropertyBag properties = TestContext.CurrentContext.Test.Properties;
+            var properties = TestContext.CurrentContext.Test.Properties;
             if (properties != null && properties.ContainsKey(TrackSuperPropsAttribute.Name))
             {
-                SuperPropsDetails = (TrackSuperPropsDetails)properties[TrackSuperPropsAttribute.Name][0];
+                SuperPropsDetails = (TrackSuperPropsDetails)properties[TrackSuperPropsAttribute.Name].Single();
                 Client = new Mixpanel.MixpanelClient(Token, GetConfig(), GetSuperProperties());
             }
         }

@@ -3,10 +3,7 @@
 [Oo]bj/
 images/
 package/
-tools/*
-!tools/packages.config
 TestResult.xml
-
 
 # VisualStudio files
 *.suo

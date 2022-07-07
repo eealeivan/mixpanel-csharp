@@ -72,7 +72,7 @@ namespace Mixpanel.Tests.MessageProperties
             CheckProperties(properties);
         }
 
-#if !NETCOREAPP11
+#if !NET6
 
         [Test]
         public void Given_ExpandoObject_When_ValidInput_Then_AllParsed()

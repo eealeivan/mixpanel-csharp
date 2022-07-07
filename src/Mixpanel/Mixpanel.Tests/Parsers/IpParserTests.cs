@@ -20,7 +20,7 @@ namespace Mixpanel.Tests.Parsers
             AssertFail("023.44.33.22");
         }
 
-#if !NETCOREAPP11
+#if !NET6
 
         [Test]
         public void Given_IPAddressInput_When_ValidIp_Then_Success()

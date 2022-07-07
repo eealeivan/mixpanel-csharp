@@ -24,7 +24,7 @@ namespace Mixpanel.Tests.Json
         [Test]
         public void When_CollectionOfObjects_Then_TheSameAsJsonNet()
         {
-            var dics = new []
+            var dics = new[]
             {
                 new Dictionary<string, object>
                 {
@@ -152,7 +152,11 @@ namespace Mixpanel.Tests.Json
             };
 
             string mixpanelJsonSerializerResult = MixpanelJsonSerializer.Serialize(dic);
-            string expectedJson =
+            string expectedJson = "";
+
+
+#if NET45
+            expectedJson =
                 "{" +
                 "\"float\":2.5," +
                 "\"floatMin\":-3.402823E+38," +
@@ -166,6 +170,26 @@ namespace Mixpanel.Tests.Json
                 "\"decimal1\":1," +
                 "\"decimal2\":1.0" +
                 "}";
+#endif
+
+#if NET6
+            expectedJson =
+                "{" +
+                "\"float\":2.5," +
+                "\"floatMin\":-3.4028235E+38," +
+                "\"floatMax\":3.4028235E+38," +
+                "\"double\":3.456," +
+                "\"doubleMin\":-1.7976931348623157E+308," +
+                "\"doubleMax\":1.7976931348623157E+308," +
+                "\"decimalMin\":-79228162514264337593543950335," +
+                "\"decimalMax\":79228162514264337593543950335," +
+                "\"decimal\":23.5," +
+                "\"decimal1\":1," +
+                "\"decimal2\":1.0" +
+                "}";
+#endif
+
+
 
             Assert.That(mixpanelJsonSerializerResult, Is.EqualTo(expectedJson));
         }

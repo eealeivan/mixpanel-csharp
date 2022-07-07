@@ -1,0 +1,5 @@
+Execute in \mixpanel-csharp\src\Mixpanel\Mixpanel
+
+dotnet clean -c Release
+dotnet build -c Release
+dotnet pack -c Release --include-source --include-symbols
