@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>net452;net6.0</TargetFrameworks>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\..\strong-name-key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,10 +4,10 @@
     <TargetFrameworks>net452;netstandard1.1</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PreserveCompilationContext>false</PreserveCompilationContext>
-    <AssemblyVersion>5.1.0.0</AssemblyVersion>
-    <FileVersion>5.1.0.0</FileVersion>
+    <AssemblyVersion>6.0.0.0</AssemblyVersion>
+    <FileVersion>6.0.0.0</FileVersion>
     <Product>Mixpanel C#</Product>
-    <Version>5.1.0</Version>
+    <Version>6.0.0</Version>
     <Authors>Aleksandr Ivanov</Authors>
     <PackageId>mixpanel-csharp</PackageId>
     <Copyright>Copyright © Aleksandr Ivanov 2022</Copyright>
@@ -16,8 +16,9 @@
     <Description>An open source Mixpanel .NET integration library that supports complete Mixpanel API. The main idea of the library is to hide API details allowing you to concentrate on data that you want to analyze. Supported platforms: .NET 4.5.2 and .NET Standard 1.1. It's also well documented, configurable and testable. Check the example usage on the project site.</Description>
     <PackageTags>mixpanel;analytics;data;tracking;.NET;netstandard</PackageTags>
     <PackageReadmeFile>nuget-readme.md</PackageReadmeFile>
-    <PackageReleaseNotes>- Add support for EU Data Residency
-- Improve property name formatting by following Microsoft Capitalization Conventions described at https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/capitalization-conventions</PackageReleaseNotes>
+    <PackageReleaseNotes>- Sign Mixpanel assembly with a strong name</PackageReleaseNotes>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\..\strong-name-key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <!--NET 4.5.2-->
