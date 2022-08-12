@@ -16,7 +16,7 @@ namespace Benchmarks.Json
             dictionaries = new Dictionary<string, object>[N];
             for (int i = 0; i < N; i++)
             {
-                dictionaries[i] = MessageCreator.Dictionary();
+                dictionaries[i] = MessageCreator.Dynamic();
             }
         }
 

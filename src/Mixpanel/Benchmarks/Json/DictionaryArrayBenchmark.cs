@@ -20,7 +20,7 @@ namespace Benchmarks.Json
                 var dictionaryArray = new Dictionary<string, object>[ArraySize];
                 for (int j = 0; j < ArraySize; j++)
                 {
-                    dictionaryArray[j] = MessageCreator.Dictionary();
+                    dictionaryArray[j] = MessageCreator.Dynamic();
                 }
 
                 dictionaryArrays.Add(dictionaryArray);
