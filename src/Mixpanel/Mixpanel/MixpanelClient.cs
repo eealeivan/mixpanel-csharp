@@ -126,21 +126,6 @@ namespace Mixpanel
         #region Alias
 
         /// <inheritdoc/>
-        public bool Alias(object alias)
-        {
-            return Alias(null, alias);
-        }
-
-        /// <inheritdoc/>
-        public bool Alias(object distinctId, object alias)
-        {
-            return SendMessageInternal(
-                MessageKind.Alias,
-                MixpanelMessageEndpoint.Track,
-                () => BuildAliasMessage(distinctId, alias));
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> AliasAsync(object alias)
         {
             return await AliasAsync(null, alias)

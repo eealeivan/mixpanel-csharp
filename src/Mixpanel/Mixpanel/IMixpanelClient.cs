@@ -100,23 +100,6 @@ namespace Mixpanel
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
         /// <param name="alias">Alias for original user profile identifier.</param>
-        bool Alias(object alias);
-
-        /// <summary>
-        /// Creates an alias to given <paramref name="distinctId"/>. 
-        /// Message will be sent to 'https://api.mixpanel.com/track/' endpoint.
-        /// Returns true if call was successful, and false otherwise.
-        /// </summary>
-        /// <param name="distinctId">Original unique user profile identifier to create alias for.</param>
-        /// <param name="alias">Alias for original user profile identifier.</param>
-        bool Alias(object distinctId, object alias);
-
-        /// <summary>
-        /// Creates an alias to 'Distinct ID' that is provided with super properties. 
-        /// Message will be sent to 'https://api.mixpanel.com/track/' endpoint.
-        /// Returns true if call was successful, and false otherwise.
-        /// </summary>
-        /// <param name="alias">Alias for original user profile identifier.</param>
         Task<bool> AliasAsync(object alias);
 
         /// <summary>
