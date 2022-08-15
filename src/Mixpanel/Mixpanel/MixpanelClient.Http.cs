@@ -137,22 +137,6 @@ namespace Mixpanel
             return base64Message;
         }
 
-        private bool HttpPost(MixpanelMessageEndpoint endpoint, string messageBody)
-        {
-            string url = GenerateUrl(endpoint);
-            try
-            {
-                var httpPostFn = ConfigHelper.GetHttpPostFn(config);
-                return httpPostFn(url, messageBody);
-            }
-            catch (Exception e)
-            {
-                LogError($"POST fails to '{url}' with data '{messageBody}'.", e);
-            }
-
-            return false;
-        }
-
         private async Task<bool> HttpPostAsync(MixpanelMessageEndpoint endpoint, string messageBody)
         {
             string url = GenerateUrl(endpoint);
@@ -169,33 +153,6 @@ namespace Mixpanel
             return await Task.FromResult(false).ConfigureAwait(false);
         }
 
-        private bool SendMessageInternal(
-            MessageKind messageKind,
-            MixpanelMessageEndpoint endpoint,
-            Func<MessageBuildResult> getMessageBuildResultFn)
-        {
-            string messageBody = GetMessageBody(getMessageBuildResultFn, messageKind);
-            if (messageBody == null)
-            {
-                return false;
-            }
-
-            return HttpPost(endpoint, messageBody);
-        }
-
-        private bool SendMessageInternal(
-            MixpanelMessageEndpoint endpoint,
-            Func<BatchMessageBuildResult> getBatchMessageBuildResultFn)
-        {
-            string messageBody = GetMessageBody(getBatchMessageBuildResultFn);
-            if (messageBody == null)
-            {
-                return false;
-            }
-
-            return HttpPost(endpoint, messageBody);
-        }
-
         private async Task<bool> SendMessageInternalAsync(
             MessageKind messageKind,
             MixpanelMessageEndpoint endpoint,
@@ -221,19 +178,6 @@ namespace Mixpanel
             }
 
             return await HttpPostAsync(endpoint, messageBody).ConfigureAwait(false);
-        }
-
-        private bool SendMessageInternal(
-            MixpanelMessageEndpoint endpoint,
-            string messageJson)
-        {
-            string messageBody = ToMixpanelMessageFormat(ToBase64(messageJson));
-            if (messageBody == null)
-            {
-                return false;
-            }
-
-            return HttpPost(endpoint, messageBody);
         }
 
         private async Task<bool> SendMessageInternalAsync(

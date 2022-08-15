@@ -17,27 +17,6 @@ namespace Mixpanel.Tests.MixpanelClient.People
     [TestFixture]
     public class MixpanelClientPeopleAddTests : MixpanelClientPeopleTestsBase
     {
-        [Test]
-        public void Given_SendSync_When_DistinctIdFromProps_Then_CorrectDataSent()
-        {
-            Client.PeopleAdd(GetProperties(includeDistinctId: true));
-            AssertSentData(DistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.DistinctId)]
-        public void Given_SendSync_When_DistinctIdFromSuperProps_Then_CorrectDataSent()
-        {
-            Client.PeopleAdd(GetProperties(includeDistinctId: false));
-            AssertSentData(SuperDistinctId);
-        }
-
-        [Test]
-        public void Given_SendSync_When_DistinctIdFromParams_Then_CorrectDataSent()
-        {
-            Client.PeopleAdd(DistinctId, GetProperties());
-            AssertSentData(DistinctId);
-        }
 
         [Test]
         public async Task Given_SendAsync_When_DistinctIdFromProps_Then_CorrectDataSent()

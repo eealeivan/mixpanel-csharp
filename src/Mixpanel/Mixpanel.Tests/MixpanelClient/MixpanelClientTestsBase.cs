@@ -45,12 +45,6 @@ namespace Mixpanel.Tests.MixpanelClient
         {
             return new MixpanelConfig
             {
-                HttpPostFn = (endpoint, data) =>
-                {
-                    HttpPostEntries.Add((endpoint, data));
-                    return true;
-                },
-
                 AsyncHttpPostFn = (endpoint, data) =>
                 {
                     HttpPostEntries.Add((endpoint, data));

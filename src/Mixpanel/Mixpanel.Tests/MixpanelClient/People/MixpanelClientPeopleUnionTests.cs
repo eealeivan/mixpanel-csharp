@@ -18,28 +18,6 @@ namespace Mixpanel.Tests.MixpanelClient.People
     public class MixpanelClientPeopleUnionTests : MixpanelClientPeopleTestsBase
     {
         [Test]
-        public void Given_SendSync_When_DistinctIdFromProps_Then_CorrectDataSent()
-        {
-            Client.PeopleUnion(GetProperties(includeDistinctId: true));
-            AssertSentData(DistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.DistinctId)]
-        public void Given_SendSync_When_DistinctIdFromSuperProps_Then_CorrectDataSent()
-        {
-            Client.PeopleUnion(GetProperties(includeDistinctId: false));
-            AssertSentData(SuperDistinctId);
-        }
-
-        [Test]
-        public void Given_SendSync_When_DistinctIdFromParams_Then_CorrectDataSent()
-        {
-            Client.PeopleUnion(DistinctId, GetProperties());
-            AssertSentData(DistinctId);
-        }
-
-        [Test]
         public async Task Given_SendAsync_When_DistinctIdFromProps_Then_CorrectDataSent()
         {
             await Client.PeopleUnionAsync(GetProperties(includeDistinctId: true));

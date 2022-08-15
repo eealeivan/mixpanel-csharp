@@ -21,35 +21,6 @@ namespace Mixpanel.Tests.MixpanelClient.Track
     public class MixpanelClientTrackTests : MixpanelClientTrackTestsBase
     {
         [Test]
-        public void Given_SendSync_When_NoDistinctId_Then_CorrectDataSent()
-        {
-            Client.Track(Event, GetProperties(includeDistinctId: false));
-            AssertSentData(null, 3 + 2 + 0);
-        }
-
-        [Test]
-        public void Given_SendSync_When_DistinctIdFromProps_Then_CorrectDataSent()
-        {
-            Client.Track(Event, GetProperties(includeDistinctId: true));
-            AssertSentData(DistinctId, 4 + 2 + 0);
-        }
-
-        [Test]
-        [TrackSuperProps(TrackSuperPropsDetails.DistinctId)]
-        public void Given_SendSync_When_DistinctIdFromSuperProps_Then_CorrectDataSent()
-        {
-            Client.Track(Event, GetProperties());
-            AssertSentData(SuperDistinctId, 4 + 2 + 0);
-        }
-
-        [Test]
-        public void Given_SendSync_When_DistinctIdFromParams_Then_CorrectDataSent()
-        {
-            Client.Track(Event, DistinctId, GetProperties());
-            AssertSentData(DistinctId, 4 + 2 + 0);
-        }
-
-        [Test]
         public async Task Given_SendAsync_When_NoDistinctId_Then_CorrectDataSent()
         {
             await Client.TrackAsync(Event, GetProperties(includeDistinctId: false));

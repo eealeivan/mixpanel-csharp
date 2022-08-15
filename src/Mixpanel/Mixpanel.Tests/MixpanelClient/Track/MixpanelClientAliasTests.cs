@@ -11,21 +11,6 @@ namespace Mixpanel.Tests.MixpanelClient.Track
     {
         [Test]
         [TrackSuperProps(TrackSuperPropsDetails.DistinctId)]
-        public void Given_SendSync_When_DistinctIdFromSuperProps_Then_CorrectDataSent()
-        {
-            Client.Alias(Alias);
-            AssertSentData(SuperDistinctId);
-        }
-
-        [Test]
-        public void Given_SendSync_When_DistinctIdFromParams_Then_CorrectDataSent()
-        {
-            Client.Alias(DistinctId, Alias);
-            AssertSentData(DistinctId);
-        }
-
-        [Test]
-        [TrackSuperProps(TrackSuperPropsDetails.DistinctId)]
         public async Task Given_SendAsync_When_DistinctIdFromSuperProps_Then_CorrectDataSent()
         {
             await Client.AliasAsync(Alias);

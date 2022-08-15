@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Mixpanel.Tests.MixpanelClient
@@ -13,7 +14,7 @@ namespace Mixpanel.Tests.MixpanelClient
 
         private List<string> urls;
         private Mixpanel.MixpanelClient client;
-        private List<Action> mixpanelMethods;
+        private List<Func<Task>> mixpanelMethods;
 
         [SetUp]
         public void SetUp()
@@ -23,24 +24,24 @@ namespace Mixpanel.Tests.MixpanelClient
             urls = new List<string>();
             client = new Mixpanel.MixpanelClient(Token, GetConfig());
 
-            mixpanelMethods = new List<Action>
+            mixpanelMethods = new List<Func<Task>>
             {
-                () => client.Track(Event, DistinctId, DictionaryWithStringProperty),
-                () => client.Alias(DistinctId, Alias),
-                () => client.PeopleSet(DistinctId, DictionaryWithStringProperty),
-                () => client.PeopleSetOnce(DistinctId, DictionaryWithStringProperty),
-                () => client.PeopleAdd(DistinctId, DictionaryWithStringProperty),
-                () => client.PeopleAppend(DistinctId, DictionaryWithStringProperty),
-                () => client.PeopleUnion(DistinctId, DictionaryWithStringProperty),
-                () => client.PeopleRemove(DistinctId, DictionaryWithStringProperty),
-                () => client.PeopleUnset(DistinctId, StringPropertyArray),
-                () => client.PeopleDelete(DistinctId),
-                () => client.PeopleTrackCharge(DistinctId, DecimalPropertyValue),
-                () => client.Send(new MixpanelMessage
+                () => client.TrackAsync(Event, DistinctId, DictionaryWithStringProperty),
+                () => client.AliasAsync(DistinctId, Alias),
+                () => client.PeopleSetAsync(DistinctId, DictionaryWithStringProperty),
+                () => client.PeopleSetOnceAsync(DistinctId, DictionaryWithStringProperty),
+                () => client.PeopleAddAsync(DistinctId, DictionaryWithStringProperty),
+                () => client.PeopleAppendAsync(DistinctId, DictionaryWithStringProperty),
+                () => client.PeopleUnionAsync(DistinctId, DictionaryWithStringProperty),
+                () => client.PeopleRemoveAsync(DistinctId, DictionaryWithStringProperty),
+                () => client.PeopleUnsetAsync(DistinctId, StringPropertyArray),
+                () => client.PeopleDeleteAsync(DistinctId),
+                () => client.PeopleTrackChargeAsync(DistinctId, DecimalPropertyValue),
+                () => client.SendAsync(new MixpanelMessage
                 {
                     Kind = MessageKind.PeopleSet,
                     Data = DictionaryWithStringProperty
-                }),
+                })
             };
         }
 
@@ -48,76 +49,76 @@ namespace Mixpanel.Tests.MixpanelClient
         {
             return new MixpanelConfig
             {
-                HttpPostFn = (endpoint, data) =>
+                AsyncHttpPostFn = (endpoint, data) =>
                 {
                     urls.Add(endpoint);
-                    return true;
+                    return Task.FromResult(true);
                 }
             };
         }
 
         [Test]
-        public void Given_CallingAllMethods_When_DefaultConfig_Then_UrlsAreValid()
+        public async Task Given_CallingAllMethods_When_DefaultConfig_Then_UrlsAreValid()
         {
-            CallAllMixpanelMethods();
+            await CallAllMixpanelMethods();
             AssertAllUrls(url => Assert.That(IsUrlValid(url)));
         }
 
         [Test]
-        public void Given_CallingAllMethods_When_DefaultConfig_Then_NoIpParam()
+        public async Task Given_CallingAllMethods_When_DefaultConfig_Then_NoIpParam()
         {
-            CallAllMixpanelMethods();
+            await CallAllMixpanelMethods();
             AssertAllUrls(url => Assert.That(url, Is.Not.Contains(IpParam)));
         }
 
         [Test]
-        public void Given_CallingAllMethods_When_ConfigUseRequestIp_Then_IpParam()
+        public async Task Given_CallingAllMethods_When_ConfigUseRequestIp_Then_IpParam()
         {
             MixpanelConfig.Global.IpAddressHandling = MixpanelIpAddressHandling.UseRequestIp;
 
-            CallAllMixpanelMethods();
+            await CallAllMixpanelMethods();
             AssertAllUrls(url => Assert.That(url, Does.Contain(Ip1Param)));
         }
 
         [Test]
-        public void Given_CallingAllMethods_When_ConfigIgnoreRequestIp_Then_IpParam()
+        public async Task Given_CallingAllMethods_When_ConfigIgnoreRequestIp_Then_IpParam()
         {
             MixpanelConfig.Global.IpAddressHandling = MixpanelIpAddressHandling.IgnoreRequestIp;
 
-            CallAllMixpanelMethods();
+            await CallAllMixpanelMethods();
             AssertAllUrls(url => Assert.That(url, Does.Contain(Ip0Param)));
         }
 
         [Test]
-        public void Given_CallingAllMethods_When_DefaultConfig_Then_UseDefaultHost()
+        public async Task Given_CallingAllMethods_When_DefaultConfig_Then_UseDefaultHost()
         {
-            CallAllMixpanelMethods();
+            await CallAllMixpanelMethods();
             AssertAllUrls(url => Assert.That(url, Does.StartWith("https://api.mixpanel.com")));
         }
 
         [Test]
-        public void Given_CallingAllMethods_When_ConfigUseDefaultDataResidency_Then_UseDefaultHost()
+        public async Task Given_CallingAllMethods_When_ConfigUseDefaultDataResidency_Then_UseDefaultHost()
         {
             MixpanelConfig.Global.DataResidencyHandling = MixpanelDataResidencyHandling.Default;
 
-            CallAllMixpanelMethods();
+            await CallAllMixpanelMethods();
             AssertAllUrls(url => Assert.That(url, Does.StartWith("https://api.mixpanel.com")));
         }
 
         [Test]
-        public void Given_CallingAllMethods_When_ConfigUseEUDataResidency_Then_UseEUHost()
+        public async Task Given_CallingAllMethods_When_ConfigUseEUDataResidency_Then_UseEUHost()
         {
             MixpanelConfig.Global.DataResidencyHandling = MixpanelDataResidencyHandling.EU;
 
-            CallAllMixpanelMethods();
+            await CallAllMixpanelMethods();
             AssertAllUrls(url => Assert.That(url, Does.StartWith("https://api-eu.mixpanel.com")));
         }
 
-        private void CallAllMixpanelMethods()
+        private async Task CallAllMixpanelMethods()
         {
-            foreach (Action mixpanelMethod in mixpanelMethods)
+            foreach (Func<Task> mixpanelMethod in mixpanelMethods)
             {
-                mixpanelMethod();
+                await mixpanelMethod();
             }
 
             Assert.That(urls.Count, Is.EqualTo(mixpanelMethods.Count));

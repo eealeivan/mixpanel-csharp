@@ -18,12 +18,6 @@ namespace Mixpanel
         public Func<object, string> SerializeJsonFn { get; set; }
 
         /// <summary>
-        /// Gets or sets user defined function that will make HTTP POST requests to mixpanel endpoints.
-        /// Takes 2 string parameters: url and content. Returns true if call was successful, and false otherwise.
-        /// </summary>
-        public Func<string, string, bool> HttpPostFn { get; set; }
-        
-        /// <summary>
         /// Gets or sets user defined function that will make async HTTP POST requests to mixpanel endpoints.
         /// Takes 2 string parameters: url and content. Returns true if call was successful, and false otherwise.
         /// </summary>
@@ -65,7 +59,6 @@ namespace Mixpanel
         public void Reset()
         {
             SerializeJsonFn = null;
-            HttpPostFn = null;
             AsyncHttpPostFn = null;
             ErrorLogFn = null;
             MixpanelPropertyNameFormat = null;

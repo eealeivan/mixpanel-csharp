@@ -22,35 +22,6 @@ namespace Mixpanel.Tests.MixpanelClient
         [TestCase(5, 0)]
         [TestCase(75, 0)]
         [TestCase(125, 200)]
-        public void Given_SendSync_When_Enumerable_Then_CorrectDataSent(
-            int trackMessagesCount, int engageMessagesCount)
-        {
-            SendResult res = Client.Send(GetSendMessages(trackMessagesCount, engageMessagesCount));
-
-            Assert.That(res.Success, Is.EqualTo(true));
-            CheckSend(trackMessagesCount, engageMessagesCount);
-        }
-
-        [Test]
-        public void Given_SendSync_When_Params_Then_CorrectDataSent()
-        {
-            var messages = GetSendMessages(2, 2);
-            SendResult res = Client.Send(messages[0], messages[1], messages[2], messages[3]);
-
-            Assert.That(res.Success, Is.EqualTo(true));
-            CheckSend(2, 2);
-        }
-
-        [TestCase(5, 7)]
-        [TestCase(49, 51)]
-        [TestCase(50, 50)]
-        [TestCase(51, 49)]
-        [TestCase(51, 49)]
-        [TestCase(0, 5)]
-        [TestCase(0, 75)]
-        [TestCase(5, 0)]
-        [TestCase(75, 0)]
-        [TestCase(125, 200)]
         public async Task Given_SendAsync_When_Enumerable_Then_CorrectDataSent(
             int trackMessagesCount, int engageMessagesCount)
         {

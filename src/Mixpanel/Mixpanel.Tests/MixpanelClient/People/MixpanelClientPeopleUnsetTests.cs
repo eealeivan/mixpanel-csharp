@@ -18,22 +18,6 @@ namespace Mixpanel.Tests.MixpanelClient.People
     {
         [Test]
         [PeopleSuperProps(PeopleSuperPropsDetails.DistinctId | PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_SendSync_When_DistinctIdFromSuperProps_Then_CorrectDataSent()
-        {
-            Client.PeopleUnset(StringPropertyArray);
-            AssertSentData(SuperDistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_SendSync_When_DistinctIdFromParams_Then_CorrectDataSent()
-        {
-            Client.PeopleUnset(DistinctId, StringPropertyArray);
-            AssertSentData(DistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.DistinctId | PeopleSuperPropsDetails.MessageSpecialProperties)]
         public async Task Given_SendAsync_When_DistinctIdFromSuperProps_Then_CorrectDataSent()
         {
             await Client.PeopleUnsetAsync(StringPropertyArray);
