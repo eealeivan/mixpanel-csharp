@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Mixpanel.Extensibility;
 using Mixpanel.MessageBuilders;
 using Mixpanel.MessageBuilders.People;
 using Mixpanel.MessageBuilders.Track;

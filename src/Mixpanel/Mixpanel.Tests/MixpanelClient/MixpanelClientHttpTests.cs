@@ -133,15 +133,9 @@ namespace Mixpanel.Tests.MixpanelClient
 
         private bool IsUrlValid(string url)
         {
-#if NET6
-            return
-                Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
-                && uriResult.Scheme == "https";
-#else
             return
                 Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
                 && uriResult.Scheme == Uri.UriSchemeHttps;
-#endif
         }
     }
 }

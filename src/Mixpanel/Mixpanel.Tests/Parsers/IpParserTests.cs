@@ -20,8 +20,6 @@ namespace Mixpanel.Tests.Parsers
             AssertFail("023.44.33.22");
         }
 
-#if !NET6
-
         [Test]
         public void Given_IPAddressInput_When_ValidIp_Then_Success()
         {
@@ -30,8 +28,6 @@ namespace Mixpanel.Tests.Parsers
 
             AssertSuccess(ipAddress, Ip);
         }
-
-#endif
 
         private void AssertSuccess(object ipToParse, string expectedIp)
         {

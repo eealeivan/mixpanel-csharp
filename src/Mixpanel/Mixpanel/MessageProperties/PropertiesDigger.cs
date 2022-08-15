@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-#if NETSTANDARD11
-using System.Linq;
-#endif
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
@@ -67,13 +64,9 @@ namespace Mixpanel.MessageProperties
         {
             return PropertyInfosCache.GetOrAdd(type, t =>
             {
-#if NETSTANDARD11
-                bool isDataContract = t.GetTypeInfo().GetCustomAttribute<DataContractAttribute>() != null;
-                var infos = t.GetRuntimeProperties().Where(x => x.CanRead).ToArray();
-#else
                 bool isDataContract = t.GetCustomAttribute<DataContractAttribute>() != null;
                 var infos = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-#endif
+
                 var res = new List<ObjectPropertyInfo>(infos.Length);
 
                 foreach (var info in infos)

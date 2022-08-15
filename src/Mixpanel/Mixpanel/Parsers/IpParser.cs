@@ -10,44 +10,29 @@ namespace Mixpanel.Parsers
 
         public static ValueParseResult Parse(object rawIp)
         {
-            if (rawIp == null)
+            switch (rawIp)
             {
-                return ValueParseResult.CreateFail("Can't be null.");
+                case null:
+                    return ValueParseResult.CreateFail("Can't be null.");
+                case string ipString:
+                    return ParseString(ipString);
+                case IPAddress ipAddress:
+                    return ValueParseResult.CreateSuccess(ipAddress.ToString());
+                default:
+                    return ValueParseResult.CreateFail(
+                        "Expected types are: string (example: 192.168.0.136) or IPAddress.");
             }
-
-            if (rawIp is string)
-            {
-                return ParseString((string)rawIp);
-            }
-
-#if !NETSTANDARD11
-
-            if (rawIp is IPAddress)
-            {
-                return ValueParseResult.CreateSuccess(((IPAddress)rawIp).ToString());
-            }
-
-            return ValueParseResult.CreateFail(
-                "Expected types are: string (example: 192.168.0.136) or IPAddress.");
-
-#else
-
-            return ValueParseResult.CreateFail(
-                "Expected types are: string (example: 192.168.0.136).");
-
-#endif
-
-
         }
 
         private static ValueParseResult ParseString(string rawIp)
         {
-            if (!Regex.IsMatch(rawIp, RegexPattern))
+            if (Regex.IsMatch(rawIp, RegexPattern))
             {
-                return ValueParseResult.CreateFail("Not a valid IP address.");
+                return ValueParseResult.CreateSuccess(rawIp);
             }
 
-            return ValueParseResult.CreateSuccess(rawIp);
+            return ValueParseResult.CreateFail("Not a valid IP address.");
+
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net452;net6.0</TargetFrameworks>
+    <TargetFrameworks>net461;net6.0</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\strong-name-key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -16,22 +16,27 @@
     <ProjectReference Include="..\Mixpanel\Mixpanel.csproj" />
   </ItemGroup>
   
-  <!--NET 4.5.2-->
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net452'">
-    <DefineConstants>NET45</DefineConstants>
+  <!--NET 4.6.1-->
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net461'">
+    <DefineConstants>NET461</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net452'">
-    <DefineConstants>NET45</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net461'">
+    <DefineConstants>NET461</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net452'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.5.0</Version>
+    </PackageReference>
+  </ItemGroup>
 
-  <!--NET CORE 1.1-->
+  <!--NET 6.0-->
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net6.0'">
     <DefineConstants>NET6</DefineConstants>
   </PropertyGroup>
@@ -45,9 +50,4 @@
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
-    <PackageReference Include="System.ValueTuple">
-      <Version>4.5.0</Version>
-    </PackageReference>
-  </ItemGroup>  
 </Project>

@@ -155,7 +155,7 @@ namespace Mixpanel.Tests.Json
             string expectedJson = "";
 
 
-#if NET45
+#if NET461
             expectedJson =
                 "{" +
                 "\"float\":2.5," +

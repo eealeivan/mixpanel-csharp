@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net452;netstandard1.1</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
@@ -13,7 +13,7 @@
     <Copyright>Copyright © Aleksandr Ivanov 2022</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/eealeivan/mixpanel-csharp</PackageProjectUrl>
-    <Description>An open source Mixpanel .NET integration library that supports complete Mixpanel API. The main idea of the library is to hide API details allowing you to concentrate on data that you want to analyze. Supported platforms: .NET 4.5.2 and .NET Standard 1.1. It's also well documented, configurable and testable. Check the example usage on the project site.</Description>
+    <Description>An open source Mixpanel .NET integration library that supports complete Mixpanel API. The main idea of the library is to hide API details allowing you to concentrate on data that you want to analyze. Supported platforms: .NET 4.6.1 and .NET Standard 2.0. It's also well documented, configurable and testable. Check the example usage on the project site.</Description>
     <PackageTags>mixpanel;analytics;data;tracking;.NET;netstandard</PackageTags>
     <PackageReadmeFile>nuget-readme.md</PackageReadmeFile>
     <PackageReleaseNotes>- Sign Mixpanel assembly with a strong name</PackageReleaseNotes>
@@ -21,34 +21,34 @@
     <AssemblyOriginatorKeyFile>..\..\..\strong-name-key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
-  <!--NET 4.5.2-->
-  <PropertyGroup Condition="'$(TargetFramework)'=='net452'">
-    <AssemblyTitle>Mixpanel C# .NET 4.5.2</AssemblyTitle>
+  <!--NET 4.6.1-->
+  <PropertyGroup Condition="'$(TargetFramework)'=='net461'">
+    <AssemblyTitle>Mixpanel C# .NET 4.6.1</AssemblyTitle>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net452'">
-    <DefineConstants>TRACE;DEBUG;NET45</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net461'">
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net452'">
-    <DefineConstants>TRACE;RELEASE;NET45</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net461'">
+    <DefineConstants>TRACE;RELEASE</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net452'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
-  <!--NET STANDARD 1.1-->
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.1'">
-    <AssemblyTitle>Mixpanel C# .NET Standard 1.1</AssemblyTitle>
+  <!--NET STANDARD 2.0-->
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <AssemblyTitle>Mixpanel C# .NET Standard 2.0</AssemblyTitle>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard1.1'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD11</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard2.0'">
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard1.1'">
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD11</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard2.0'">
+    <DefineConstants>TRACE;RELEASE</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.1'">
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>

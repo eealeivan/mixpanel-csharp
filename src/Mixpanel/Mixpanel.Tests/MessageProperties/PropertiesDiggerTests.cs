@@ -72,8 +72,6 @@ namespace Mixpanel.Tests.MessageProperties
             CheckProperties(properties);
         }
 
-#if !NET6
-
         [Test]
         public void Given_ExpandoObject_When_ValidInput_Then_AllParsed()
         {
@@ -104,8 +102,6 @@ namespace Mixpanel.Tests.MessageProperties
                 .ToArray();
             CheckProperties(properties);
         }
-
-#endif
 
         [Test]
         public void Given_AnonymousClass_When_ValidInput_Then_AllParsed()
