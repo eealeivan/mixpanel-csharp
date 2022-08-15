@@ -22,29 +22,6 @@ namespace Mixpanel
         /// Object containing keys and values that will be parsed and sent to Mixpanel. Check documentation
         /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
         /// </param>
-        bool Track(string @event, object properties);
-
-        /// <summary>
-        /// Send message to 'https://api.mixpanel.com/track/' endpoint.
-        /// Returns true if call was successful, and false otherwise.
-        /// </summary>
-        /// <param name="event">Name of the event.</param>
-        /// <param name="distinctId">Unique user profile identifier.</param>
-        /// <param name="properties">
-        /// Object containing keys and values that will be parsed and sent to Mixpanel. Check documentation
-        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
-        /// </param>
-        bool Track(string @event, object distinctId, object properties);
-
-        /// <summary>
-        /// Send a message to 'https://api.mixpanel.com/track/' endpoint.
-        /// Returns true if call was successful, and false otherwise.
-        /// </summary>
-        /// <param name="event">Name of the event.</param>
-        /// <param name="properties">
-        /// Object containing keys and values that will be parsed and sent to Mixpanel. Check documentation
-        /// on project page 'https://github.com/eealeivan/mixpanel-csharp' for supported object containers.
-        /// </param>
         Task<bool> TrackAsync(string @event, object properties);
 
         /// <summary>

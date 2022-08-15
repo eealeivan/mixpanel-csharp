@@ -169,6 +169,7 @@ namespace Mixpanel
             return await Task.FromResult(false).ConfigureAwait(false);
         }
 
+        [Obsolete]
         private bool SendMessageInternal(
             MessageKind messageKind,
             MixpanelMessageEndpoint endpoint,

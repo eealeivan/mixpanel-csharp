@@ -73,21 +73,6 @@ namespace Mixpanel
         #region Track
 
         /// <inheritdoc/>
-        public bool Track(string @event, object properties)
-        {
-            return Track(@event, null, properties);
-        }
-
-        /// <inheritdoc/>
-        public bool Track(string @event, object distinctId, object properties)
-        {
-            return SendMessageInternal(
-                MessageKind.Track,
-                MixpanelMessageEndpoint.Track,
-                () => BuildTrackMessage(@event, distinctId, properties));
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> TrackAsync(string @event, object properties)
         {
             return await TrackAsync(@event, null, properties).ConfigureAwait(false);
