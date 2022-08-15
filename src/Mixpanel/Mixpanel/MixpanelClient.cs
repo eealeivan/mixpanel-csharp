@@ -178,21 +178,6 @@ namespace Mixpanel
         #region PeopleSet
 
         /// <inheritdoc/>
-        public bool PeopleSet(object properties)
-        {
-            return PeopleSet(null, properties);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleSet(object distinctId, object properties)
-        {
-            return SendMessageInternal(
-                MessageKind.PeopleSet,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleSetMessage(distinctId, properties));
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> PeopleSetAsync(object properties)
         {
             return await PeopleSetAsync(null, properties)
@@ -244,20 +229,6 @@ namespace Mixpanel
 
         #region PeopleSetOnce
 
-        /// <inheritdoc/>
-        public bool PeopleSetOnce(object properties)
-        {
-            return PeopleSetOnce(null, properties);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleSetOnce(object distinctId, object properties)
-        {
-            return SendMessageInternal(
-                MessageKind.PeopleSetOnce,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleSetOnceMessage(distinctId, properties));
-        }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleSetOnceAsync(object properties)
@@ -312,21 +283,6 @@ namespace Mixpanel
         #region PeopleAdd
 
         /// <inheritdoc/>
-        public bool PeopleAdd(object properties)
-        {
-            return PeopleAdd(null, properties);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleAdd(object distinctId, object properties)
-        {
-            return SendMessageInternal(
-                MessageKind.PeopleAdd,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleAddMessage(distinctId, properties));
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> PeopleAddAsync(object properties)
         {
             return await PeopleAddAsync(null, properties)
@@ -377,21 +333,6 @@ namespace Mixpanel
         #endregion PeopleAdd
 
         #region PeopleAppend
-
-        /// <inheritdoc/>
-        public bool PeopleAppend(object properties)
-        {
-            return PeopleAppend(null, properties);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleAppend(object distinctId, object properties)
-        {
-            return SendMessageInternal(
-                MessageKind.PeopleAppend,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleAppendMessage(distinctId, properties));
-        }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleAppendAsync(object properties)
@@ -446,21 +387,6 @@ namespace Mixpanel
         #region PeopleUnion
 
         /// <inheritdoc/>
-        public bool PeopleUnion(object properties)
-        {
-            return PeopleUnion(null, properties);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleUnion(object distinctId, object properties)
-        {
-            return SendMessageInternal(
-                MessageKind.PeopleUnion,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleUnionMessage(distinctId, properties));
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> PeopleUnionAsync(object properties)
         {
             return await PeopleUnionAsync(null, properties)
@@ -513,21 +439,6 @@ namespace Mixpanel
         #region PeopleRemove
 
         /// <inheritdoc/>
-        public bool PeopleRemove(object properties)
-        {
-            return PeopleRemove(null, properties);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleRemove(object distinctId, object properties)
-        {
-            return SendMessageInternal(
-                MessageKind.PeopleRemove,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleRemoveMessage(distinctId, properties));
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> PeopleRemoveAsync(object properties)
         {
             return await PeopleRemoveAsync(null, properties)
@@ -578,21 +489,6 @@ namespace Mixpanel
         #endregion PeopleRemove
 
         #region PeopleUnset
-
-        /// <inheritdoc/>
-        public bool PeopleUnset(IEnumerable<string> propertyNames)
-        {
-            return PeopleUnset(null, propertyNames);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleUnset(object distinctId, IEnumerable<string> propertyNames)
-        {
-            return SendMessageInternal(
-                MessageKind.PeopleUnset,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleUnsetMessage(distinctId, propertyNames));
-        }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleUnsetAsync(IEnumerable<string> propertyNames)
@@ -649,21 +545,6 @@ namespace Mixpanel
         #region PeopleDelete
 
         /// <inheritdoc/>
-        public bool PeopleDelete()
-        {
-            return PeopleDelete(null);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleDelete(object distinctId)
-        {
-            return SendMessageInternal(
-                MessageKind.PeopleDelete,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleDeleteMessage(distinctId));
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> PeopleDeleteAsync()
         {
             return await PeopleDeleteAsync(null)
@@ -714,33 +595,6 @@ namespace Mixpanel
         #endregion PeopleDelete
 
         #region PeopleTrackCharge
-
-        /// <inheritdoc/>
-        public bool PeopleTrackCharge(decimal amount)
-        {
-            return PeopleTrackCharge(null, amount);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleTrackCharge(object distinctId, decimal amount)
-        {
-            return PeopleTrackCharge(distinctId, amount, UtcNow());
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleTrackCharge(decimal amount, DateTime time)
-        {
-            return PeopleTrackCharge(null, amount, time);
-        }
-
-        /// <inheritdoc/>
-        public bool PeopleTrackCharge(object distinctId, decimal amount, DateTime time)
-        {
-            return SendMessageInternal(
-                MessageKind.PeopleTrackCharge,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleTrackChargeMessage(distinctId, amount, time));
-        }
 
         /// <inheritdoc/>
         public async Task<bool> PeopleTrackChargeAsync(decimal amount)
@@ -840,40 +694,6 @@ namespace Mixpanel
         #region Send
 
         /// <inheritdoc/>
-        public SendResult Send(params MixpanelMessage[] messages)
-        {
-            return Send(messages as IEnumerable<MixpanelMessage>);
-        }
-
-        /// <inheritdoc/>
-        public SendResult Send(IEnumerable<MixpanelMessage> messages)
-        {
-            var resultInternal = new SendResultInternal();
-            var batchMessage = new BatchMessageWrapper(messages);
-
-            SendBatches(MixpanelMessageEndpoint.Track, batchMessage.TrackMessages);
-            SendBatches(MixpanelMessageEndpoint.Engage, batchMessage.EngageMessages);
-
-            return resultInternal.ToRealSendResult();
-
-            void SendBatches(MixpanelMessageEndpoint endpoint, List<List<MixpanelMessage>> batches)
-            {
-                if (batches == null)
-                {
-                    return;
-                }
-
-                foreach (List<MixpanelMessage> batch in batches)
-                {
-                    bool success = SendMessageInternal(
-                        endpoint,
-                        () => new BatchMessageBuildResult(batch));
-                    resultInternal.Update(success, batch);
-                }
-            }
-        }
-
-        /// <inheritdoc/>
         public async Task<SendResult> SendAsync(params MixpanelMessage[] messages)
         {
             return await SendAsync(messages as IEnumerable<MixpanelMessage>).ConfigureAwait(false);
@@ -950,12 +770,6 @@ namespace Mixpanel
         #endregion Send
 
         #region SendJson
-
-        /// <inheritdoc/>
-        public bool SendJson(MixpanelMessageEndpoint endpoint, string messageJson)
-        {
-            return SendMessageInternal(endpoint, messageJson);
-        }
 
         /// <inheritdoc />
         public async Task<bool> SendJsonAsync(MixpanelMessageEndpoint endpoint, string messageJson)

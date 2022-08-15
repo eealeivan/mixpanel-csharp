@@ -10,16 +10,6 @@ namespace Mixpanel.Tests.MixpanelClient
     public class MixpanelClientSendJsonTests : MixpanelClientTestsBase
     {
         [Test]
-        public void When_SendSync_Then_CorrectDataSent()
-        {
-            bool result = Client.SendJson(MixpanelMessageEndpoint.Track, CreateJsonMessage());
-
-            Assert.That(result, Is.True);
-            Assert.That(HttpPostEntries.Single().Endpoint, Is.EqualTo(TrackUrl));
-            CheckSendJsonMessage();
-        }
-
-        [Test]
         public async Task When_SendAsync_Then_CorrectDataSent()
         {
             bool result = await Client.SendJsonAsync(MixpanelMessageEndpoint.Track, CreateJsonMessage());

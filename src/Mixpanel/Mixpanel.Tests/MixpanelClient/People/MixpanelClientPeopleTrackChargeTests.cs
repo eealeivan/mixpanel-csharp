@@ -24,57 +24,6 @@ namespace Mixpanel.Tests.MixpanelClient.People
     {
         [Test]
         [PeopleSuperProps(PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_SendSync_When_DistinctIdFromParams_Then_CorrectDataSent()
-        {
-            bool res = Client.PeopleTrackCharge(DistinctId, DecimalPropertyValue, Time);
-
-            Assert.That(res, Is.True);
-            AssertSentData(DistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.DistinctId | PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_SendSync_When_DistinctIdFromSuperProps_Then_CorrectDataSent()
-        {
-            bool res = Client.PeopleTrackCharge(DecimalPropertyValue, Time);
-
-            Assert.That(res, Is.True);
-            AssertSentData(SuperDistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.DistinctId | PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_SendSync_When_DistinctIdFromParamsAndSuperProps_Then_CorrectDataSent()
-        {
-            bool res = Client.PeopleTrackCharge(DistinctId, DecimalPropertyValue, Time);
-
-            Assert.That(res, Is.True);
-            AssertSentData(DistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_SendSync_When_TimeFromParams_Then_CorrectDataSent()
-        {
-            bool res = Client.PeopleTrackCharge(DistinctId, DecimalPropertyValue, Time);
-
-            Assert.That(res, Is.True);
-            AssertSentData(DistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_SendSync_When_NoTime_Then_CorrectDataSent()
-        {
-            Client.UtcNow = () => Time;
-            bool res = Client.PeopleTrackCharge(DistinctId, DecimalPropertyValue);
-
-            Assert.That(res, Is.True);
-            AssertSentData(DistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.MessageSpecialProperties)]
         public async Task Given_SendAsync_When_DistinctIdFromParams_Then_CorrectDataSent()
         {
             bool res = await Client.PeopleTrackChargeAsync(DistinctId, DecimalPropertyValue, Time);

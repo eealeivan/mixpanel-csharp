@@ -7,11 +7,6 @@ namespace Mixpanel
     {
         static readonly HttpClient HttpClient = new HttpClient();
 
-        public bool Post(string url, string formData)
-        {
-            return PostAsync(url, formData).GetAwaiter().GetResult();
-        }
-
         public async Task<bool> PostAsync(string url, string formData)
         {
             HttpResponseMessage responseMessage =
