@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bogus;
+using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+// ReSharper disable AssignNullToNotNullAttribute
 
 namespace Mixpanel.Tests.MixpanelClient.People
 {
@@ -11,90 +13,175 @@ namespace Mixpanel.Tests.MixpanelClient.People
     // {
     //     "$token": "36ada5b10da39a1347559321baf13063",
     //     "$distinct_id": "13793",
-    //     "$delete": ""
+    //     "$delete": "",
+    //     "$ignore_alias": true 
     // }
 
     [TestFixture]
-    public class MixpanelClientPeopleDeleteTests : MixpanelClientPeopleTestsBase
+    public class MixpanelClientPeopleDeleteTests
     {
         [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public async Task Given_SendAsync_When_DistinctIdFromParams_Then_CorrectDataSent()
+        public async Task PeopleDeleteAsync_SendMessage_EngageUrlCalled()
         {
-            await Client.PeopleDeleteAsync(DistinctId);
-            AssertSentData(DistinctId);
+            // Arrange
+            var (token, distinctId, httpMockMixpanelConfig) = GenerateInputs();
+            IMixpanelClient client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance);
+
+            // Act
+            await client.PeopleDeleteAsync(distinctId);
+
+            // Assert
+            (string endpoint, _) = httpMockMixpanelConfig.Messages.Single();
+            endpoint.Should().Be("https://api.mixpanel.com/engage");
         }
 
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.DistinctId | PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public async Task Given_SendAsync_When_DistinctIdFromSuperProps_Then_CorrectDataSent()
+        [TestCase(DistinctIdType.Argument, true)]
+        [TestCase(DistinctIdType.Argument, false)]
+        [TestCase(DistinctIdType.Argument, null)]
+        [TestCase(DistinctIdType.SuperProps, true)]
+        [TestCase(DistinctIdType.SuperProps, false)]
+        [TestCase(DistinctIdType.SuperProps, null)]
+        public async Task PeopleDeleteAsync_AllArgumentVariations_CorrectPropertiesInMessage(DistinctIdType distinctIdType, bool? ignoreAlias)
         {
-            await Client.PeopleDeleteAsync();
-            AssertSentData(SuperDistinctId);
+            // Arrange
+            var (token, distinctId, httpMockMixpanelConfig) = GenerateInputs();
+            var superProps = distinctIdType == DistinctIdType.SuperProps ? new { DistinctId = distinctId } : null;
+            IMixpanelClient client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance, superProps);
+
+            // Act
+            bool result;
+            switch (distinctIdType)
+            {
+                case DistinctIdType.Argument when ignoreAlias is null:
+                    result = await client.PeopleDeleteAsync(distinctId);
+                    break;
+                case DistinctIdType.Argument: // ignoreAlias is not null
+                    result = await client.PeopleDeleteAsync(distinctId, ignoreAlias: ignoreAlias.Value);
+                    break;
+                case DistinctIdType.SuperProps when ignoreAlias is null:
+                    result = await client.PeopleDeleteAsync();
+                    break;
+                case DistinctIdType.SuperProps: // ignoreAlias is not null
+                    result = await client.PeopleDeleteAsync(ignoreAlias: ignoreAlias.Value);
+                    break;
+                default:
+                    throw new Exception();
+            }
+
+            // Assert
+            result.Should().Be(true);
+            (_, JObject message) = httpMockMixpanelConfig.Messages.Single();
+            message.Should().HaveCount(ignoreAlias.Equals(true) ? 4 : 3);
+            message.Should().ContainKey("$token").WhoseValue.Value<string>().Should().Be(token);
+            message.Should().ContainKey("$distinct_id").WhoseValue.Value<string>().Should().Be(distinctId);
+            message.Should().ContainKey("$delete").WhoseValue.Value<string>().Should().Be("");
+            if (ignoreAlias.Equals(true))
+            {
+                message.Should().ContainKey("$ignore_alias").WhoseValue.Value<bool>().Should().Be(true);
+            }
         }
 
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_GetMessage_When_DistinctIdFromParams_Then_CorrectMessageReturned()
+        [TestCase(DistinctIdType.Argument, true)]
+        [TestCase(DistinctIdType.Argument, false)]
+        [TestCase(DistinctIdType.Argument, null)]
+        [TestCase(DistinctIdType.SuperProps, true)]
+        [TestCase(DistinctIdType.SuperProps, false)]
+        [TestCase(DistinctIdType.SuperProps, null)]
+        public void GetPeopleDeleteMessage_AllArgumentVariations_CorrectPropertiesInMessage(DistinctIdType distinctIdType, bool? ignoreAlias)
         {
-            MixpanelMessage message = Client.GetPeopleDeleteMessage(DistinctId);
-            AssertMessage(message, DistinctId);
+            // Arrange
+            var (token, distinctId, _) = GenerateInputs();
+            var superProps = distinctIdType == DistinctIdType.SuperProps ? new { DistinctId = distinctId } : null;
+            IMixpanelClient client = new Mixpanel.MixpanelClient(token, null, superProps);
+
+            // Act
+            MixpanelMessage message;
+            switch (distinctIdType)
+            {
+                case DistinctIdType.Argument when ignoreAlias is null:
+                    message = client.GetPeopleDeleteMessage(distinctId);
+                    break;
+                case DistinctIdType.Argument: // ignoreAlias is not null
+                    message = client.GetPeopleDeleteMessage(distinctId, ignoreAlias: ignoreAlias.Value);
+                    break;
+                case DistinctIdType.SuperProps when ignoreAlias is null:
+                    message = client.GetPeopleDeleteMessage();
+                    break;
+                case DistinctIdType.SuperProps: // ignoreAlias is not null
+                    message = client.GetPeopleDeleteMessage(ignoreAlias: ignoreAlias.Value);
+                    break;
+                default:
+                    throw new Exception();
+            }
+
+            // Assert
+            message.Kind.Should().Be(MessageKind.PeopleDelete);
+            message.Data.Should().HaveCount(ignoreAlias.Equals(true) ? 4 : 3);
+            message.Data.Should().ContainKey("$token").WhoseValue.Should().Be(token);
+            message.Data.Should().ContainKey("$distinct_id").WhoseValue.Should().Be(distinctId);
+            message.Data.Should().ContainKey("$delete").WhoseValue.Should().Be("");
+            if (ignoreAlias.Equals(true))
+            {
+                message.Data.Should().ContainKey("$ignore_alias").WhoseValue.Should().Be(true);
+            }
         }
 
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.DistinctId | PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_GetMessage_When_DistinctIdFromSuperProps_Then_CorrectMessageReturned()
+        [TestCase(DistinctIdType.Argument, true)]
+        [TestCase(DistinctIdType.Argument, false)]
+        [TestCase(DistinctIdType.Argument, null)]
+        [TestCase(DistinctIdType.SuperProps, true)]
+        [TestCase(DistinctIdType.SuperProps, false)]
+        [TestCase(DistinctIdType.SuperProps, null)]
+        public void PeopleDeleteTest_AllArgumentVariations_CorrectPropertiesInMessage(DistinctIdType distinctIdType, bool? ignoreAlias)
         {
-            MixpanelMessage message = Client.GetPeopleDeleteMessage();
-            AssertMessage(message, SuperDistinctId);
+            // Arrange
+            var (token, distinctId, _) = GenerateInputs();
+            var superProps = distinctIdType == DistinctIdType.SuperProps ? new { DistinctId = distinctId } : null;
+            IMixpanelClient client = new Mixpanel.MixpanelClient(token, null, superProps);
+
+            // Act
+            MixpanelMessageTest messageTest;
+            switch (distinctIdType)
+            {
+                case DistinctIdType.Argument when ignoreAlias is null:
+                    messageTest = client.PeopleDeleteTest(distinctId);
+                    break;
+                case DistinctIdType.Argument: // ignoreAlias is not null
+                    messageTest = client.PeopleDeleteTest(distinctId, ignoreAlias:ignoreAlias.Value);
+                    break;
+                case DistinctIdType.SuperProps when ignoreAlias is null:
+                    messageTest = client.PeopleDeleteTest();
+                    break;
+                case DistinctIdType.SuperProps: // ignoreAlias is not null
+                    messageTest = client.PeopleDeleteTest(ignoreAlias: ignoreAlias.Value);
+                    break;
+                default:
+                    throw new Exception();
+            }
+
+            // Assert
+            messageTest.Data.Should().HaveCount(ignoreAlias.Equals(true) ? 4 : 3);
+            messageTest.Data.Should().ContainKey("$token").WhoseValue.Should().Be(token);
+            messageTest.Data.Should().ContainKey("$distinct_id").WhoseValue.Should().Be(distinctId);
+            messageTest.Data.Should().ContainKey("$delete").WhoseValue.Should().Be("");
+            if (ignoreAlias.Equals(true))
+            {
+                messageTest.Data.Should().ContainKey("$ignore_alias").WhoseValue.Should().Be(true);
+            }
+
+            messageTest.Json.Should().NotBeNull();
+            messageTest.Base64.Should().NotBeNull();
+            messageTest.Exception.Should().BeNull();
         }
 
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_GetTestMessage_When_DistinctIdFromParams_Then_CorrectMessageReturned()
+        private (string token, string distinctId, HttpMockMixpanelConfig httpMockMixpanelConfig) GenerateInputs()
         {
-            MixpanelMessageTest message = Client.PeopleDeleteTest(DistinctId);
-            AssertDictionary(message.Data, DistinctId);
-        }
-
-        [Test]
-        [PeopleSuperProps(PeopleSuperPropsDetails.DistinctId | PeopleSuperPropsDetails.MessageSpecialProperties)]
-        public void Given_GetTestMessage_When_DistinctIdFromSuperProps_Then_CorrectMessageReturned()
-        {
-            MixpanelMessageTest message = Client.PeopleDeleteTest();
-            AssertDictionary(message.Data, SuperDistinctId);
-        }
-
-        private void AssertSentData(object expectedDistinctId)
-        {
-            var (endpoint, data) = HttpPostEntries.Single();
-
-            Assert.That(endpoint, Is.EqualTo(EngageUrl));
-
-            var msg = ParseMessageData(data);
-            AssertJson(msg, expectedDistinctId);
-        }
-
-        private void AssertJson(JObject msg, object expectedDistinctId)
-        {
-            AssertJsonMessageProperties(msg, expectedDistinctId);
-
-            var delete = (JValue)msg["$delete"];
-            Assert.That(delete.Value, Is.EqualTo(String.Empty));
-        }
-
-        private void AssertMessage(MixpanelMessage msg, object expectedDistinctId)
-        {
-            Assert.That(msg.Kind, Is.EqualTo(MessageKind.PeopleDelete));
-            AssertDictionary(msg.Data, expectedDistinctId);
-        }
-
-        private void AssertDictionary(IDictionary<string, object> dic, object expectedDistinctId)
-        {
-            AssertDictionaryMessageProperties(dic, expectedDistinctId);
-
-            Assert.That(dic["$delete"], Is.TypeOf<string>());
-            Assert.That(dic["$delete"], Is.EqualTo(String.Empty));
+            return
+                (
+                    new Randomizer().AlphaNumeric(32),
+                    new Randomizer().AlphaNumeric(10),
+                    new HttpMockMixpanelConfig(null)
+                );
         }
     }
 }

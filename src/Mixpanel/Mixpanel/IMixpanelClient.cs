@@ -696,8 +696,12 @@ namespace Mixpanel
         /// 'Distinct ID' will be taken from super properties.
         /// Sends a message to 'https://api.mixpanel.com/engage/' endpoint. 
         /// Returns true if call was successful, and false otherwise.
+        /// /// <param name="ignoreAlias">
+        /// If you have duplicate profiles, set this parameter to true
+        /// so that you don't delete the original profile when trying to delete the duplicate.
+        /// </param>
         /// </summary>
-        Task<bool> PeopleDeleteAsync();
+        Task<bool> PeopleDeleteAsync(bool ignoreAlias = false);
 
         /// <summary>
         /// Permanently delete the profile from Mixpanel, along with all of its properties.
@@ -705,7 +709,11 @@ namespace Mixpanel
         /// Returns true if call was successful, and false otherwise.
         /// </summary>
         /// <param name="distinctId">Unique user profile identifier.</param>
-        Task<bool> PeopleDeleteAsync(object distinctId);
+        /// <param name="ignoreAlias">
+        /// If you have duplicate profiles, set this parameter to true
+        /// so that you don't delete the original profile when trying to delete the duplicate.
+        /// </param>
+        Task<bool> PeopleDeleteAsync(object distinctId, bool ignoreAlias = false);
 
         /// <summary>
         /// Returns a <see cref="MixpanelMessage"/> for 'PeopleDelete'. 
@@ -714,7 +722,11 @@ namespace Mixpanel
         /// No data will be sent to Mixpanel.
         /// You can send returned message using <see cref="SendAsync(Mixpanel.MixpanelMessage[])"/> method.
         /// </summary>
-        MixpanelMessage GetPeopleDeleteMessage();
+        /// <param name="ignoreAlias">
+        /// If you have duplicate profiles, set this parameter to true
+        /// so that you don't delete the original profile when trying to delete the duplicate.
+        /// </param> 
+        MixpanelMessage GetPeopleDeleteMessage(bool ignoreAlias = false);
 
         /// <summary>
         /// Returns a <see cref="MixpanelMessage"/> for 'PeopleDelete'. 
@@ -723,7 +735,11 @@ namespace Mixpanel
         /// You can send returned message using <see cref="SendAsync(Mixpanel.MixpanelMessage[])"/> method.
         /// </summary>
         /// <param name="distinctId">Unique user profile identifier.</param>
-        MixpanelMessage GetPeopleDeleteMessage(object distinctId);
+        /// <param name="ignoreAlias">
+        /// If you have duplicate profiles, set this parameter to true
+        /// so that you don't delete the original profile when trying to delete the duplicate.
+        /// </param>
+        MixpanelMessage GetPeopleDeleteMessage(object distinctId, bool ignoreAlias = false);
 
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
@@ -731,8 +747,12 @@ namespace Mixpanel
         /// creating a message it can be found in <see cref="MixpanelMessageTest.Exception"/> property.
         /// The message will NOT be sent to Mixpanel.
         /// </summary>
-        MixpanelMessageTest PeopleDeleteTest();
-        
+        /// <param name="ignoreAlias">
+        /// If you have duplicate profiles, set this parameter to true
+        /// so that you don't delete the original profile when trying to delete the duplicate.
+        /// </param>
+        MixpanelMessageTest PeopleDeleteTest(bool ignoreAlias = false);
+
         /// <summary>
         /// Returns <see cref="MixpanelMessageTest"/> that contains all steps (message data, JSON,
         /// base64) of building 'PeopleDelete' message. If some error occurs during the process of 
@@ -740,7 +760,11 @@ namespace Mixpanel
         /// The message will NOT be sent to Mixpanel.
         /// </summary>
         /// <param name="distinctId">Unique user profile identifier.</param>
-        MixpanelMessageTest PeopleDeleteTest(object distinctId);
+        /// <param name="ignoreAlias">
+        /// If you have duplicate profiles, set this parameter to true
+        /// so that you don't delete the original profile when trying to delete the duplicate.
+        /// </param>
+        MixpanelMessageTest PeopleDeleteTest(object distinctId, bool ignoreAlias = false);
 
         #endregion PeopleDelete
 

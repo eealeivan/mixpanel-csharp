@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Bogus;
+using FluentAssertions;
 using Mixpanel.MessageBuilders;
 using Mixpanel.MessageBuilders.People;
 using Mixpanel.MessageProperties;
 using NUnit.Framework;
+// ReSharper disable ExpressionIsAlwaysNull
 
 namespace Mixpanel.Tests.MessageBuilders.People
 {
@@ -10,83 +12,127 @@ namespace Mixpanel.Tests.MessageBuilders.People
     // {
     //     "$token": "36ada5b10da39a1347559321baf13063",
     //     "$distinct_id": "13793",
-    //     "$delete": ""
+    //     "$delete": "",
+    //     "$ignore_alias": true 
     // }
 
     [TestFixture]
-    public class PeopleDeleteMessageBuilderTests : PeopleTestsBase
+    public class PeopleDeleteMessageBuilderTests
     {
-        protected override string OperationName => "$delete";
-
         [Test]
-        public void When_DistinctIdParameter_Then_DistinctIdSetInMessage()
+        public void Build_FullMessage_AllPropertiesSetInMessage()
         {
+            // Arrange
+            var (token, distinctId) = GenerateInputs();
+            const bool ignoreAlias = true;
+
+            // Act
             MessageBuildResult messageBuildResult =
-                PeopleDeleteMessageBuilder.Build(Token, null, DistinctId, null);
+                PeopleDeleteMessageBuilder.Build(token, null, distinctId, ignoreAlias, null);
 
-            AssertDeleteMessageSuccess(messageBuildResult, DistinctId);
+            // Assert
+            messageBuildResult.Success.Should().BeTrue();
+            messageBuildResult.Error.Should().BeNull();
+            messageBuildResult.Message.Count.Should().Be(4);
+            messageBuildResult.Message.Should().ContainKey("$delete").WhoseValue.Should().Be("");
+            messageBuildResult.Message.Should().ContainKey("$token").WhoseValue.Should().Be(token);
+            messageBuildResult.Message.Should().ContainKey("$distinct_id").WhoseValue.Should().Be(distinctId);
+            messageBuildResult.Message.Should().ContainKey("$ignore_alias").WhoseValue.Should().Be(ignoreAlias);
         }
 
         [Test]
-        public void When_DistinctIdFromSuperProperties_Then_DistinctIdSetInMessage()
+        public void Build_DistinctIdProvidedAsArgument_DistinctIdSetInMessage()
         {
-            var superProperties = CreateSuperProperties(
-                ObjectProperty.Default(DistinctIdPropertyName, PropertyOrigin.SuperProperty, SuperDistinctId));
+            // Arrange
+            var (token, distinctId) = GenerateInputs();
 
+            // Act
             MessageBuildResult messageBuildResult =
-                PeopleDeleteMessageBuilder.Build(Token, superProperties, null, null);
+                PeopleDeleteMessageBuilder.Build(token, null, distinctId, false, null);
 
-            AssertDeleteMessageSuccess(messageBuildResult, SuperDistinctId);
+            // Assert
+            messageBuildResult.Message.Should().ContainKey("$distinct_id").WhoseValue.Should().Be(distinctId);
         }
 
         [Test]
-        public void When_NonSpecialSuperProperties_Then_Ignored()
+        public void Build_DistinctIdProvidedAsSuperProperty_DistinctIdSetInMessage()
         {
-            var superProperties = CreateSuperProperties(
-                ObjectProperty.Default(DistinctIdPropertyName, PropertyOrigin.SuperProperty, SuperDistinctId),
-                // Should be ignored
-                ObjectProperty.Default(DecimalSuperPropertyName, PropertyOrigin.SuperProperty, DecimalSuperPropertyValue));
+            // Arrange
+            var (token, distinctId) = GenerateInputs();
+            var superProperties = new[]
+            {
+                new ObjectProperty(MixpanelProperty.DistinctId, PropertyNameSource.Default, PropertyOrigin.SuperProperty, distinctId)
+            };
 
-
+            // Act
             MessageBuildResult messageBuildResult =
-                PeopleDeleteMessageBuilder.Build(Token, superProperties, null, null);
+                PeopleDeleteMessageBuilder.Build(token, superProperties, null, false, null);
 
-            AssertDeleteMessageSuccess(messageBuildResult, SuperDistinctId);
+            // Assert
+            messageBuildResult.Message.Should().ContainKey("$distinct_id").WhoseValue.Should().Be(distinctId);
         }
 
         [Test]
-        public void When_NoToken_Then_MessageBuildFails()
+        public void Build_DistinctIdProvidedAsArgumentAndSuperProperty_DistinctIdFromArgumentSetInMessage()
         {
-            MessageBuildResult messageBuildResult = PeopleDeleteMessageBuilder.Build(null, null, null, null);
-            AssertMessageFail(messageBuildResult);
+            // Arrange
+            var (token, _) = GenerateInputs();
+            string argDistinctId = new Randomizer().AlphaNumeric(10);
+            string superPropsDistinctId = new Randomizer().AlphaNumeric(10);
+            var superProperties = new[]
+            {
+                new ObjectProperty(MixpanelProperty.DistinctId, PropertyNameSource.Default, PropertyOrigin.SuperProperty, superPropsDistinctId)
+            };
+
+            // Act
+            MessageBuildResult messageBuildResult =
+                PeopleDeleteMessageBuilder.Build(token, superProperties, argDistinctId, false, null);
+
+            // Assert
+            messageBuildResult.Message.Should().ContainKey("$distinct_id").WhoseValue.Should().Be(argDistinctId);
         }
 
         [Test]
-        public void When_NoDistinctId_Then_MessageBuildFails()
+        public void Build_NoTokenProvided_MessageBuildFails()
         {
-            MessageBuildResult messageBuildResult = PeopleDeleteMessageBuilder.Build(Token, null, null, null);
-            AssertMessageFail(messageBuildResult);
+            // Arrange
+            string token = null;
+            var (_, distinctId) = GenerateInputs();
+
+            // Act
+            MessageBuildResult messageBuildResult =
+                PeopleDeleteMessageBuilder.Build(token, null, distinctId, false, null);
+
+            // Assert
+            messageBuildResult.Success.Should().BeFalse();
+            messageBuildResult.Message.Should().BeNull();
+            messageBuildResult.Error.Should().NotBeNull();
         }
 
-        private void AssertDeleteMessageSuccess(MessageBuildResult messageBuildResult, object expectedDistinctId)
+        [Test]
+        public void Build_NoDistinctIdProvided_MessageBuildFails()
         {
-            AssertMessageSuccess(messageBuildResult);
+            // Arrange
+            string distinctId = null;
+            var (token, _) = GenerateInputs();
 
-            AssetMessageProperties(
-                messageBuildResult,
-                new (string name, object value)[]
-                {
-                    (PeopleSpecialProperty.Token, Token),
-                    (PeopleSpecialProperty.DistinctId, expectedDistinctId)
-                });
+            // Act
+            MessageBuildResult messageBuildResult =
+                PeopleDeleteMessageBuilder.Build(token, null, distinctId, false, null);
 
-            AssertOperation(
-                messageBuildResult,
-                operation =>
-                {
-                    Assert.That(operation, Is.TypeOf<string>());
-                    Assert.That(operation, Is.EqualTo(String.Empty));
-                });
+            // Assert
+            messageBuildResult.Success.Should().BeFalse();
+            messageBuildResult.Message.Should().BeNull();
+            messageBuildResult.Error.Should().NotBeNull();
+        }
+
+        private (string token, string distinctId) GenerateInputs()
+        {
+            return
+            (
+                new Randomizer().AlphaNumeric(32),
+                new Randomizer().AlphaNumeric(10)
+            );
         }
     }
 }

@@ -9,7 +9,8 @@ namespace Mixpanel.MessageBuilders.People
     // {
     //     "$token": "36ada5b10da39a1347559321baf13063",
     //     "$distinct_id": "13793",
-    //     "$delete": ""
+    //     "$delete": "",
+    //     "$ignore_alias": true 
     // }
 
     internal static class PeopleDeleteMessageBuilder 
@@ -18,6 +19,7 @@ namespace Mixpanel.MessageBuilders.People
             string token,
             IEnumerable<ObjectProperty> superProperties,
             object distinctId,
+            bool ignoreAlias,
             MixpanelConfig config)
         {
             MessageBuildResult messageBuildResult = PeopleMessageBuilderBase.CreateMessage(
@@ -35,6 +37,12 @@ namespace Mixpanel.MessageBuilders.People
             }
 
             messageBuildResult.Message["$delete"] = Empty;
+
+            if (ignoreAlias)
+            {
+                messageBuildResult.Message[PeopleSpecialProperty.IgnoreAlias] = true;
+            }
+            
             return messageBuildResult;
         }
     }
