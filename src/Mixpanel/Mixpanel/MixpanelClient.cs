@@ -545,51 +545,51 @@ namespace Mixpanel
         #region PeopleDelete
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleDeleteAsync()
+        public async Task<bool> PeopleDeleteAsync(bool ignoreAlias = false)
         {
-            return await PeopleDeleteAsync(null)
+            return await PeopleDeleteAsync(null, ignoreAlias)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleDeleteAsync(object distinctId)
+        public async Task<bool> PeopleDeleteAsync(object distinctId, bool ignoreAlias = false)
         {
             return await SendMessageInternalAsync(
                 MessageKind.PeopleDelete,
                 MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleDeleteMessage(distinctId))
+                () => BuildPeopleDeleteMessage(distinctId, ignoreAlias))
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public MixpanelMessage GetPeopleDeleteMessage()
+        public MixpanelMessage GetPeopleDeleteMessage(bool ignoreAlias = false)
         {
-            return GetPeopleDeleteMessage(null);
+            return GetPeopleDeleteMessage(null, ignoreAlias);
         }
 
         /// <inheritdoc/>
-        public MixpanelMessage GetPeopleDeleteMessage(object distinctId)
+        public MixpanelMessage GetPeopleDeleteMessage(object distinctId, bool ignoreAlias = false)
         {
             return GetMessage(
                 MessageKind.PeopleDelete,
-                () => BuildPeopleDeleteMessage(distinctId));
+                () => BuildPeopleDeleteMessage(distinctId, ignoreAlias));
         }
 
         /// <inheritdoc/>
-        public MixpanelMessageTest PeopleDeleteTest()
+        public MixpanelMessageTest PeopleDeleteTest(bool ignoreAlias = false)
         {
-            return PeopleDeleteTest(null);
+            return PeopleDeleteTest(null, ignoreAlias);
         }
 
         /// <inheritdoc/>
-        public MixpanelMessageTest PeopleDeleteTest(object distinctId)
+        public MixpanelMessageTest PeopleDeleteTest(object distinctId, bool ignoreAlias = false)
         {
-            return TestMessage(() => BuildPeopleDeleteMessage(distinctId));
+            return TestMessage(() => BuildPeopleDeleteMessage(distinctId, ignoreAlias));
         }
 
-        private MessageBuildResult BuildPeopleDeleteMessage(object distinctId)
+        private MessageBuildResult BuildPeopleDeleteMessage(object distinctId, bool ignoreAlias = false)
         {
-            return PeopleDeleteMessageBuilder.Build(token, superProperties, distinctId, config);
+            return PeopleDeleteMessageBuilder.Build(token, superProperties, distinctId, ignoreAlias, config);
         }
 
         #endregion PeopleDelete
