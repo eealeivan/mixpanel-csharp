@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Bogus;
+using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 // ReSharper disable RedundantArgumentDefaultValue
@@ -47,6 +50,42 @@ namespace Mixpanel.Tests.MixpanelClient.Track
         {
             await Client.TrackAsync(Event, DistinctId, GetProperties());
             AssertSentData(DistinctId, 4 + 2 + 0);
+        }
+
+        [Test]
+        public void TrackAsync_CancellationRequested_RequestCancelled()
+        {
+            // Arrange
+            var (token, _, @event, httpMockMixpanelConfig) = GenerateInputs();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance);
+
+            // Act
+            var task = Task.Factory.StartNew(
+                async () => await client.TrackAsync(@event, new { }, cancellationTokenSource.Token));
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
+        }
+
+        [Test]
+        public void TrackAsyncWithDistinctId_CancellationRequested_RequestCancelled()
+        {
+            // Arrange
+            var (token, distinctId, @event, httpMockMixpanelConfig) = GenerateInputs();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance);
+
+            // Act
+            var task = Task.Factory.StartNew(
+                async () => await client.TrackAsync(@event, distinctId, new { }, cancellationTokenSource.Token));
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
         }
 
         [Test]
@@ -171,6 +210,18 @@ namespace Mixpanel.Tests.MixpanelClient.Track
                 Assert.That(props[DecimalSuperPropertyName], Is.EqualTo(DecimalSuperPropertyValue));
                 Assert.That(props[StringSuperPropertyName], Is.EqualTo(StringSuperPropertyValue));
             }
+        }
+
+        private (string token, string distinctId, string @event, HttpMockMixpanelConfig<JObject> httpMockMixpanelConfig) GenerateInputs()
+        {
+            var randomizer = new Randomizer();
+            return
+            (
+                randomizer.AlphaNumeric(32),
+                randomizer.AlphaNumeric(10),
+                randomizer.Words(),
+                new HttpMockMixpanelConfig<JObject>(null)
+            );
         }
     }
 }

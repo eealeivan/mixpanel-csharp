@@ -37,10 +37,13 @@ namespace Mixpanel.Tests.MixpanelClient
                 () => client.PeopleUnsetAsync(DistinctId, StringPropertyArray),
                 () => client.PeopleDeleteAsync(DistinctId),
                 () => client.PeopleTrackChargeAsync(DistinctId, DecimalPropertyValue),
-                () => client.SendAsync(new MixpanelMessage
+                () => client.SendAsync(new[]
                 {
-                    Kind = MessageKind.PeopleSet,
-                    Data = DictionaryWithStringProperty
+                    new MixpanelMessage
+                    {
+                        Kind = MessageKind.PeopleSet,
+                        Data = DictionaryWithStringProperty
+                    }
                 })
             };
         }
@@ -49,7 +52,7 @@ namespace Mixpanel.Tests.MixpanelClient
         {
             return new MixpanelConfig
             {
-                AsyncHttpPostFn = (endpoint, data) =>
+                AsyncHttpPostFn = (endpoint, data, cancellationToken) =>
                 {
                     urls.Add(endpoint);
                     return Task.FromResult(true);

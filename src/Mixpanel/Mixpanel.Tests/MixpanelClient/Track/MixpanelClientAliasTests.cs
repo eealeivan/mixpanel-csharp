@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Bogus;
+using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -22,6 +25,43 @@ namespace Mixpanel.Tests.MixpanelClient.Track
         {
             await Client.AliasAsync(DistinctId, Alias);
             AssertSentData(DistinctId);
+        }
+
+        [Test]
+        public void AliasAsync_CancellationRequested_RequestCancelled()
+        {
+            // Arrange
+            var (token, distinctId, alias, httpMockMixpanelConfig) = GenerateInputs();
+            var superProps = new { DistinctId = distinctId };
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance, superProps);
+
+            // Act
+            var task = Task.Factory.StartNew(
+                async () => await client.AliasAsync(alias, cancellationTokenSource.Token));
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
+        }
+
+        [Test]
+        public void AliasAsyncWithDistinctId_CancellationRequested_RequestCancelled()
+        {
+            // Arrange
+            var (token, distinctId, alias, httpMockMixpanelConfig) = GenerateInputs();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance);
+
+            // Act
+            var task = Task.Factory.StartNew(
+                async () => await client.AliasAsync(distinctId, alias, cancellationTokenSource.Token));
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
         }
 
         [Test]
@@ -92,6 +132,18 @@ namespace Mixpanel.Tests.MixpanelClient.Track
             Assert.That(props["token"], Is.EqualTo(Token));
             Assert.That(props["distinct_id"], Is.EqualTo(expectedDistinctId));
             Assert.That(props["alias"], Is.EqualTo(Alias));
+        }
+
+        private (string token, string distinctId, string alias, HttpMockMixpanelConfig<JObject> httpMockMixpanelConfig) GenerateInputs()
+        {
+            var randomizer = new Randomizer();
+            return
+            (
+                randomizer.AlphaNumeric(32),
+                randomizer.AlphaNumeric(10),
+                randomizer.AlphaNumeric(10),
+                new HttpMockMixpanelConfig<JObject>()
+            );
         }
     }
 }

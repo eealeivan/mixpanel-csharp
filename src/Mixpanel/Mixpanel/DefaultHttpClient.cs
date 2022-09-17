@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Mixpanel
@@ -7,10 +8,10 @@ namespace Mixpanel
     {
         static readonly HttpClient HttpClient = new HttpClient();
 
-        public async Task<bool> PostAsync(string url, string formData)
+        public async Task<bool> PostAsync(string url, string formData, CancellationToken cancellationToken)
         {
             HttpResponseMessage responseMessage =
-                await HttpClient.PostAsync(url, new StringContent(formData)).ConfigureAwait(false);
+                await HttpClient.PostAsync(url, new StringContent(formData), cancellationToken).ConfigureAwait(false);
             if (!responseMessage.IsSuccessStatusCode)
             {
                 return false;

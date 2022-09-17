@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Mixpanel
@@ -19,9 +20,9 @@ namespace Mixpanel
 
         /// <summary>
         /// Gets or sets user defined function that will make async HTTP POST requests to mixpanel endpoints.
-        /// Takes 2 string parameters: url and content. Returns true if call was successful, and false otherwise.
+        /// Takes 3 parameters: url, content and cancellation token. Returns true if call was successful, and false otherwise.
         /// </summary>
-        public Func<string, string, Task<bool>> AsyncHttpPostFn { get; set; }
+        public Func<string, string, CancellationToken, Task<bool>> AsyncHttpPostFn { get; set; }
 
         /// <summary>
         /// Gets ot sets user defined function for retrieving error logs. Takes 2 parameters: message and exception.

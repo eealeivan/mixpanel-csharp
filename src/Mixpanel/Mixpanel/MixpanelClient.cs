@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Mixpanel.MessageBuilders;
 using Mixpanel.MessageBuilders.People;
@@ -73,18 +74,19 @@ namespace Mixpanel
         #region Track
 
         /// <inheritdoc/>
-        public async Task<bool> TrackAsync(string @event, object properties)
+        public async Task<bool> TrackAsync(string @event, object properties, CancellationToken cancellationToken = default)
         {
-            return await TrackAsync(@event, null, properties).ConfigureAwait(false);
+            return await TrackAsync(@event, null, properties, cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> TrackAsync(string @event, object distinctId, object properties)
+        public async Task<bool> TrackAsync(string @event, object distinctId, object properties, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
                     MessageKind.Track,
                     MixpanelMessageEndpoint.Track,
-                    () => BuildTrackMessage(@event, distinctId, properties))
+                    () => BuildTrackMessage(@event, distinctId, properties),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -126,19 +128,20 @@ namespace Mixpanel
         #region Alias
 
         /// <inheritdoc/>
-        public async Task<bool> AliasAsync(object alias)
+        public async Task<bool> AliasAsync(object alias, CancellationToken cancellationToken = default)
         {
-            return await AliasAsync(null, alias)
+            return await AliasAsync(null, alias, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> AliasAsync(object distinctId, object alias)
+        public async Task<bool> AliasAsync(object distinctId, object alias, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.Alias,
-                MixpanelMessageEndpoint.Track,
-                () => BuildAliasMessage(distinctId, alias))
+                    MessageKind.Alias,
+                    MixpanelMessageEndpoint.Track,
+                    () => BuildAliasMessage(distinctId, alias),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -178,19 +181,20 @@ namespace Mixpanel
         #region PeopleSet
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleSetAsync(object properties)
+        public async Task<bool> PeopleSetAsync(object properties, CancellationToken cancellationToken = default)
         {
-            return await PeopleSetAsync(null, properties)
+            return await PeopleSetAsync(null, properties, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleSetAsync(object distinctId, object properties)
+        public async Task<bool> PeopleSetAsync(object distinctId, object properties, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.PeopleSet,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleSetMessage(distinctId, properties))
+                    MessageKind.PeopleSet,
+                    MixpanelMessageEndpoint.Engage,
+                    () => BuildPeopleSetMessage(distinctId, properties),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -231,19 +235,20 @@ namespace Mixpanel
 
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleSetOnceAsync(object properties)
+        public async Task<bool> PeopleSetOnceAsync(object properties, CancellationToken cancellationToken = default)
         {
-            return await PeopleSetOnceAsync(null, properties)
+            return await PeopleSetOnceAsync(null, properties, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleSetOnceAsync(object distinctId, object properties)
+        public async Task<bool> PeopleSetOnceAsync(object distinctId, object properties, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.PeopleSetOnce,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleSetOnceMessage(distinctId, properties))
+                    MessageKind.PeopleSetOnce,
+                    MixpanelMessageEndpoint.Engage,
+                    () => BuildPeopleSetOnceMessage(distinctId, properties),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -283,19 +288,20 @@ namespace Mixpanel
         #region PeopleAdd
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleAddAsync(object properties)
+        public async Task<bool> PeopleAddAsync(object properties, CancellationToken cancellationToken = default)
         {
-            return await PeopleAddAsync(null, properties)
+            return await PeopleAddAsync(null, properties, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleAddAsync(object distinctId, object properties)
+        public async Task<bool> PeopleAddAsync(object distinctId, object properties, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.PeopleAdd,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleAddMessage(distinctId, properties))
+                    MessageKind.PeopleAdd,
+                    MixpanelMessageEndpoint.Engage,
+                    () => BuildPeopleAddMessage(distinctId, properties),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -335,19 +341,20 @@ namespace Mixpanel
         #region PeopleAppend
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleAppendAsync(object properties)
+        public async Task<bool> PeopleAppendAsync(object properties, CancellationToken cancellationToken = default)
         {
-            return await PeopleAppendAsync(null, properties)
+            return await PeopleAppendAsync(null, properties, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleAppendAsync(object distinctId, object properties)
+        public async Task<bool> PeopleAppendAsync(object distinctId, object properties, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.PeopleAppend,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleAppendMessage(distinctId, properties))
+                    MessageKind.PeopleAppend,
+                    MixpanelMessageEndpoint.Engage,
+                    () => BuildPeopleAppendMessage(distinctId, properties),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -387,19 +394,20 @@ namespace Mixpanel
         #region PeopleUnion
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleUnionAsync(object properties)
+        public async Task<bool> PeopleUnionAsync(object properties, CancellationToken cancellationToken = default)
         {
-            return await PeopleUnionAsync(null, properties)
+            return await PeopleUnionAsync(null, properties, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleUnionAsync(object distinctId, object properties)
+        public async Task<bool> PeopleUnionAsync(object distinctId, object properties, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.PeopleUnion,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleUnionMessage(distinctId, properties))
+                    MessageKind.PeopleUnion,
+                    MixpanelMessageEndpoint.Engage,
+                    () => BuildPeopleUnionMessage(distinctId, properties),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -439,19 +447,20 @@ namespace Mixpanel
         #region PeopleRemove
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleRemoveAsync(object properties)
+        public async Task<bool> PeopleRemoveAsync(object properties, CancellationToken cancellationToken = default)
         {
-            return await PeopleRemoveAsync(null, properties)
+            return await PeopleRemoveAsync(null, properties, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleRemoveAsync(object distinctId, object properties)
+        public async Task<bool> PeopleRemoveAsync(object distinctId, object properties, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.PeopleRemove,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleRemoveMessage(distinctId, properties))
+                    MessageKind.PeopleRemove,
+                    MixpanelMessageEndpoint.Engage,
+                    () => BuildPeopleRemoveMessage(distinctId, properties),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -491,19 +500,20 @@ namespace Mixpanel
         #region PeopleUnset
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleUnsetAsync(IEnumerable<string> propertyNames)
+        public async Task<bool> PeopleUnsetAsync(IEnumerable<string> propertyNames, CancellationToken cancellationToken = default)
         {
-            return await PeopleUnsetAsync(null, propertyNames)
+            return await PeopleUnsetAsync(null, propertyNames, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleUnsetAsync(object distinctId, IEnumerable<string> propertyNames)
+        public async Task<bool> PeopleUnsetAsync(object distinctId, IEnumerable<string> propertyNames, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.PeopleUnset,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleUnsetMessage(distinctId, propertyNames))
+                    MessageKind.PeopleUnset,
+                    MixpanelMessageEndpoint.Engage,
+                    () => BuildPeopleUnsetMessage(distinctId, propertyNames),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -545,19 +555,20 @@ namespace Mixpanel
         #region PeopleDelete
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleDeleteAsync(bool ignoreAlias = false)
+        public async Task<bool> PeopleDeleteAsync(bool ignoreAlias = false, CancellationToken cancellationToken = default)
         {
-            return await PeopleDeleteAsync(null, ignoreAlias)
+            return await PeopleDeleteAsync(null, ignoreAlias, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleDeleteAsync(object distinctId, bool ignoreAlias = false)
+        public async Task<bool> PeopleDeleteAsync(object distinctId, bool ignoreAlias = false, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.PeopleDelete,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleDeleteMessage(distinctId, ignoreAlias))
+                    MessageKind.PeopleDelete,
+                    MixpanelMessageEndpoint.Engage,
+                    () => BuildPeopleDeleteMessage(distinctId, ignoreAlias),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -597,33 +608,34 @@ namespace Mixpanel
         #region PeopleTrackCharge
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleTrackChargeAsync(decimal amount)
+        public async Task<bool> PeopleTrackChargeAsync(decimal amount, CancellationToken cancellationToken = default)
         {
-            return await PeopleTrackChargeAsync(null, amount)
+            return await PeopleTrackChargeAsync(null, amount, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount)
+        public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount, CancellationToken cancellationToken = default)
         {
-            return await PeopleTrackChargeAsync(distinctId, amount, UtcNow())
+            return await PeopleTrackChargeAsync(distinctId, amount, UtcNow(), cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleTrackChargeAsync(decimal amount, DateTime time)
+        public async Task<bool> PeopleTrackChargeAsync(decimal amount, DateTime time, CancellationToken cancellationToken = default)
         {
-            return await PeopleTrackChargeAsync(null, amount, time)
+            return await PeopleTrackChargeAsync(null, amount, time, cancellationToken)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount, DateTime time)
+        public async Task<bool> PeopleTrackChargeAsync(object distinctId, decimal amount, DateTime time, CancellationToken cancellationToken = default)
         {
             return await SendMessageInternalAsync(
-                MessageKind.PeopleTrackCharge,
-                MixpanelMessageEndpoint.Engage,
-                () => BuildPeopleTrackChargeMessage(distinctId, amount, time))
+                    MessageKind.PeopleTrackCharge,
+                    MixpanelMessageEndpoint.Engage,
+                    () => BuildPeopleTrackChargeMessage(distinctId, amount, time),
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -694,13 +706,7 @@ namespace Mixpanel
         #region Send
 
         /// <inheritdoc/>
-        public async Task<SendResult> SendAsync(params MixpanelMessage[] messages)
-        {
-            return await SendAsync(messages as IEnumerable<MixpanelMessage>).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        public async Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages)
+        public async Task<SendResult> SendAsync(IEnumerable<MixpanelMessage> messages, CancellationToken cancellationToken = default)
         {
             var resultInternal = new SendResultInternal();
             var batchMessage = new BatchMessageWrapper(messages);
@@ -719,10 +725,11 @@ namespace Mixpanel
 
                 foreach (List<MixpanelMessage> batch in batches)
                 {
-                    bool success = await SendMessageInternalAsync(
+                    bool result = await SendMessageInternalAsync(
                         endpoint,
-                        () => new BatchMessageBuildResult(batch));
-                    resultInternal.Update(success, batch);
+                        () => new BatchMessageBuildResult(batch),
+                        cancellationToken);
+                    resultInternal.Update(result, batch);
                 }
             }
         }
@@ -761,20 +768,15 @@ namespace Mixpanel
             return testMessages.AsReadOnly();
         }
 
-        /// <inheritdoc/>
-        public ReadOnlyCollection<MixpanelBatchMessageTest> SendTest(params MixpanelMessage[] messages)
-        {
-            return SendTest(messages as IEnumerable<MixpanelMessage>);
-        }
-
         #endregion Send
 
         #region SendJson
 
         /// <inheritdoc />
-        public async Task<bool> SendJsonAsync(MixpanelMessageEndpoint endpoint, string messageJson)
+        public async Task<bool> SendJsonAsync(
+            MixpanelMessageEndpoint endpoint, string messageJson, CancellationToken cancellationToken = default)
         {
-            return await SendMessageInternalAsync(endpoint, messageJson).ConfigureAwait(false);
+            return await SendMessageInternalAsync(endpoint, messageJson, cancellationToken).ConfigureAwait(false);
         }
 
         #endregion SendJson

@@ -8,29 +8,38 @@ using Newtonsoft.Json.Linq;
 
 namespace Mixpanel.Tests.MixpanelClient
 {
-    public class HttpMockMixpanelConfig
+    public class HttpMockMixpanelConfig<TMessage> where TMessage : class
     {
         public MixpanelConfig Instance { get; }
-        public List<(string Endpoint, JObject Message)> Messages { get; }
+        public List<(string Endpoint, TMessage Message)> Messages { get; }
+        public bool RequestCancelled { get; private set; }
 
-        public HttpMockMixpanelConfig(MixpanelConfig config)
+        public HttpMockMixpanelConfig(MixpanelConfig config = null)
         {
             Instance = config ?? new MixpanelConfig();
-            Messages = new List<(string Endpoint, JObject Message)>();
+            Messages = new List<(string Endpoint, TMessage Message)>();
 
             if (Instance.AsyncHttpPostFn != null)
             {
                 throw new Exception("AsyncHttpPostFn is expected to be null.");
             }
 
-            Instance.AsyncHttpPostFn = (endpoint, data) =>
+            Instance.AsyncHttpPostFn = async (endpoint, data, cancellationToken) =>
             {
+                if (cancellationToken.CanBeCanceled)
+                {
+                    cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(1));
+                }
+
+                RequestCancelled = cancellationToken.IsCancellationRequested;
+                cancellationToken.ThrowIfCancellationRequested();
+
                 Messages.Add((endpoint, ParseMessageData(data)));
-                return Task.FromResult(true);
+                return await Task.FromResult(true);
             };
         }
 
-        private JObject ParseMessageData(string data)
+        private TMessage ParseMessageData(string data)
         {
             // Can't use JObject.Parse because it's not possible to disable DateTime parsing
             using (var stringReader = new StringReader(GetJsonFromData(data)))
@@ -38,8 +47,18 @@ namespace Mixpanel.Tests.MixpanelClient
                 using (JsonReader jsonReader = new JsonTextReader(stringReader))
                 {
                     jsonReader.DateParseHandling = DateParseHandling.None;
-                    JObject msg = JObject.Load(jsonReader);
-                    return msg;
+
+                    if (typeof(TMessage) == typeof(JObject))
+                    {
+                        return JObject.Load(jsonReader) as TMessage;
+                    }
+
+                    if (typeof(TMessage) == typeof(JArray))
+                    {
+                        return JArray.Load(jsonReader) as TMessage;
+                    }
+
+                    throw new NotSupportedException($"{typeof(TMessage)} is not supported.");
                 }
             }
         }
