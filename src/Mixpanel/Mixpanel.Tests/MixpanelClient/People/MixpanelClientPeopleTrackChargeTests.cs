@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Bogus;
+using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -71,6 +75,47 @@ namespace Mixpanel.Tests.MixpanelClient.People
 
             Assert.That(res, Is.True);
             AssertSentData(DistinctId);
+        }
+
+        [TestCase(DistinctIdType.Argument, true)]
+        [TestCase(DistinctIdType.Argument, false)]
+        [TestCase(DistinctIdType.SuperProps, true)]
+        [TestCase(DistinctIdType.SuperProps, false)]
+        public void PeopleTrackChargeAsyncAllVariations_CancellationRequested_RequestCancelled(
+            DistinctIdType distinctIdType, bool setTime)
+        {
+            // Arrange
+            var (token, distinctId, amount, time, httpMockMixpanelConfig) = GenerateInputs();
+            var superProps = distinctIdType == DistinctIdType.SuperProps ? new { DistinctId = distinctId } : null;
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance, superProps);
+
+            // Act
+            Func<Task<bool>> function;
+            switch (distinctIdType)
+            {
+                case DistinctIdType.Argument when setTime:
+                    function = async () => await client.PeopleTrackChargeAsync(distinctId, amount, time, cancellationTokenSource.Token);
+                    break;
+                case DistinctIdType.Argument: // setTime is false
+                    function = async () => await client.PeopleTrackChargeAsync(distinctId, amount, cancellationTokenSource.Token);
+                    break;
+                case DistinctIdType.SuperProps when setTime:
+                    function = async () => await client.PeopleTrackChargeAsync(amount, time, cancellationTokenSource.Token);
+                    break;
+                case DistinctIdType.SuperProps: // setTime is false
+                    function = async () => await client.PeopleTrackChargeAsync(amount, cancellationTokenSource.Token);
+                    break;
+                default:
+                    throw new Exception();
+            }
+            
+            var task = Task.Factory.StartNew(function);
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
         }
 
         [Test]
@@ -204,6 +249,20 @@ namespace Mixpanel.Tests.MixpanelClient.People
             Assert.That(transactions.Count, Is.EqualTo(2));
             Assert.That(transactions["$time"], Is.EqualTo(TimeFormat));
             Assert.That(transactions["$amount"], Is.EqualTo(DecimalPropertyValue));
+        }
+
+        private (string token, string distinctId, decimal amount, DateTime time, HttpMockMixpanelConfig<JObject> httpMockMixpanelConfig) GenerateInputs()
+        {
+            var randomizer = new Randomizer();
+            var date = new Faker().Date;
+            return
+            (
+                randomizer.AlphaNumeric(32),
+                randomizer.AlphaNumeric(10),
+                randomizer.Decimal(),
+                date.Recent(),
+                new HttpMockMixpanelConfig<JObject>()
+            );
         }
     }
 }

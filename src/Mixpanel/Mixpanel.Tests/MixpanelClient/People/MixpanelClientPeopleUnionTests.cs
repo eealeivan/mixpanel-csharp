@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Bogus;
+using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 // ReSharper disable RedundantArgumentDefaultValue
@@ -37,6 +40,43 @@ namespace Mixpanel.Tests.MixpanelClient.People
         {
             await Client.PeopleUnionAsync(DistinctId, GetProperties());
             AssertSentData(DistinctId);
+        }
+
+        [Test]
+        public void PeopleUnionAsync_CancellationRequested_RequestCancelled()
+        {
+            // Arrange
+            var (token, distinctId, httpMockMixpanelConfig) = GenerateInputs();
+            var superProps = new { DistinctId = distinctId };
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance, superProps);
+
+            // Act
+            var task = Task.Factory.StartNew(
+                async () => await client.PeopleUnionAsync(new { }, cancellationTokenSource.Token));
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
+        }
+
+        [Test]
+        public void PeopleUnionAsyncWithDistinctId_CancellationRequested_RequestCancelled()
+        {
+            // Arrange
+            var (token, distinctId, httpMockMixpanelConfig) = GenerateInputs();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance);
+
+            // Act
+            var task = Task.Factory.StartNew(
+                async () => await client.PeopleUnionAsync(distinctId, new { }, cancellationTokenSource.Token));
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
         }
 
         [Test]
@@ -139,6 +179,17 @@ namespace Mixpanel.Tests.MixpanelClient.People
             Assert.That(union.Count, Is.EqualTo(2));
             Assert.That(union[DecimalPropertyName], Is.EquivalentTo(DecimalPropertyArray));
             Assert.That(union[StringPropertyName], Is.EquivalentTo(StringPropertyArray));
+        }
+
+        private (string token, string distinctId, HttpMockMixpanelConfig<JObject> httpMockMixpanelConfig) GenerateInputs()
+        {
+            var randomizer = new Randomizer();
+            return
+            (
+                randomizer.AlphaNumeric(32),
+                randomizer.AlphaNumeric(10),
+                new HttpMockMixpanelConfig<JObject>()
+            );
         }
     }
 }

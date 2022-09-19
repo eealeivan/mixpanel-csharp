@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Mixpanel.Json;
 
@@ -17,7 +18,7 @@ namespace Mixpanel
             return MixpanelJsonSerializer.Serialize;
         }
 
-        public static Func<string, string, Task<bool>> GetHttpPostAsyncFn(MixpanelConfig config)
+        public static Func<string, string, CancellationToken, Task<bool>> GetHttpPostAsyncFn(MixpanelConfig config)
         {
             if (config != null && config.AsyncHttpPostFn != null)
                 return config.AsyncHttpPostFn;

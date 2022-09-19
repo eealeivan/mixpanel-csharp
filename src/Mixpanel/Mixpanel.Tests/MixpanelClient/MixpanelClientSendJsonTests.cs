@@ -1,5 +1,8 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Bogus;
+using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -7,44 +10,60 @@ using NUnit.Framework;
 namespace Mixpanel.Tests.MixpanelClient
 {
     [TestFixture]
-    public class MixpanelClientSendJsonTests : MixpanelClientTestsBase
+    public class MixpanelClientSendJsonTests
     {
         [Test]
-        public async Task When_SendAsync_Then_CorrectDataSent()
+        public async Task SendAsync_TrackMessage_CorrectDataSent()
         {
-            bool result = await Client.SendJsonAsync(MixpanelMessageEndpoint.Track, CreateJsonMessage());
+            // Arrange
+            var httpMockMixpanelConfig = new HttpMockMixpanelConfig<JObject>();
+            var client = new Mixpanel.MixpanelClient(httpMockMixpanelConfig.Instance);
+            var message = CreateJsonMessage();
 
-            Assert.That(result, Is.True);
-            Assert.That(HttpPostEntries.Single().Endpoint, Is.EqualTo(TrackUrl));
-            CheckSendJsonMessage();
+            // Act
+            var result = await client.SendJsonAsync(MixpanelMessageEndpoint.Track, message);
+
+            // Assert
+            result.Should().BeTrue();
+            var (endpoint, sentMessage) = httpMockMixpanelConfig.Messages.Single();
+            endpoint.Should().Be("https://api.mixpanel.com/track");
+            sentMessage.ToString(Formatting.None).Should().Be(message);
+        }
+
+        [Test]
+        public void SendAsync_CancellationRequested_RequestCancelled()
+        {
+            // Arrange
+            var httpMockMixpanelConfig = new HttpMockMixpanelConfig<JObject>();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(httpMockMixpanelConfig.Instance);
+            var jsonMessage = CreateJsonMessage();
+
+            // Act
+            var task = Task.Factory.StartNew(
+                async () => await client.SendJsonAsync(
+                    MixpanelMessageEndpoint.Track, jsonMessage, cancellationTokenSource.Token));
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
         }
 
         private string CreateJsonMessage()
         {
+            var randomizer = new Randomizer();
             var message = new
             {
-                @event = Event,
+                @event = randomizer.Words(),
                 properties = new
                 {
-                    token = Token,
-                    distinct_id = DistinctId,
-                    StringProperty = StringPropertyValue
+                    token = randomizer.AlphaNumeric(30),
+                    distinct_id = randomizer.AlphaNumeric(10)
                 }
             };
-            string messageJson = JsonConvert.SerializeObject(message);
-            return messageJson;
-        }
 
-        private void CheckSendJsonMessage()
-        {
-            var msg = ParseMessageData(HttpPostEntries.Single().Data);
-            Assert.That(msg.Count, Is.EqualTo(2));
-            Assert.That(msg["event"].Value<string>(), Is.EqualTo(Event));
-            var props = (JObject)msg["properties"];
-            Assert.That(props.Count, Is.EqualTo(3));
-            Assert.That(props["token"].Value<string>(), Is.EqualTo(Token));
-            Assert.That(props["distinct_id"].Value<string>(), Is.EqualTo(DistinctId));
-            Assert.That(props[StringPropertyName].Value<string>(), Is.EqualTo(StringPropertyValue));
+            return JsonConvert.SerializeObject(message);
         }
     }
 }

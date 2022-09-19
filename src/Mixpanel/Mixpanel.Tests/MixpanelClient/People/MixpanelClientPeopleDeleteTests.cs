@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Bogus;
 using FluentAssertions;
@@ -46,7 +47,7 @@ namespace Mixpanel.Tests.MixpanelClient.People
             // Arrange
             var (token, distinctId, httpMockMixpanelConfig) = GenerateInputs();
             var superProps = distinctIdType == DistinctIdType.SuperProps ? new { DistinctId = distinctId } : null;
-            IMixpanelClient client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance, superProps);
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance, superProps);
 
             // Act
             bool result;
@@ -81,6 +82,43 @@ namespace Mixpanel.Tests.MixpanelClient.People
             }
         }
 
+        [Test]
+        public void PeopleDeleteAsync_CancellationRequested_RequestCancelled()
+        {
+            // Arrange
+            var (token, distinctId, httpMockMixpanelConfig) = GenerateInputs();
+            var superProps = new { DistinctId = distinctId };
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance, superProps);
+
+            // Act
+            var task = Task.Factory.StartNew(
+                async () => await client.PeopleDeleteAsync(cancellationToken: cancellationTokenSource.Token));
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
+        }
+
+        [Test]
+        public void PeopleDeleteAsyncWithDistinctId_CancellationRequested_RequestCancelled()
+        {
+            // Arrange
+            var (token, distinctId, httpMockMixpanelConfig) = GenerateInputs();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var client = new Mixpanel.MixpanelClient(token, httpMockMixpanelConfig.Instance);
+
+            // Act
+            var task = Task.Factory.StartNew(
+                async () => await client.PeopleDeleteAsync(distinctId, cancellationToken: cancellationTokenSource.Token));
+            cancellationTokenSource.Cancel();
+            task.Wait();
+
+            // Assert
+            httpMockMixpanelConfig.RequestCancelled.Should().BeTrue();
+        }
+
         [TestCase(DistinctIdType.Argument, true)]
         [TestCase(DistinctIdType.Argument, false)]
         [TestCase(DistinctIdType.Argument, null)]
@@ -92,7 +130,7 @@ namespace Mixpanel.Tests.MixpanelClient.People
             // Arrange
             var (token, distinctId, _) = GenerateInputs();
             var superProps = distinctIdType == DistinctIdType.SuperProps ? new { DistinctId = distinctId } : null;
-            IMixpanelClient client = new Mixpanel.MixpanelClient(token, null, superProps);
+            var client = new Mixpanel.MixpanelClient(token, null, superProps);
 
             // Act
             MixpanelMessage message;
@@ -137,7 +175,7 @@ namespace Mixpanel.Tests.MixpanelClient.People
             // Arrange
             var (token, distinctId, _) = GenerateInputs();
             var superProps = distinctIdType == DistinctIdType.SuperProps ? new { DistinctId = distinctId } : null;
-            IMixpanelClient client = new Mixpanel.MixpanelClient(token, null, superProps);
+            var client = new Mixpanel.MixpanelClient(token, null, superProps);
 
             // Act
             MixpanelMessageTest messageTest;
@@ -174,13 +212,13 @@ namespace Mixpanel.Tests.MixpanelClient.People
             messageTest.Exception.Should().BeNull();
         }
 
-        private (string token, string distinctId, HttpMockMixpanelConfig httpMockMixpanelConfig) GenerateInputs()
+        private (string token, string distinctId, HttpMockMixpanelConfig<JObject> httpMockMixpanelConfig) GenerateInputs()
         {
             return
                 (
                     new Randomizer().AlphaNumeric(32),
                     new Randomizer().AlphaNumeric(10),
-                    new HttpMockMixpanelConfig(null)
+                    new HttpMockMixpanelConfig<JObject>()
                 );
         }
     }
