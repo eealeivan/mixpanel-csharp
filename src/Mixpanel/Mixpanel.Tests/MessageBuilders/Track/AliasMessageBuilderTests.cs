@@ -5,7 +5,7 @@ using Mixpanel.MessageBuilders.Track;
 using Mixpanel.MessageProperties;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MessageBuilders.Track
+namespace Mixpanel.Tests.Unit.MessageBuilders.Track
 {
     [TestFixture]
     public class AliasMessageBuilderTests : MixpanelTestsBase

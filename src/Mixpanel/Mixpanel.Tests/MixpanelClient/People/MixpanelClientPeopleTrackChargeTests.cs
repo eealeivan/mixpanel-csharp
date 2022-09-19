@@ -8,7 +8,7 @@ using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MixpanelClient.People
+namespace Mixpanel.Tests.Unit.MixpanelClient.People
 {
     // Message example:
     // {

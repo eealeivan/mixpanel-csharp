@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mixpanel.Tests.MixpanelClient.People
+namespace Mixpanel.Tests.Unit.MixpanelClient.People
 {
     [Flags]
     public enum PeopleSuperPropsDetails

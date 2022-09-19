@@ -7,7 +7,7 @@ using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MixpanelClient
+namespace Mixpanel.Tests.Unit.MixpanelClient
 {
     [TestFixture]
     public class MixpanelClientSendTests

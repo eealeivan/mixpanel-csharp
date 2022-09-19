@@ -7,7 +7,7 @@ using Mixpanel.MessageProperties;
 using Mixpanel.Parsers;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MessageBuilders.Track
+namespace Mixpanel.Tests.Unit.MessageBuilders.Track
 {
     // Message example:
     // {

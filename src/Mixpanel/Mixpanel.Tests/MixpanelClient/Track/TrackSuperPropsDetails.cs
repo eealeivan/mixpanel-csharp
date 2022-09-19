@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mixpanel.Tests.MixpanelClient.Track
+namespace Mixpanel.Tests.Unit.MixpanelClient.Track
 {
     [Flags]
     public enum TrackSuperPropsDetails

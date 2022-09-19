@@ -4,7 +4,7 @@ using Mixpanel.Json;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.Json
+namespace Mixpanel.Tests.Unit.Json
 {
     [TestFixture]
     public class MixpanelJsonSerializerTests : MixpanelTestsBase

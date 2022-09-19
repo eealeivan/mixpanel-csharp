@@ -6,9 +6,10 @@ using Bogus;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+
 // ReSharper disable RedundantArgumentDefaultValue
 
-namespace Mixpanel.Tests.MixpanelClient.Track
+namespace Mixpanel.Tests.Unit.MixpanelClient.Track
 {
     // Message example:
     // {

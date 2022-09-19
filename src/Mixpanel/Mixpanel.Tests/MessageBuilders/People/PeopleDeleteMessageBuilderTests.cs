@@ -4,9 +4,10 @@ using Mixpanel.MessageBuilders;
 using Mixpanel.MessageBuilders.People;
 using Mixpanel.MessageProperties;
 using NUnit.Framework;
+
 // ReSharper disable ExpressionIsAlwaysNull
 
-namespace Mixpanel.Tests.MessageBuilders.People
+namespace Mixpanel.Tests.Unit.MessageBuilders.People
 {
     // Message example:
     // {
