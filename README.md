@@ -2,13 +2,15 @@
 [Mixpanel](https://mixpanel.com/) is a great analitics platform, but unfortunetally there is no official integration library for .NET. So if you are writing code on .NET and want to use Mixpanel, then ```mixpanel-csharp``` can be an excellent choice. ```mixpanel-csharp``` main idea is to hide most api details (you don't need to remember what time formatting to use, or in which cases you should prefix properties with ```$```) and concentrate on data that you want to analyze.
 
 ## Features
-- Supports full [Mixpanel HTTP Tracking API](https://mixpanel.com/help/reference/http)
-- [Send tracking messages](https://github.com/eealeivan/mixpanel-csharp/wiki/Sending-messages) synchronously or asynchronously, pack them into batches, create messages to send them later
-- Pass [message data](https://github.com/eealeivan/mixpanel-csharp/wiki/Message-data) in form that you prefer: predefined contract,  `IDictionary<string, object>`, anonymous type or dynamic
+- Supports the following [Mixpanel Ingestion API's](https://developer.mixpanel.com/reference/ingestion-api):
+    - [Track Events](https://developer.mixpanel.com/reference/track-event)
+    - [User Profiles](https://developer.mixpanel.com/reference/user-profiles)
+- [Send messages simultaneously](https://github.com/eealeivan/mixpanel-csharp/wiki/Sending-messages) or just create a message instance and send it later
+- Pass [the message data](https://github.com/eealeivan/mixpanel-csharp/wiki/Message-data) in form that you prefer: predefined contract, `IDictionary<string, object>`, anonymous type or dynamic
 - Add properties globally to all messages with super properties. Usable for properties such as `distinct_id`
 - Great [configurability](https://github.com/eealeivan/mixpanel-csharp/wiki/Configuration). For example you can provide your own JSON serializer or function that will make HTTP requests
 - No dependencies. Keeps your project clean
-- Runs on .NET 4.5.2 and [.NET Standard 1.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
+- Runs on .NET 4.6.1 and [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - Detailed [documentation](https://github.com/eealeivan/mixpanel-csharp/wiki)
 
 ## Sample usage for track message
