@@ -16,7 +16,13 @@
     <Description>An open source Mixpanel .NET integration library that supports complete Mixpanel API. The main idea of the library is to hide API details allowing you to concentrate on data that you want to analyze. Supported platforms: .NET 4.6.1 and .NET Standard 2.0. It's also well documented, configurable and testable. Check the example usage on the project site.</Description>
     <PackageTags>mixpanel;analytics;data;tracking;.NET;netstandard</PackageTags>
     <PackageReadmeFile>nuget-readme.md</PackageReadmeFile>
-    <PackageReleaseNotes>- Sign Mixpanel assembly with a strong name</PackageReleaseNotes>
+    <PackageReleaseNotes>
+      - Sign Mixpanel assembly with a strong name
+      - Update minimal supported versions to .NET Framework 4.6.1 (net461) and .NET Standard 2.0 (netstandard2.0)
+      - Remove all synchronous methods from (I)MixpanelClient
+      - Add IgnoreAlias parameter to PeopleDeleteAsync methods
+      - Add CancellationToken parameter to all asynchronous methods in (I)MixpanelClient
+    </PackageReleaseNotes>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\strong-name-key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
