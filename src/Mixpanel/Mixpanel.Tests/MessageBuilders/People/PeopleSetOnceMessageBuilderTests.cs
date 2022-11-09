@@ -4,7 +4,7 @@ using Mixpanel.MessageBuilders.People;
 using Mixpanel.MessageProperties;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MessageBuilders.People
+namespace Mixpanel.Tests.Unit.MessageBuilders.People
 {
     // Message example:
     // {

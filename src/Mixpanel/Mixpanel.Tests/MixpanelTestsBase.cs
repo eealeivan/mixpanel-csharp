@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mixpanel.Tests
+namespace Mixpanel.Tests.Unit
 {
     public abstract class MixpanelTestsBase
     {

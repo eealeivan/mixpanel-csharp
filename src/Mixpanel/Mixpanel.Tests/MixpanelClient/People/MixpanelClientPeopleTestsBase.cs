@@ -2,9 +2,8 @@
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 
-namespace Mixpanel.Tests.MixpanelClient.People
+namespace Mixpanel.Tests.Unit.MixpanelClient.People
 {
     [TestFixture]
     public abstract class MixpanelClientPeopleTestsBase : MixpanelClientTestsBase

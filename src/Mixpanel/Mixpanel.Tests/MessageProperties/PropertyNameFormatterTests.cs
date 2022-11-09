@@ -1,7 +1,7 @@
 using Mixpanel.MessageProperties;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MessageProperties
+namespace Mixpanel.Tests.Unit.MessageProperties
 {
     [TestFixture]
     public class PropertyNameFormatterTests

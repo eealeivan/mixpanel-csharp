@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MixpanelClient.People
+namespace Mixpanel.Tests.Unit.MixpanelClient.People
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class PeopleSuperPropsAttribute : PropertyAttribute

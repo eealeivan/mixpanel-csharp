@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MixpanelClient
+namespace Mixpanel.Tests.Unit.MixpanelClient
 {
     [TestFixture]
     public class MixpanelClientHttpTests : MixpanelTestsBase

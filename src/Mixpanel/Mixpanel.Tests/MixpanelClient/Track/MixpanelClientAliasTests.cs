@@ -7,7 +7,7 @@ using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MixpanelClient.Track
+namespace Mixpanel.Tests.Unit.MixpanelClient.Track
 {
     [TestFixture]
     public class MixpanelClientAliasTests : MixpanelClientTrackTestsBase

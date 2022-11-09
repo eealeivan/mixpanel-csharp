@@ -7,7 +7,7 @@ using Mixpanel.MessageProperties;
 using Mixpanel.Parsers;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MessageBuilders.People
+namespace Mixpanel.Tests.Unit.MessageBuilders.People
 {
     public abstract class PeopleTestsBase : MixpanelTestsBase
     {

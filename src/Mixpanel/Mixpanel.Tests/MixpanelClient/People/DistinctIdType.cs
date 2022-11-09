@@ -1,4 +1,4 @@
-﻿namespace Mixpanel.Tests.MixpanelClient.People
+﻿namespace Mixpanel.Tests.Unit.MixpanelClient.People
 {
     public enum DistinctIdType
     {

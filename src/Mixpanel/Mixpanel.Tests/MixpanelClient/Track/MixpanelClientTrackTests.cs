@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bogus;
 using FluentAssertions;
+using Mixpanel.Tests.Unit.MixpanelClient;
+using Mixpanel.Tests.Unit.MixpanelClient.Track;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 // ReSharper disable RedundantArgumentDefaultValue

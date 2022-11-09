@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MixpanelClient.Track
+namespace Mixpanel.Tests.Unit.MixpanelClient.Track
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class TrackSuperPropsAttribute : PropertyAttribute

@@ -3,7 +3,7 @@ using System.Collections;
 using Mixpanel.Parsers;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.Parsers
+namespace Mixpanel.Tests.Unit.Parsers
 {
     [TestFixture]
     public class CollectionParserTests : MixpanelTestsBase

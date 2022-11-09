@@ -4,7 +4,7 @@ using Mixpanel.MessageBuilders;
 using Mixpanel.MessageProperties;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.MessageBuilders
+namespace Mixpanel.Tests.Unit.MessageBuilders
 {
     [TestFixture]
     public class MessageCandidateTests : MixpanelTestsBase

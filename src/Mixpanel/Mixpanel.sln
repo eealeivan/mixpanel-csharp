@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mixpanel", "Mixpanel\Mixpanel.csproj", "{073DD847-DB73-4AFF-A37E-0ECD66CEE9EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mixpanel.Tests", "Mixpanel.Tests\Mixpanel.Tests.csproj", "{77B94569-E2E9-4B19-BF6A-6E9B245ED7BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mixpanel.Tests.Unit", "Mixpanel.Tests\Mixpanel.Tests.Unit.csproj", "{77B94569-E2E9-4B19-BF6A-6E9B245ED7BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{B61C6995-7CCF-4899-9C14-21DB347CBEDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{B61C6995-7CCF-4899-9C14-21DB347CBEDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mixpanel.Tests.Integration", "Mixpanel.Tests.Integration\Mixpanel.Tests.Integration.csproj", "{C70E67E8-B537-4E14-B2A6-EE12784AF0A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{B61C6995-7CCF-4899-9C14-21DB347CBEDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B61C6995-7CCF-4899-9C14-21DB347CBEDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B61C6995-7CCF-4899-9C14-21DB347CBEDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C70E67E8-B537-4E14-B2A6-EE12784AF0A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C70E67E8-B537-4E14-B2A6-EE12784AF0A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C70E67E8-B537-4E14-B2A6-EE12784AF0A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C70E67E8-B537-4E14-B2A6-EE12784AF0A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

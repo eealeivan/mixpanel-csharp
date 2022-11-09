@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Mixpanel.Tests.MixpanelClient
+namespace Mixpanel.Tests.Unit.MixpanelClient
 {
     public class HttpMockMixpanelConfig<TMessage> where TMessage : class
     {
