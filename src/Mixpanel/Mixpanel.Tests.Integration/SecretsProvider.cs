@@ -1,16 +1,17 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
+using Mixpanel.Tests.Integration.DefaultHttpClient;
 
 namespace Mixpanel.Tests.Integration
 {
-    public static class SecretsManager
+    public static class SecretsProvider
     {
         public static string MixpanelProjectId { get; }
         public static string MixpanelProjectToken { get; }
         public static string MixpanelServiceAccountUsername { get; }
         public static string MixpanelServiceAccountSecret { get; }
 
-        static SecretsManager()
+        static SecretsProvider()
         {
             var builder = new ConfigurationBuilder()
                 .AddUserSecrets<DefaultHttpClientTests>();

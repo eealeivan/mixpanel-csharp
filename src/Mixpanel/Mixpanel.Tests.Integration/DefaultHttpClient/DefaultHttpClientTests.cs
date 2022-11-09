@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Mixpanel.Tests.Integration
+namespace Mixpanel.Tests.Integration.DefaultHttpClient
 {
     public class DefaultHttpClientTests
     {
@@ -14,7 +14,7 @@ namespace Mixpanel.Tests.Integration
         public async Task PostAsync_SuccessRequest_TrueReturned()
         {
             // Arrange
-            var httpClient = new DefaultHttpClient();
+            var httpClient = new Mixpanel.DefaultHttpClient();
 
             // Act
             var result = await httpClient.PostAsync(BaseUrl + "success", "", CancellationToken.None);
@@ -27,7 +27,7 @@ namespace Mixpanel.Tests.Integration
         public async Task PostAsync_FailRequest_FalseReturned()
         {
             // Arrange
-            var httpClient = new DefaultHttpClient();
+            var httpClient = new Mixpanel.DefaultHttpClient();
 
             // Act
             var result = await httpClient.PostAsync(BaseUrl + "fail", "", CancellationToken.None);
@@ -40,7 +40,7 @@ namespace Mixpanel.Tests.Integration
         public async Task PostAsync_CancellationToken_CancelledForSlowRequest()
         {
             // Arrange
-            var httpClient = new DefaultHttpClient();
+            var httpClient = new Mixpanel.DefaultHttpClient();
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
             var cancellationToken = cancellationTokenSource.Token;
 
