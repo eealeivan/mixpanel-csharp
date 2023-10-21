@@ -1,6 +1,6 @@
 ﻿namespace Mixpanel.Parsers
 {
-    internal sealed class ValueParseResult
+    public sealed class ValueParseResult
     {
         public bool Success { get; }
         public object Value { get; }

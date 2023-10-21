@@ -71,7 +71,17 @@ namespace Mixpanel.MessageBuilders.Track
                 string formattedPropertyName = pair.Key;
                 ObjectProperty objectProperty = pair.Value;
 
-                ValueParseResult result = GenericPropertyParser.Parse(objectProperty.Value, allowCollections: true);
+                ValueParseResult result;
+
+                if (config.CustomPropertiesParser != null)
+                {
+                    result = config.CustomPropertiesParser(objectProperty.Value, true);
+                }
+                else
+                {
+                    result = GenericPropertyParser.Parse(objectProperty.Value, allowCollections: true);
+                }
+
                 if (!result.Success)
                 {
                     continue;
