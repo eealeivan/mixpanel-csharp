@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mixpanel.Parsers;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -48,6 +49,11 @@ namespace Mixpanel
         /// A global instance of the config.
         /// </summary>
         public static MixpanelConfig Global { get; }
+
+        /// <summary>
+        /// With this property you can create your own Parser to handle custom properties.
+        /// </summary>
+        public Func<object, bool, ValueParseResult> CustomPropertiesParser { get; set; }
 
         static MixpanelConfig()
         {
